@@ -66,8 +66,12 @@ Commit messages follow [Conventional Commits](https://www.conventionalcommits.or
 customer records, and no exports from other statistics packages. Fixtures must
 be synthetic (generated from a fixed seed, like `app/tests/spss-parity/make-dataset.R`)
 or anonymised beyond re-identification. The `.gitignore` and the pre-commit
-hook block common data formats, files over 5 MB and absolute home-directory
-paths; they are a safety net, not a substitute for checking what you add.
+hook block data formats — including plain-text tables such as `.csv` and
+`.txt` — files over 5 MB and absolute home-directory paths, and CI repeats the
+data-file check and scans for secrets on every pull request. A new fixture
+must be added to the allow-list in `.githooks/check-files`, with its origin
+stated in the commit. These are a safety net, not a substitute for checking
+what you add.
 
 ## The SPSS parity harness
 

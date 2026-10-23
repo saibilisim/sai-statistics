@@ -7,45 +7,23 @@
 #   git config core.hooksPath .githooks
 #
 # Checks only what is staged:
-#   1. data / statistics-package files (real datasets must never be committed)
-#   2. files over 5 MB
-#   3. absolute paths into the committer's own home directory (tests may use
+#   1. data files — statistics-package formats and plain-text tables (.csv,
+#      .txt, …) outside the allow-list — and files over 5 MB (check-files,
+#      which CI runs too)
+#   2. absolute paths into the committer's own home directory (tests may use
 #      made-up paths like C:\Users\Test — only the real one is a leak)
-#   4. secrets, via gitleaks when it is installed
+#   3. secrets, via gitleaks when it is installed (CI runs gitleaks as well)
 #
 # A deliberate exception can be committed with `git commit --no-verify`;
-# say why in the commit message.
+# say why in the commit message. CI will still flag a data file.
 
 fail=0
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 [ -z "$staged" ] && exit 0
 
-# Synthetic fixtures that are allowed despite their extension.
-allowed() {
-  case "$1" in
-    app/tests/fixtures/import-excel.xlsx | app/tests/fixtures/import-excel-mixed.xlsx) return 0 ;;
-  esac
-  return 1
-}
-
-for f in $staged; do
-  [ -f "$f" ] || continue
-
-  case "$f" in
-    *.sav | *.zsav | *.por | *.sas7bdat | *.xpt | *.dta | *.rds | *.RData | *.parquet | *.sdf | *.spv | *.xlsx | *.xls | *.pdf)
-      if ! allowed "$f"; then
-        echo "pre-commit: data file staged: $f"
-        fail=1
-      fi
-      ;;
-  esac
-
-  size=$(wc -c < "$f" | tr -d ' ')
-  if [ "$size" -gt 5242880 ]; then
-    echo "pre-commit: file over 5 MB staged: $f ($size bytes)"
-    fail=1
-  fi
-done
+if ! printf '%s\n' "$staged" | sh "$(git rev-parse --show-toplevel)/.githooks/check-files"; then
+  fail=1
+fi
 
 # The committer's own home directory in the staged diff (added lines only),
 # in the spellings it takes in code, JSON and SPSS/R files.
