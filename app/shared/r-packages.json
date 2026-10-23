@@ -1,0 +1,195 @@
+{
+  "$comment": [
+    "Single source of truth for every R package the app cares about.",
+    "Consumed by shared/optional-packages.ts (app + IPC allow-list), by the three",
+    "scripts/vendor-r-runtime.* scripts (which read the conda names from here), and",
+    "by r-scripts/setup.R (the user installs their own R path).",
+    "tests/unit/r-packages-manifest.test.ts fails if any consumer drifts from this file.",
+    "",
+    "bundled = every package any analysis uses. The vendored runtime carries all of",
+    "          them (signed with the rest of the runtime), so a user who installs the",
+    "          packaged app installs nothing and needs no internet for R. Until 0.2.28",
+    "          eleven of them were optional, downloaded on demand from the R Packages",
+    "          manager; that left unsigned DLLs (Smart App Control) and a first-use wait,",
+    "          and the manager was removed (2026-10-11).",
+    "          Most of the first group are R recommended set, which every stock CRAN",
+    "          install ships but conda-forge r-base does NOT.",
+    "",
+    "conda is the conda-forge package name; recommended marks the ones",
+    "r-recommended pulls in as a group."
+  ],
+  "runtime": {
+    "$comment": [
+      "Windows R runtime source (scripts/vendor-r-runtime-win.ps1) and the package",
+      "repository every R package install uses — the vendored runtime AND the in-app",
+      "R Packages manager (r-bridge.ts installRPackage). The repository is a dated",
+      "Posit Package Manager snapshot: the same URL returns the same package versions",
+      "(with Windows/macOS binaries) forever, which is what keeps builds reproducible.",
+      "Linux/macOS runtimes still come from conda-forge (r-base pinned in their scripts).",
+      "Changing either value = an R upgrade: rerun scripts/compare-r-versions.cjs and",
+      "the SPSS parity suites before shipping (roadmap.md, 2026-10-10)."
+    ],
+    "windowsR": "4.6.1",
+    "windowsInstallerSha256": "c5424c40cd70ef85765a55d2ff96bb602b5f30ed536938ff004f14db5db3c2df",
+    "cranSnapshot": "https://packagemanager.posit.co/cran/2026-09-01"
+  },
+  "console": {
+    "$comment": [
+      "Packages no analysis uses but an R user expects on day one in the R",
+      "terminal (2026-10-21: `library(ggplot2)` failed in a fresh install). The",
+      "vendored runtimes carry them; they are NOT part of the first-run check for",
+      "a system-R user nor of the analysis install allow-list. Kept BEFORE the",
+      "bundled list: setup.R reads everything after that key as the list.",
+      "Measured on Windows (R 4.6.1, 2026-09-01 snapshot): these three + their",
+      "dependencies add ~15 MB compressed to the installer. car was left out —",
+      "its dependency tree (pbkrtest, doBy, forecast, quantreg …) alone adds",
+      "~19 MB; it installs from the Packages panel."
+    ],
+    "packages": [
+      {
+        "r": "ggplot2",
+        "conda": "r-ggplot2",
+        "use": "Plots"
+      },
+      {
+        "r": "readxl",
+        "conda": "r-readxl",
+        "use": "read_excel()"
+      },
+      {
+        "r": "lubridate",
+        "conda": "r-lubridate",
+        "use": "Dates and times"
+      }
+    ]
+  },
+  "bundled": [
+    {
+      "r": "jsonlite",
+      "conda": "r-jsonlite",
+      "use": "JSON I/O — every script"
+    },
+    {
+      "r": "arrow",
+      "conda": "r-arrow",
+      "use": "Parquet transport from DuckDB"
+    },
+    {
+      "r": "psych",
+      "conda": "r-psych",
+      "use": "Factor Analysis: KMO, Bartlett, Promax"
+    },
+    {
+      "r": "nortest",
+      "conda": "r-nortest",
+      "use": "Lilliefors-corrected K-S (Normality)"
+    },
+    {
+      "r": "haven",
+      "conda": "r-haven",
+      "use": "File > Export Data > SPSS (.sav) writer"
+    },
+    {
+      "r": "ordinal",
+      "conda": "r-ordinal",
+      "use": "Ordinal regression: location, scale and nominal models"
+    },
+    {
+      "r": "MASS",
+      "conda": "r-mass",
+      "recommended": true,
+      "use": "Discriminant (lda), Explore M-estimators (rlm)"
+    },
+    {
+      "r": "boot",
+      "conda": "r-boot",
+      "recommended": true,
+      "use": "Bootstrap percentile/BCa CIs"
+    },
+    {
+      "r": "survival",
+      "conda": "r-survival",
+      "recommended": true,
+      "use": "Kaplan-Meier, Cox regression"
+    },
+    {
+      "r": "nnet",
+      "conda": "r-nnet",
+      "recommended": true,
+      "use": "Multinomial logistic (multinom)"
+    },
+    {
+      "r": "nlme",
+      "conda": "r-nlme",
+      "recommended": true,
+      "use": "Linear Mixed Models (lme)"
+    },
+    {
+      "r": "class",
+      "conda": "r-class",
+      "recommended": true,
+      "use": "Nearest Neighbour classification (knn.cv)"
+    },
+    {
+      "r": "rpart",
+      "conda": "r-rpart",
+      "recommended": true,
+      "use": "Classification Tree / CRT"
+    },
+    {
+      "r": "geepack",
+      "conda": "r-geepack",
+      "use": "GEE (Generalized Estimating Equations)"
+    },
+    {
+      "r": "lme4",
+      "conda": "r-lme4",
+      "use": "Generalized Linear Mixed Models (glmer)"
+    },
+    {
+      "r": "mice",
+      "conda": "r-mice",
+      "use": "Multiple Imputation"
+    },
+    {
+      "r": "BayesFactor",
+      "conda": "r-bayesfactor",
+      "use": "Bayesian t-tests, ANOVA, correlation, regression"
+    },
+    {
+      "r": "coin",
+      "conda": "r-coin",
+      "use": "Exact / Monte Carlo nonparametric tests (tied data)"
+    },
+    {
+      "r": "randtests",
+      "conda": "r-randtests",
+      "use": "Runs test"
+    },
+    {
+      "r": "mvtnorm",
+      "conda": "r-mvtnorm",
+      "use": "Multivariate normal probabilities (Dunnett, Tukey-Kramer)"
+    },
+    {
+      "r": "multcomp",
+      "conda": "r-multcomp",
+      "use": "Dunnett and general linear hypothesis post hoc"
+    },
+    {
+      "r": "pROC",
+      "conda": "r-proc",
+      "use": "ROC curve comparison (DeLong)"
+    },
+    {
+      "r": "agricolae",
+      "conda": "r-agricolae",
+      "use": "Homogeneous subsets (Waller-Duncan, REGW)"
+    },
+    {
+      "r": "emmeans",
+      "conda": "r-emmeans",
+      "use": "Estimated marginal means (EM Means)"
+    }
+  ]
+}

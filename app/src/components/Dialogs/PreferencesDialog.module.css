@@ -1,0 +1,571 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-scrim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-scrim);
+}
+
+.dialog {
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 860px;
+  max-width: 92vw;
+  height: 640px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-header);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--color-bg-surface);
+  border-right: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-sm);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-ui);
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.navItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.navItem.active {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.navIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-lg) var(--space-xl);
+}
+
+/* Vertical rhythm between setting rows inside a category page — the shared
+ * dataStyles.conditionRow/radioRow have no margin of their own (used
+ * elsewhere in tighter single-column dialogs), so this dialog composes its
+ * own spacer class alongside them (`cx(dataStyles.conditionRow, styles.row)`). */
+.row {
+  margin-bottom: var(--space-lg);
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-surface);
+  border-top: 1px solid var(--color-border);
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.footerLeft,
+.footerRight {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.pageTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Keyboard Shortcuts panel ── */
+.shortcutSearch {
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-ui);
+  margin-bottom: var(--space-md);
+}
+
+.shortcutSearch:focus,
+.shortcutSearch:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.shortcutRow {
+  display: grid;
+  grid-template-columns: 1fr 180px 32px;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shortcutLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.shortcutInput {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-ui);
+  text-align: center;
+  cursor: pointer;
+}
+
+.shortcutInput.recording {
+  border-color: var(--color-accent);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.shortcutInput.conflict {
+  border-color: var(--color-error);
+}
+
+.shortcutResetBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.shortcutResetBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.shortcutResetBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.conflictNote {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  margin-top: 2px;
+}
+
+.creditPackRow {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+/* Hesap doğrulanmamış uyarısı — hata değil, dikkat çekici bir durum bildirimi. */
+.unverifiedNote {
+  color: var(--color-warning);
+}
+
+/* Hesap yönetimi (şifre/e-posta değiştir, sil). */
+.accountForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: var(--space-xs) 0;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+}
+
+.accountNotice {
+  color: var(--color-success);
+}
+
+.accountError {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+}
+
+.pwHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.pwHintWarn {
+  color: var(--color-warning);
+}
+
+.dangerNote {
+  color: var(--color-error);
+}
+
+/* Yıkıcı eylem düğmesi (Hesabı sil). */
+
+/* Hesabı sil bölümü — AI ayarlarının en altında, ayrı bir "tehlikeli bölge"
+   olarak diğer (normal) eylemlerden görsel olarak ayrışır. */
+.dangerZone {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.dangerZoneLabel {
+  color: var(--color-error);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+}
+
+/* "Hesabı sil" düğmesinin açtığı doğrulama penceresi (AccountManagement.tsx
+   DeleteAccountDialog). Tercihler'in üstünde, document.body'ye portal. */
+.deleteDialog {
+  min-width: 0;
+  width: min(480px, calc(100vw - 2 * var(--space-xl)));
+}
+
+.deleteBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.deleteWarning {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-error-border);
+  border-left: 3px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  background: var(--color-error-bg);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.deleteMethod {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.deleteMethod + .deleteMethod {
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.deleteMethodLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.deleteMethodRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.deleteMethodRow input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── AI ayarları — "plan seçimi" görünümü (2026-08-25 redesign): sağlayıcı
+   ve model artık düz <select> değil, modern AI ürünlerinin fiyatlandırma/
+   ayar sayfalarındaki gibi seçilebilir kartlar. Native <input type=radio>
+   + :has() ile stil — ekstra state/klavye kodu gerekmez, tab/ok tuşları
+   tarayıcının kendi radiogroup davranışıyla çalışır. */
+.aiProviderGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+}
+
+.aiProviderCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    background var(--duration-fast) var(--easing-standard);
+}
+
+.aiProviderCard:hover {
+  border-color: var(--color-border-strong);
+}
+
+.aiProviderCard:has(input:checked) {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-surface));
+}
+
+.aiProviderCard input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aiProviderCardTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.aiProviderCardHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+/* Sağlayıcıya göre değişen içerik — gruplanmış kart (Bağlantı/Hesap/Kredi/Model). */
+.aiCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+.aiCardTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+
+.aiBalanceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.aiBalanceValue {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.aiEmailRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.aiEmail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aiVerifiedDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  flex-shrink: 0;
+}
+
+.aiModelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: var(--space-xs);
+}
+
+.aiModelCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.aiModelCard:hover {
+  border-color: var(--color-border-strong);
+}
+
+.aiModelCard:has(input:checked) {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-base));
+}
+
+.aiModelCard input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aiModelName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aiModelStats {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: var(--space-xs);
+  row-gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.aiModelStatValue {
+  justify-self: end;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.aiModelTierBoxes {
+  display: inline-flex;
+  gap: var(--space-xs);
+  justify-self: end;
+}
+
+.aiModelTierBox {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
+}
+
+.aiModelTierBoxOn {
+  background: var(--color-accent);
+}
+
+.aiModelAttribution {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.aiStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.aiStatusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-error);
+  flex-shrink: 0;
+}
+
+.aiStatusDot.reachable {
+  background: var(--color-success);
+}
+
+/* Diyalog düğmeleri: tek kaynak DialogButtons.module.css */
+.closeBtn {
+  composes: closeBtn from './DialogButtons.module.css';
+}
+
+.btn {
+  composes: btn from './DialogButtons.module.css';
+}
+
+.primary {
+  composes: primary from './DialogButtons.module.css';
+}
+
+.dangerBtn {
+  composes: danger from './DialogButtons.module.css';
+}

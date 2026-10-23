@@ -1,0 +1,111 @@
+{
+  "name": "sai-statistics",
+  "version": "0.2.36",
+  "description": "Cross-platform desktop statistics application built on the R engine",
+  "main": "out/main/main.cjs",
+  "type": "module",
+  "scripts": {
+    "postinstall": "install-electron",
+    "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{cwd:'..',stdio:'ignore'})}catch{}\"",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build && node scripts/copy-r-scripts.cjs && node scripts/copy-docs.cjs",
+    "typecheck": "tsc --noEmit --project tsconfig.node.json && tsc --noEmit --project tsconfig.web.json",
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:r-validation": "Rscript tests/r-validation/run-all.R",
+    "test:e2e": "node tests/e2e/run-e2e.cjs",
+    "dist": "electron-vite build && node scripts/gen-third-party-notices.cjs && electron-builder",
+    "dist:win": "electron-vite build && node scripts/gen-third-party-notices.cjs && electron-builder --win",
+    "release-notes:new": "node scripts/check-release-notes.cjs --scaffold",
+    "release-notes:check": "node scripts/check-release-notes.cjs",
+    "dist:mac": "electron-vite build && node scripts/gen-third-party-notices.cjs && electron-builder --mac",
+    "dist:linux": "electron-vite build && node scripts/gen-third-party-notices.cjs && electron-builder --linux",
+    "vendor:r-runtime": "bash scripts/vendor-r-runtime.sh",
+    "vendor:r-runtime:win": "powershell -ExecutionPolicy Bypass -File scripts/vendor-r-runtime-win.ps1",
+    "vendor:r-runtime:mac": "bash scripts/vendor-r-runtime-mac.sh",
+    "dist:flatpak": "flatpak run org.flatpak.Builder --user --install --force-clean flatpak-build-dir flatpak/com.saibilisim.saistatistics.yml",
+    "dist:flatpak:bundle": "flatpak run org.flatpak.Builder --user --force-clean --repo=flatpak-repo flatpak-build-dir flatpak/com.saibilisim.saistatistics.yml && flatpak build-bundle --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo flatpak-repo dist/sai-statistics-$npm_package_version-x86_64.flatpak com.saibilisim.saistatistics"
+  },
+  "keywords": [
+    "statistics",
+    "spss",
+    "electron",
+    "r"
+  ],
+  "author": {
+    "name": "SAI Bilisim",
+    "email": "dev@saibilisim.com"
+  },
+  "homepage": "https://saistatistics.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saibilisim/sai-statistics.git"
+  },
+  "bugs": {
+    "url": "https://github.com/saibilisim/sai-statistics/issues"
+  },
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "dependencies": {
+    "@duckdb/node-api": "1.5.3-r.3"
+  },
+  "optionalDependencies": {
+    "@duckdb/node-bindings-darwin-arm64": "1.5.3-r.3",
+    "@duckdb/node-bindings-darwin-x64": "1.5.3-r.3",
+    "@duckdb/node-bindings-linux-arm64": "1.5.3-r.3",
+    "@duckdb/node-bindings-linux-arm64-musl": "1.5.3-r.3",
+    "@duckdb/node-bindings-linux-x64": "1.5.3-r.3",
+    "@duckdb/node-bindings-linux-x64-musl": "1.5.3-r.3",
+    "@duckdb/node-bindings-win32-arm64": "1.5.3-r.3",
+    "@duckdb/node-bindings-win32-x64": "1.5.3-r.3"
+  },
+  "devDependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.64.1",
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^24.19.2",
+    "@types/plotly.js": "^3.0.15",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@univerjs/icons": "1.4.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "adm-zip": "^0.6.1",
+    "ag-grid-community": "^35.3.1",
+    "ag-grid-react": "^35.3.1",
+    "docx": "9.8.1",
+    "electron": "^43.8.3",
+    "electron-builder": "^26.15.3",
+    "electron-log": "^5.4.4",
+    "electron-store": "^11.0.2",
+    "electron-updater": "^6.8.9",
+    "electron-vite": "^5.0.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.13.0",
+    "i18next": "^26.5.4",
+    "i18next-resources-to-backend": "^1.2.3",
+    "jszip": "3.10.1",
+    "plotly.js-dist-min": "^3.7.0",
+    "prettier": "^3.8.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-i18next": "^17.1.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.60.1",
+    "vite": "^8.3.5",
+    "vitest": "^4.1.12",
+    "zod": "^4.6.7",
+    "zundo": "^2.3.0",
+    "zustand": "^5.0.15"
+  }
+}

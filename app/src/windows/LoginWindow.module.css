@@ -1,0 +1,286 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-xl);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  box-sizing: border-box;
+}
+
+/* Küçük, tek amaçlı bir pencere — kartı ayrı bir yüzey gibi çerçeveleme (gri
+   sayfa + beyaz kart) gereksizdi; form doğrudan pencere zemininde. */
+.card {
+  width: 100%;
+  max-width: 360px;
+  box-sizing: border-box;
+}
+
+/* ── Marka başlığı — ikon kendi rengini taşıyor, arkasında ayrı bir "kart"
+   çipi yok (önceden vardı, iç içe kart gibi göründüğü için kaldırıldı). ── */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.brandMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.brandName {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.brandSub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ── Alanlar ── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.field label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.field input {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-ui);
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+}
+
+.hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin: 2px 0 0;
+}
+
+.hintWarn {
+  color: var(--color-warning);
+}
+
+/* Lisans/gizlilik onayı (kayıt) ve Google ile devam bilgilendirmesi. */
+.terms {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+.terms input {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.termsNote {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+  text-align: center;
+  margin: var(--space-xs) 0 0;
+}
+
+.termsLink {
+  color: var(--color-accent);
+}
+
+/* Küçük satır-içi bağlantı (Şifremi unuttum). */
+.inlineLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Birincil eylem ── */
+.submit {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+  margin-top: var(--space-xs);
+  transition:
+    filter 0.12s ease,
+    opacity 0.12s ease;
+}
+
+.submit:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ── Ayraç ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  margin: var(--space-md) 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Google ── */
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.googleBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+}
+
+.googleBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.googleBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-hover);
+  border-radius: var(--radius-sm);
+  padding: 1px var(--space-xs);
+}
+
+/* ── Alt geçiş bağlantısı ── */
+.switchRow {
+  text-align: center;
+  margin-top: var(--space-md);
+}
+
+.switchLink {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+}
+
+.switchLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Bilgi panelleri (doğrula / sıfırlama gönderildi) ── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.panelTitle {
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  margin: 0;
+}
+
+.panelText {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.panelHint {
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-sm);
+}
+
+/* ── Durum mesajları ── */
+.error {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  margin-top: var(--space-sm);
+}
+
+.success {
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin: var(--space-sm) 0 0;
+}

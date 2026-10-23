@@ -1,0 +1,1363 @@
+/* Output View — SPSS-style output window */
+
+.root {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-bg-base);
+  /* Ensure this fills exactly the parent height — critical for scroll */
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Right-side panel wrapper ── */
+.rightPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+/* ── Left navigator panel ── */
+.navigator {
+  width: 220px;
+  min-width: 160px;
+  max-width: 320px;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.navigatorHeader {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.navSearchBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.navSearchInput {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+}
+
+.navSearchInput:focus,
+.navSearchInput:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.navSearchClear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  padding: 0;
+}
+
+.navList {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: var(--space-xs) 0;
+}
+
+.navItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: 4px var(--space-sm);
+  cursor: pointer;
+  user-select: none;
+  border-left: 3px solid transparent;
+}
+
+.navItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.navItem.selected {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border-left-color: var(--color-accent);
+}
+
+.navItemIcon {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.navItemText {
+  flex: 1;
+  overflow: hidden;
+}
+
+.navItemTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navItemMeta {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  margin-top: 1px;
+}
+
+.navItemActions {
+  opacity: 0;
+  display: flex;
+  gap: 2px;
+}
+
+.navItem:hover .navItemActions {
+  opacity: 1;
+}
+
+.navActionBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 1px 3px;
+  border-radius: var(--radius-sm);
+}
+.navActionBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+/* Navigator drag-reorder + hidden-block dimming (output-navigator polish) */
+.navItem[draggable='true'] {
+  cursor: grab;
+}
+
+.navItemDragOver {
+  border-top: 2px solid var(--color-accent);
+}
+
+.navItemHidden {
+  opacity: 0.5;
+}
+
+/* Table sub-items (SPSS Viewer-style outline: each table nested under its
+   analysis block, indented one level, smaller than the block row above it). */
+.navSubItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: 3px var(--space-sm) 3px calc(var(--space-sm) + 16px);
+  cursor: pointer;
+  user-select: none;
+  border-left: 3px solid transparent;
+}
+
+.navSubItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.navSubItem.selected {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border-left-color: var(--color-accent);
+}
+
+.navSubItemTitle {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Brief flash when jumping to a table from the navigator, so it's findable
+   among several tables in the same block. */
+.navHighlightFlash {
+  animation: navHighlightFlash 1.2s ease-out;
+}
+
+@keyframes navHighlightFlash {
+  0% {
+    outline: 2px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+  100% {
+    outline: 2px solid transparent;
+    background: transparent;
+  }
+}
+
+/* Inserted doc items (heading/text/page-break) — navigator + content pane */
+.insertedItemRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.insertedHeading {
+  flex: 1;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+}
+
+.insertedText {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  white-space: pre-wrap;
+}
+
+input.insertedHeading,
+input.insertedText {
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+}
+
+.pageBreakRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+  margin: var(--space-sm) 0;
+  border-top: 1px dashed var(--color-border-strong);
+}
+
+.pageBreakLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Print/export only — HTML/PDF export CSS also emits an equivalent rule
+   (output-export.ts CSS constant); this is the on-screen/editor half. */
+@media print {
+  .pageBreakRow {
+    page-break-after: always;
+    border-top: none;
+  }
+  .pageBreakLabel,
+  .pageBreakRow .navActionBtn {
+    display: none;
+  }
+}
+
+/* ── Main content area ── */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Empty state ── */
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  color: var(--color-text-secondary);
+}
+
+.emptyIcon {
+  font-size: 40px;
+  opacity: 0.3;
+}
+
+.emptyText {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+
+.emptyHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-disabled);
+}
+
+/* ── Analysis block ── */
+.block {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-bg-overlay);
+  /* `.content` is a flex column; without this, a block taller than the
+     viewport (its `overflow:hidden` resolves min-height to 0) would shrink to
+     fit and clip its own table instead of letting `.content` scroll. */
+  flex-shrink: 0;
+  /* Anchor for the AI ask-popover / error row (absolute, under the header). */
+  position: relative;
+}
+
+.blockHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px 14px;
+  min-height: 38px;
+  background: var(--color-bg-header);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.blockHidden {
+  opacity: 0.6;
+}
+
+.hiddenTag {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  color: var(--color-text-secondary);
+}
+
+.blockCollapseBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.blockTitle {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+input.blockTitle,
+input.tableTitle {
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-family: inherit;
+  width: 100%;
+}
+
+.blockMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.blockSummary {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  padding: 0 var(--space-sm) var(--space-xs);
+}
+
+.blockSummaryContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-md);
+  padding: 6px 12px;
+  margin: 6px var(--space-sm) 8px var(--space-sm);
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg-surface));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 18%, var(--color-border));
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+}
+
+.summaryGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.summaryLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.summaryChips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.summaryChip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.summaryValueChip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+}
+
+.syntaxToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  padding: var(--space-xs) 0;
+  text-align: left;
+}
+
+.syntaxBlock {
+  font-size: var(--font-size-xs);
+  background: var(--color-bg-header);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.warningBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-warning);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.blockDeleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  padding: 0 4px;
+  opacity: 0;
+}
+
+.blockHeader:hover .blockDeleteBtn {
+  opacity: 1;
+}
+
+.blockDeleteBtn:hover {
+  color: var(--color-error);
+}
+
+/* ── AI block actions (§5.4 E/F/G) ── */
+.aiBtn {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-accent) 16%, var(--color-bg-surface)),
+    color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-surface))
+  );
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.aiBtn:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: var(--color-accent-text, #ffffff);
+  border-color: var(--color-accent);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
+.aiBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Ask popover + error row are children of .blockHeader (React tree) but
+   visually float under the header, anchored to the block. */
+.aiAskPopover {
+  position: absolute;
+  top: 100%;
+  right: var(--space-sm);
+  z-index: 10;
+  width: 360px;
+  max-width: calc(100% - 2 * var(--space-sm));
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 25%);
+  padding: var(--space-sm);
+  cursor: default;
+}
+
+.aiAskRow {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.aiAskInput {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+.aiAskAnswer {
+  margin-top: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-sm);
+}
+
+.aiLinkBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.aiErrorRow {
+  position: absolute;
+  top: 100%;
+  right: var(--space-sm);
+  z-index: 10;
+  max-width: calc(100% - 2 * var(--space-sm));
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  cursor: default;
+}
+
+.aiAskError {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+.aiNoteBand {
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.aiNoteHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.aiNoteTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.aiNoteBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-xs);
+}
+
+.aiNoteMeta {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.aiNoteText {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  user-select: text;
+}
+
+.blockBody {
+  padding: var(--space-sm) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  user-select: text;
+}
+
+/* ── Output table ── */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.tableTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.outputTable {
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  min-width: 400px;
+  background: var(--color-bg-overlay);
+}
+
+.outputTable th,
+.outputTable td {
+  padding: 4px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+  /* Native text selection is allowed here (unlike DataView's grid) so users
+     can drag-select across a paragraph and into a table's cell text in one
+     go — the .cellSelected background below is a second, independent
+     selection concept (the click-drag range used for hide-rows/transpose)
+     and intentionally coexists with whatever the browser highlights. */
+}
+
+.outputTable th {
+  background: var(--color-bg-header);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-top: 2px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.outputTable th:first-child {
+  text-align: left;
+}
+
+/* Per-cell alignment (SPSS-style): text labels left, numbers/missing right. */
+.outputTable td.txtCell {
+  text-align: left;
+}
+
+.outputTable td.numCell {
+  text-align: right;
+}
+
+.outputTable tr:last-child td {
+  border-bottom: 2px solid var(--color-border-strong);
+}
+
+.outputTable tr:hover td {
+  background: var(--color-bg-hover);
+}
+
+.tableContextOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-popover);
+  background: transparent;
+}
+
+.tableContextMenu {
+  position: absolute;
+  min-width: 170px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: var(--space-xs);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+}
+
+.tableContextItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+}
+
+.tableContextItem:hover {
+  background: var(--color-bg-hover);
+}
+
+/* p-value significance coloring */
+.pSig {
+  color: var(--color-sig-p05);
+  font-weight: var(--font-weight-semibold);
+}
+
+.pVSig {
+  color: var(--color-sig-p01);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Cell/range selection (output-view: grid-style range for hide-rows/cols,
+   transpose, etc. — layered on top of, not instead of, native text
+   selection; see .outputTable td above). */
+.cellSelected {
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent) !important;
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+.tableFootnote {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+  font-style: italic;
+}
+
+/* ── Plot area ── */
+.plotWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.plotTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.plotImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── Plot edit controls ── */
+.plotHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.plotActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+}
+
+.copyBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+}
+
+.copyBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.editToggleBtn {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s ease;
+}
+
+.editToggleBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+}
+
+.plotControls {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: var(--space-sm);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resizeHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-overlay);
+  border-left: 3px solid var(--color-accent);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+/* Tab navigation */
+.editorTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.tabBtn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.tabBtn.activeTab {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-accent);
+  border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Sections and layouts */
+.editorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.sectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.editorRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.editorField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editorField label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.editorFieldWide {
+  flex: 2;
+  min-width: 200px;
+}
+
+.editorFieldFlex {
+  flex: 1;
+}
+
+.editorRowWideGap {
+  gap: var(--space-xl);
+}
+
+.formatBtnRow {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.mutedHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-disabled);
+}
+
+.staticPlotHint {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+  margin-top: var(--space-xs);
+}
+
+.traceRow {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-sm);
+}
+
+.traceIndexLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  width: 60px;
+  color: var(--color-text-secondary);
+}
+
+/* Inputs and interactive items */
+.textInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 6px 10px;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.textInput:focus,
+.selectInput:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+.selectInput {
+  padding: 6px 10px;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.colorInput {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iconBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+.iconBtn.activeBtn {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Checkbox alignment */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+}
+
+.checkboxLabel input {
+  cursor: pointer;
+  accent-color: var(--color-accent);
+}
+
+/* Presets styling */
+.presetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+  margin-top: 4px;
+}
+
+.presetBtn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.presetBtn:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+}
+
+/* Traces list styling */
+.tracesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.plotContainer {
+  display: block;
+  position: relative;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-overlay);
+  margin-right: auto; /* aligns plot left instead of full viewport stretch */
+  resize: both;
+  overflow: hidden;
+  width: 720px;
+  height: 450px;
+  min-width: 320px;
+  min-height: 240px;
+  max-width: 100%;
+}
+
+/* ── Warning/note rows ── */
+.warningRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: color-mix(in srgb, var(--color-warning) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 30%, transparent);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+/* ── Running indicator ── */
+.runningBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-overlay);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progressBar {
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ── Toolbar strip ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  flex-shrink: 0;
+}
+
+.toolbarBtn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-xs);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.toolbarBtn:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.plotContainer :global(text.g-title),
+.plotContainer :global(text.g-xtitle),
+.plotContainer :global(text.g-ytitle),
+.plotContainer :global(text.xtitle),
+.plotContainer :global(text.ytitle) {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.plotContainer :global(text.g-title):hover,
+.plotContainer :global(text.g-xtitle):hover,
+.plotContainer :global(text.g-ytitle):hover,
+.plotContainer :global(text.xtitle):hover,
+.plotContainer :global(text.ytitle):hover {
+  opacity: 0.7;
+}
+
+.plotImg {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.plotImg:hover {
+  opacity: 0.95;
+}
+
+/* ── Table Formatting Options ── */
+.tableApa {
+  border-collapse: collapse !important;
+  font-family: 'Times New Roman', Times, serif !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+.tableApa th {
+  border-top: 2px solid #000000 !important;
+  border-bottom: 1px solid #000000 !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Times New Roman', Times, serif !important;
+  font-size: var(--font-size-sm) !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: bold !important;
+  font-style: italic !important;
+}
+.tableApa td {
+  border-bottom: none !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-family: 'Times New Roman', Times, serif !important;
+  font-size: var(--font-size-sm) !important;
+  padding: 6px 12px !important;
+}
+.tableApa tr:last-child td {
+  border-bottom: 2px solid #000000 !important;
+}
+.tableApa tr:hover td {
+  background: #f8fafc !important;
+}
+
+.tableCompact th,
+.tableCompact td {
+  padding: 2px 6px !important;
+  font-size: var(--font-size-xs) !important;
+}
+
+.tableClassic {
+  border-collapse: collapse !important;
+  border: 1px solid #777777 !important;
+}
+.tableClassic th,
+.tableClassic td {
+  border: 1px solid #777777 !important;
+  padding: 4px 8px !important;
+  font-family: 'Times New Roman', Times, serif !important;
+  font-size: var(--font-size-sm) !important;
+}
+.tableClassic th {
+  background: #e0e0e0 !important;
+  color: #000000 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: bold !important;
+}
+.tableClassic td {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* ── Toolbar formatting group ── */
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-left: auto; /* Push table formatting to the right */
+}
+
+.toolbarLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.toolbarSelect {
+  padding: 2px 6px;
+  font-size: var(--font-size-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-overlay);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  outline: none;
+}
+.toolbarSelect:focus {
+  border-color: var(--color-accent);
+}

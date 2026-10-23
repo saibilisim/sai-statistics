@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability / Güvenlik açığı
+    url: https://github.com/saibilisim/sai-statistics/security/advisories/new
+    about: Report security problems privately, not as an issue.
+  - name: Account, AI credits and purchases / Hesap, AI kredisi ve satın alma
+    url: https://saistatistics.com
+    about: Questions about the SAI account or the AI service are handled outside this repository.

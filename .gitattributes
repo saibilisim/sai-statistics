@@ -1,0 +1,40 @@
+# .gitattributes — satır sonu (EOL) normalizasyonu.
+#
+# Neden: proje Linux/macOS/Windows'ta birden geliştiriliyor ve repo, Linux'ta
+# çalıştırılan shebang'li script'ler taşıyor (build-installer.sh,
+# vendor-r-runtime*.sh, start.sh). Bu dosya olmadan davranış her geliştiricinin
+# yerel `core.autocrlf` ayarına kalır; Windows tarafında autocrlf=true olduğu
+# için bir .sh CRLF ile checkout edilip commit'lenirse Linux'ta
+# "bad interpreter: /bin/bash^M" ile patlar — ve hata script'te değil,
+# satır sonlarında olduğu için teşhisi zordur.
+#
+# Seçim gerekçesi: 2026-08-14'te çalışma ağacının tamamının LF olduğu
+# doğrulandı. Bu yüzden `eol=lf` mevcut duruma birebir uyar, yani bu dosyayı
+# eklemek TEK bir sahte diff üretmez. `eol=crlf` ya da eol'süz `text=auto`
+# seçilseydi Windows'ta bir sonraki checkout tüm ağacı CRLF'e çevirip
+# devam eden çalışmanın üstüne yüzlerce dosyalık gürültü bindirirdi.
+
+# Varsayılan: repoda LF sakla, çalışma ağacına LF yaz (her platformda).
+* text=auto eol=lf
+
+# Shebang taşıyanlar — CRLF girerse Linux'ta çalışmaz. Yukarıdaki kural
+# zaten kapsıyor, ama niyet burada açıkça yazılı kalsın.
+*.sh text eol=lf
+*.R  text eol=lf
+
+# PowerShell yalnızca Windows'ta koşar; CRLF yerel konvansiyon ve
+# Windows PowerShell 5.1 bazı durumlarda LF'e takılabiliyor.
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# İkili dosyalar — normalizasyon uygulanmasın (bozar).
+*.png  binary
+*.ico  binary
+*.icns binary
+*.xlsx binary
+*.sav  binary
+*.parquet binary
+*.zip  binary
+*.gz   binary
+*.node binary

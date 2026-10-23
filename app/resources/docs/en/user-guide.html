@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — User Guide</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+      }
+      code,
+      kbd {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .toc {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+      }
+      .toc ul {
+        margin: 0.3rem 0;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      .warn {
+        background: #fdecea;
+        border-left: 4px solid #cf222e;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.5rem 0.7rem;
+        text-align: left;
+        font-size: 0.95em;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — User Guide</h1>
+    <p>
+      SAI Statistics is a cross-platform desktop statistics application built on the R engine. This
+      guide covers the core workflows and the points worth knowing if you are coming from SPSS.
+    </p>
+
+    <div class="toc">
+      <strong>Contents</strong>
+      <ul>
+        <li><a href="#import">1. Importing and Saving Data</a></li>
+        <li><a href="#variable-view">2. Variable View — What Actually Affects Analyses?</a></li>
+        <li><a href="#weight-split-select">3. Weight Cases / Split File / Select Cases</a></li>
+        <li><a href="#running">4. Running an Analysis</a></li>
+        <li><a href="#output">5. Output — Formats and Export</a></li>
+        <li><a href="#terminal">6. Syntax / Terminal Tab</a></li>
+        <li><a href="#accessibility">7. Accessibility</a></li>
+      </ul>
+    </div>
+
+    <h2 id="import">1. Importing and Saving Data</h2>
+    <p>
+      Use <strong>File ▸ Import Data</strong> to open CSV/text, Excel (.xlsx), SPSS (.sav, .zsav,
+      .por), Stata (.dta) or SAS (.sas7bdat, .xpt) files. The data is written straight into the
+      app's built-in database — there is no separate loading step to wait through, even for large
+      files.
+    </p>
+    <div class="note">
+      <strong>More than 200,000 rows:</strong> Data View shows the whole dataset without pagination.
+      After importing a larger dataset you will see an information box — it is only a heads-up and
+      blocks nothing. Scrolling may become slower, but <strong>analyses are unaffected</strong>:
+      every analysis reads directly from the database, not from what Data View is displaying.
+    </div>
+    <p>
+      <strong>File ▸ Save</strong> stores your work in the app's own <code>.sdf</code> format —
+      data, variable definitions and cell formatting in a single file, so reopening it needs no
+      import step. <strong>File ▸ Export Data</strong> writes CSV, Excel or SPSS (.sav) files.
+    </p>
+
+    <h2 id="variable-view">2. Variable View — What Actually Affects Analyses?</h2>
+    <p>
+      An important note for users coming from SPSS: some Variable View fields are purely
+      <em>cosmetic</em>, while others <strong>genuinely change analysis results</strong>. The table
+      below shows which is which.
+    </p>
+    <table>
+      <tr>
+        <th>Field</th>
+        <th>Effect</th>
+        <th>Details</th>
+      </tr>
+      <tr>
+        <td><strong>Missing</strong> (user-defined missing values)</td>
+        <td>✅ Real</td>
+        <td>
+          The missing-value codes you define (e.g. <code>-99</code>) are excluded from that
+          variable's statistics in the analyses.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Decimals</strong></td>
+        <td>✅ Real (display)</td>
+        <td>Controls the number of decimals shown for values, e.g. in the Frequencies table.</td>
+      </tr>
+      <tr>
+        <td><strong>Measure</strong> (Nominal / Ordinal / Scale)</td>
+        <td>🟡 Partial</td>
+        <td>
+          Moves variables of the matching measurement level to the top of the variable lists in
+          dialogs. It is not a filter — you can still pick any variable.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Role</strong></td>
+        <td>🟡 Partial</td>
+        <td>Pre-fills the target and input boxes once, the first time some dialogs are opened.</td>
+      </tr>
+      <tr>
+        <td><strong>Width</strong></td>
+        <td>❌ Cosmetic</td>
+        <td>Only changes how Data View displays cells; it never affects results.</td>
+      </tr>
+    </table>
+    <p>
+      Bottom line: <strong>take missing-value definitions seriously</strong> — they are the fields
+      that change statistical results. The others mainly keep the familiar SPSS layout.
+    </p>
+
+    <h2 id="weight-split-select">3. Weight Cases / Split File / Select Cases</h2>
+    <p>
+      Once switched on in the <strong>Data</strong> menu, these three settings
+      <strong>apply automatically to every analysis that follows</strong> — you don't need to set
+      them again in each dialog:
+    </p>
+    <ul>
+      <li>
+        <strong>Weight Cases:</strong> core analyses such as Frequencies, Crosstabs, Descriptives,
+        Means, the t tests and ANOVA use true weighted formulas (not row duplication). An analysis
+        that does not support weighting says so with a warning in its output instead of silently
+        ignoring the weight.
+      </li>
+      <li>
+        <strong>Split File:</strong> produces separate results for each group where the analysis
+        supports it; otherwise the output shows a warning.
+      </li>
+      <li><strong>Select Cases:</strong> limits the rows that every analysis reads.</li>
+    </ul>
+    <div class="warn">
+      If a result looks different from what you expected, check the status bar first: it always
+      shows the weight, split and filter state (for example <code>Filter: ON</code>).
+    </div>
+
+    <h2 id="running">4. Running an Analysis</h2>
+    <p>
+      Choose a procedure from the <strong>Analyze</strong> menu, move variables into the target
+      boxes by drag-and-drop or double-click, open sub-dialogs such as <em>Statistics</em> or
+      <em>Options</em> if needed, and click <strong>OK</strong>. The result appears in Output View.
+      Every dialog also offers:
+    </p>
+    <ul>
+      <li><strong>Paste R</strong> — shows the R code that will run (full transparency).</li>
+      <li>
+        <strong>Paste Syntax</strong> — writes the equivalent SPSS syntax command into the Syntax /
+        Terminal tab, so you can save and re-run it later.
+      </li>
+      <li>
+        <strong>Keyboard:</strong> <kbd>Tab</kbd>/<kbd>Shift+Tab</kbd> moves between fields,
+        <kbd>Enter</kbd> confirms, <kbd>Escape</kbd> cancels.
+      </li>
+    </ul>
+
+    <h2 id="output">5. Output — Formats and Export</h2>
+    <p>
+      Every block in Output View can be collapsed or removed. The table style (Academic / Compact /
+      APA) is set in <strong>Edit ▸ Preferences</strong>.
+      <strong>File ▸ Save Output as HTML...</strong>
+      creates a single self-contained HTML file that you can share by e-mail;
+      <strong>File ▸ Export Output</strong> saves the results as HTML, PDF, Word, Excel, CSV or
+      Markdown.
+    </p>
+
+    <h2 id="terminal">6. Syntax / Terminal Tab</h2>
+    <p>The Syntax / Terminal tab (<kbd>Ctrl+5</kbd>) has two modes:</p>
+    <ul>
+      <li>
+        <strong>SPSS Syntax mode:</strong> write classic SPSS commands such as
+        <code>FREQUENCIES VARIABLES=age</code>. They run through the same analyses and the same
+        input checks as the menus — no arbitrary code is executed.
+      </li>
+      <li>
+        <strong>R Console mode:</strong> an interactive R session, similar to RStudio. Code runs
+        only on your own computer and only when you click <strong>Run</strong> — nothing runs
+        automatically, even if an opened file contains code. You can turn the console off under
+        <strong>Edit ▸ Preferences ▸ Enable the R console</strong>.
+      </li>
+    </ul>
+
+    <h2 id="accessibility">7. Accessibility</h2>
+    <p>
+      Keyboard navigation (Tab/Enter/Escape, focus kept inside dialogs), a High Contrast theme and
+      screen reader support (live regions, ARIA roles) are available in all dialogs and in Output
+      View. Data View and Variable View are HTML grids with ARIA roles, so screen readers can read
+      their cells, and Output tables are real HTML tables.
+    </p>
+    <div class="note">
+      <strong>Tip for large datasets:</strong> to stay fast, Data View draws only the rows currently
+      on screen. To review a large dataset with a screen reader, summarize it with Frequencies or
+      Descriptives and read the tables in Output View rather than moving cell by cell.
+    </div>
+
+    <footer>SAI Statistics · This guide is installed together with the app.</footer>
+  </body>
+</html>

@@ -1,0 +1,361 @@
+/* MarkdownText — LLM markdown çıktısının tipografisi.
+   Tüm renk/boşluk/tipografi değerleri tema token'larından gelir (CLAUDE.md §7).
+
+   Tasarım niyeti: sohbet balonu değil, okunabilir bir *belge* ritmi —
+   bloklar arası tek bir düşey ritim (--space-md), başlıklarda kademeli
+   ölçek, tablo/kod bloklarında kendi kabuğu olan kart görünümü. */
+
+.markdown {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+  /* Uygulama genelinde body `user-select: none` (masaüstü davranışı);
+     AI yanıtı okunan/alıntılanan bir metin, fare ile seçilebilmeli. */
+  user-select: text;
+  cursor: auto;
+  /* Markdown blokları kendi boşluklarını yönetir — dışarıdan gelen
+     `white-space: pre-wrap` fazladan boş satır üretmesin. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.markdown > *:first-child {
+  margin-top: 0;
+}
+
+.markdown > *:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Paragraf & satır içi ─────────────────────────────────────────── */
+
+.markdown p {
+  margin: 0 0 var(--space-md);
+}
+
+.markdown strong {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.markdown em {
+  font-style: italic;
+}
+
+.markdown del {
+  color: var(--color-text-secondary);
+}
+
+.markdown a {
+  color: var(--color-text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: default;
+}
+
+.markdown img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+}
+
+/* ── Başlıklar ───────────────────────────────────────────────────── */
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin: var(--space-lg) 0 var(--space-sm);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.markdown h1 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  padding-bottom: var(--space-xs);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.markdown h2 {
+  font-size: var(--font-size-lg);
+  padding-bottom: var(--space-xs);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.markdown h3 {
+  font-size: var(--font-size-body);
+}
+
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+
+/* ── Listeler ────────────────────────────────────────────────────── */
+
+.markdown ul,
+.markdown ol {
+  margin: 0 0 var(--space-md);
+  padding-left: var(--space-xl);
+}
+
+.markdown li {
+  margin-bottom: var(--space-xs);
+}
+
+.markdown li::marker {
+  color: var(--color-text-secondary);
+}
+
+/* İç içe listeler kendi başlarına blok değil, maddeye ait alt kırılım. */
+.markdown li > ul,
+.markdown li > ol {
+  margin: var(--space-xs) 0 0;
+}
+
+/* Gevşek (loose) listelerde remark her maddeyi <p> ile sarar — madde
+   içindeki tek paragraf fazladan alt boşluk üretmesin. */
+.markdown li > p {
+  margin-bottom: var(--space-xs);
+}
+
+.markdown li > p:last-child {
+  margin-bottom: 0;
+}
+
+/* GFM görev listesi */
+.markdown li input[type='checkbox'] {
+  margin-right: var(--space-xs);
+  accent-color: var(--color-accent);
+}
+
+/* ── Satır içi kod ───────────────────────────────────────────────── */
+
+.markdown code {
+  font-family: var(--font-family-mono);
+  font-variant-ligatures: none;
+  font-size: 0.92em;
+  background: var(--color-bg-code);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0 4px;
+  word-break: break-word;
+}
+
+/* ── Kod bloğu kartı (başlık çubuğu + renklendirilmiş gövde) ─────── */
+
+.codeBlock {
+  margin: 0 0 var(--space-md);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-code);
+  overflow: hidden;
+}
+
+.codeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 2px var(--space-xs) 2px var(--space-sm);
+  background: var(--color-bg-header);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.codeLang {
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  user-select: none;
+}
+
+.codeCopyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.codeCopyBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.codePre {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  overflow-x: auto;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  tab-size: 2;
+  white-space: pre;
+  color: var(--color-text-primary);
+  /* Cascadia/Fira ligatürleri `<-` → `←`, `%>%` → tek glif yapıyordu; kod
+     ekranda birebir kaynaktaki gibi görünmeli (kopyalanan metin doğru olsa
+     bile kullanıcı gördüğünü yazıyor). */
+  font-variant-ligatures: none;
+}
+
+.codePre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  word-break: normal;
+}
+
+/* Sözdizimi renkleri — `code-highlight.ts` token türleriyle birebir. */
+.tok_keyword {
+  color: var(--color-code-keyword);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tok_string {
+  color: var(--color-code-string);
+}
+
+.tok_comment {
+  color: var(--color-code-comment);
+  font-style: italic;
+}
+
+.tok_number {
+  color: var(--color-code-number);
+}
+
+.tok_function {
+  color: var(--color-code-function);
+}
+
+.tok_operator {
+  color: var(--color-code-operator);
+}
+
+/* ── Tablolar ────────────────────────────────────────────────────── */
+
+/* Kopyala düğmesinin konumlandığı kap (tablo + düğme birlikte bir blok). */
+.tableBlock {
+  position: relative;
+  margin: 0 0 var(--space-md);
+}
+
+/* Tabloyu TSV olarak kopyala — yalnız blok üzerine gelince/odakta görünür,
+   sayıların üstünü kalıcı olarak kapatmasın. */
+.tableCopyBtn {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-xs);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--easing-standard);
+}
+
+.tableBlock:hover .tableCopyBtn,
+.tableCopyBtn:focus-visible {
+  opacity: 1;
+}
+
+.tableCopyBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+/* Kaydırma kabuğu tabloyu kendi içinde tutar; aksi halde geniş bir tablo
+   panelin tamamını yatayda taşırıp mesaj akışını kaydırıyordu. */
+.tableWrap {
+  margin: 0;
+  overflow-x: auto;
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+.tableWrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+/* SPSS çıktı geleneği: dikey çizgi yok, yalnız yatay ayraçlar. */
+.tableWrap th,
+.tableWrap td {
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+}
+
+.tableWrap th {
+  background: var(--color-bg-header);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  border-bottom: var(--border-width-thick) solid var(--color-border-strong);
+  white-space: nowrap;
+}
+
+.tableWrap tbody tr + tr td {
+  border-top: var(--border-width-thin) solid var(--color-border);
+}
+
+.tableWrap tbody tr:hover td {
+  background: var(--color-bg-hover);
+}
+
+/* Sayısal sütunlar sağa yaslı + sabit genişlikli rakam: ondalıklar alt alta
+   hizalanır (katsayı/p-değeri sütunları göz taramasıyla okunabilsin).
+   Başlık hücresi de aynı hizayı alır — aksi halde sütun kırık görünüyor. */
+.tableWrap th[data-numeric='true'],
+.tableWrap td[data-numeric='true'] {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── Alıntı & ayraç ──────────────────────────────────────────────── */
+
+.markdown blockquote {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
+  border-left: 3px solid var(--color-border-strong);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+}
+
+.markdown blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+.markdown hr {
+  border: none;
+  border-top: var(--border-width-thin) solid var(--color-border);
+  margin: var(--space-lg) 0;
+}

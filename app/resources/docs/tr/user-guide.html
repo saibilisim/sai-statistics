@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — Kullanıcı Kılavuzu</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+      }
+      code,
+      kbd {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .toc {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+      }
+      .toc ul {
+        margin: 0.3rem 0;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      .warn {
+        background: #fdecea;
+        border-left: 4px solid #cf222e;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.5rem 0.7rem;
+        text-align: left;
+        font-size: 0.95em;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — Kullanıcı Kılavuzu</h1>
+    <p>
+      SAI Statistics, R motoru üzerine kurulu, platformlar arası bir masaüstü istatistik
+      uygulamasıdır. Bu kılavuz temel iş akışlarını ve SPSS'ten geçenlerin bilmesinde yarar olan
+      noktaları anlatır.
+    </p>
+
+    <div class="toc">
+      <strong>İçindekiler</strong>
+      <ul>
+        <li><a href="#import">1. Veriyi İçe Aktarma ve Kaydetme</a></li>
+        <li>
+          <a href="#variable-view">2. Değişken Görünümü — Hangi Alan Analizi Gerçekten Etkiler?</a>
+        </li>
+        <li>
+          <a href="#weight-split-select">3. Vakaları Ağırlıklandır / Dosyayı Böl / Vakaları Seç</a>
+        </li>
+        <li><a href="#running">4. Analiz Çalıştırma</a></li>
+        <li><a href="#output">5. Çıktı — Biçimler ve Dışa Aktarma</a></li>
+        <li><a href="#terminal">6. Sözdizimi / Terminal Sekmesi</a></li>
+        <li><a href="#accessibility">7. Erişilebilirlik</a></li>
+      </ul>
+    </div>
+
+    <h2 id="import">1. Veriyi İçe Aktarma ve Kaydetme</h2>
+    <p>
+      <strong>Dosya ▸ Veri İçe Aktar</strong> menüsünden CSV/metin, Excel (.xlsx), SPSS (.sav,
+      .zsav, .por), Stata (.dta) veya SAS (.sas7bdat, .xpt) dosyaları açılabilir. Veri doğrudan
+      uygulamanın yerleşik veritabanına yazılır — büyük dosyalarda bile ayrıca bir "yükleniyor"
+      adımı beklemezsiniz.
+    </p>
+    <div class="note">
+      <strong>200.000 satırdan büyük veri:</strong> Veri Görünümü, sayfalama olmadan tüm veri setini
+      gösterir. Daha büyük bir veri seti içe aktarıldığında bir bilgi kutusu çıkar — yalnızca bir
+      uyarıdır, hiçbir şeyi engellemez. Kaydırma yavaşlayabilir ama
+      <strong>analizler etkilenmez</strong>: her analiz, Veri Görünümü'nde ne gösterildiğinden
+      bağımsız olarak doğrudan veritabanından okur.
+    </div>
+    <p>
+      <strong>Dosya ▸ Kaydet</strong> çalışmanızı uygulamanın kendi <code>.sdf</code> biçiminde
+      saklar — veri, değişken tanımları ve hücre biçimleri tek dosyada; yeniden açarken içe aktarma
+      gerekmez. <strong>Dosya ▸ Veri Dışa Aktar</strong> CSV, Excel veya SPSS (.sav) dosyası yazar.
+    </p>
+
+    <h2 id="variable-view">2. Değişken Görünümü — Hangi Alan Analizi Gerçekten Etkiler?</h2>
+    <p>
+      SPSS'ten gelenler için önemli bir not: Değişken Görünümü'ndeki bazı alanlar yalnızca
+      <em>görseldir</em>, bazıları ise <strong>analiz sonucunu gerçekten değiştirir</strong>.
+      Aşağıdaki tablo hangisinin hangisi olduğunu gösterir.
+    </p>
+    <table>
+      <tr>
+        <th>Alan</th>
+        <th>Etki</th>
+        <th>Açıklama</th>
+      </tr>
+      <tr>
+        <td><strong>Kayıp</strong> (kullanıcı tanımlı kayıp değerler)</td>
+        <td>✅ Gerçek</td>
+        <td>
+          Tanımladığınız kayıp değer kodları (örn. <code>-99</code>) analizlerde o değişkenin
+          istatistiklerinden çıkarılır.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Ondalık</strong></td>
+        <td>✅ Gerçek (görüntü)</td>
+        <td>Değerlerin kaç ondalıkla gösterileceğini belirler (örn. Frekanslar tablosunda).</td>
+      </tr>
+      <tr>
+        <td><strong>Ölçüm</strong> (Sınıflama / Sıralı / Ölçek)</td>
+        <td>🟡 Kısmi</td>
+        <td>
+          Diyaloglardaki değişken listelerinde uygun ölçüm düzeyindeki değişkenleri üste taşır.
+          Filtre değildir — yine de istediğiniz değişkeni seçebilirsiniz.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Rol</strong></td>
+        <td>🟡 Kısmi</td>
+        <td>Bazı diyaloglar ilk açıldığında hedef ve girdi kutularını bir kez önceden doldurur.</td>
+      </tr>
+      <tr>
+        <td><strong>Genişlik</strong></td>
+        <td>❌ Görsel</td>
+        <td>Yalnızca Veri Görünümü'ndeki hücre görünümünü değiştirir; sonuçları hiç etkilemez.</td>
+      </tr>
+    </table>
+    <p>
+      Kısacası: <strong>kayıp değer tanımlarını ciddiye alın</strong> — istatistiksel sonucu
+      değiştiren alanlar bunlardır. Diğerleri çoğunlukla tanıdık SPSS düzenini korumak içindir.
+    </p>
+
+    <h2 id="weight-split-select">3. Vakaları Ağırlıklandır / Dosyayı Böl / Vakaları Seç</h2>
+    <p>
+      <strong>Veri</strong> menüsünden açıldıktan sonra bu üç ayar
+      <strong>sonraki tüm analizlere otomatik uygulanır</strong> — her diyalogda yeniden ayarlamanız
+      gerekmez:
+    </p>
+    <ul>
+      <li>
+        <strong>Vakaları Ağırlıklandır:</strong> Frekanslar, Çapraz Tablolar, Betimleyici
+        İstatistikler, Ortalamalar, t testleri ve ANOVA gibi temel analizler gerçek ağırlıklı
+        formüller kullanır (satır çoğaltma değil). Ağırlığı desteklemeyen bir analiz, ağırlığı
+        sessizce yok saymak yerine çıktısında bir uyarıyla bunu belirtir.
+      </li>
+      <li>
+        <strong>Dosyayı Böl:</strong> analiz destekliyorsa her grup için ayrı sonuç üretir;
+        desteklemiyorsa çıktıda bir uyarı görünür.
+      </li>
+      <li><strong>Vakaları Seç:</strong> tüm analizlerin okuduğu satırları sınırlar.</li>
+    </ul>
+    <div class="warn">
+      Bir sonuç beklediğinizden farklıysa önce durum çubuğuna bakın: ağırlık, bölme ve filtre durumu
+      orada her zaman görünür (örneğin <code>Filtre: AÇIK</code>).
+    </div>
+
+    <h2 id="running">4. Analiz Çalıştırma</h2>
+    <p>
+      <strong>Analiz Et</strong> menüsünden bir prosedür seçin, değişkenleri sürükle-bırak ya da
+      çift tıklamayla hedef kutulara taşıyın, gerekirse <em>İstatistikler</em> veya
+      <em>Seçenekler</em> gibi alt pencereleri açın ve <strong>Tamam</strong>'a basın. Sonuç Çıktı
+      Görünümü'nde belirir. Her diyalogda ayrıca:
+    </p>
+    <ul>
+      <li><strong>R Kodunu Yapıştır</strong> — çalışacak R kodunu gösterir (tam şeffaflık).</li>
+      <li>
+        <strong>Sözdizimine Aktar</strong> — eşdeğer SPSS sözdizimi komutunu Sözdizimi / Terminal
+        sekmesine yazar; daha sonra kaydedip yeniden çalıştırabilirsiniz.
+      </li>
+      <li>
+        <strong>Klavye:</strong> <kbd>Tab</kbd>/<kbd>Shift+Tab</kbd> alanlar arasında gezer,
+        <kbd>Enter</kbd> onaylar, <kbd>Escape</kbd> iptal eder.
+      </li>
+    </ul>
+
+    <h2 id="output">5. Çıktı — Biçimler ve Dışa Aktarma</h2>
+    <p>
+      Çıktı Görünümü'ndeki her blok katlanabilir veya silinebilir. Tablo stili (Akademik / Kompakt /
+      APA) <strong>Düzenle ▸ Tercihler</strong>'den seçilir.
+      <strong>Dosya ▸ Output'u HTML Olarak Kaydet...</strong> e-postayla paylaşılabilen, kendi
+      içinde tam tek bir HTML dosyası üretir; <strong>Dosya ▸ Çıktıyı Dışa Aktar</strong> sonuçları
+      HTML, PDF, Word, Excel, CSV veya Markdown olarak kaydeder.
+    </p>
+
+    <h2 id="terminal">6. Sözdizimi / Terminal Sekmesi</h2>
+    <p>Sözdizimi / Terminal sekmesinin (<kbd>Ctrl+5</kbd>) iki modu vardır:</p>
+    <ul>
+      <li>
+        <strong>SPSS Syntax modu:</strong> <code>FREQUENCIES VARIABLES=yas</code> gibi klasik SPSS
+        komutları yazabilirsiniz. Komutlar menülerle aynı analizlerden ve aynı girdi denetimlerinden
+        geçer — keyfi kod çalıştırılmaz.
+      </li>
+      <li>
+        <strong>R Konsolu modu:</strong> RStudio'ya benzer etkileşimli bir R oturumu. Kod yalnızca
+        kendi bilgisayarınızda ve yalnızca siz <strong>Çalıştır</strong>'a bastığınızda çalışır —
+        açılan bir dosya kod içerse bile hiçbir şey kendiliğinden çalışmaz. Konsolu
+        <strong>Düzenle ▸ Tercihler ▸ R konsolunu etkinleştir</strong> ile kapatabilirsiniz.
+      </li>
+    </ul>
+
+    <h2 id="accessibility">7. Erişilebilirlik</h2>
+    <p>
+      Klavyeyle gezinme (Tab/Enter/Escape, odak diyalog içinde kalır), Yüksek Kontrast teması ve
+      ekran okuyucu desteği (canlı bölgeler, ARIA rolleri) tüm diyaloglarda ve Çıktı Görünümü'nde
+      vardır. Veri Görünümü ve Değişken Görünümü ARIA rollerine sahip HTML tablolarıdır; ekran
+      okuyucular hücreleri okuyabilir. Çıktı tabloları da gerçek HTML tablolarıdır.
+    </p>
+    <div class="note">
+      <strong>Büyük veri setleri için ipucu:</strong> hızlı kalmak için Veri Görünümü yalnızca
+      ekranda görünen satırları çizer. Büyük bir veri setini ekran okuyucuyla incelemek için hücre
+      hücre gezinmek yerine Frekanslar veya Betimleyici İstatistikler ile özetleyip tabloları Çıktı
+      Görünümü'nde okuyun.
+    </div>
+
+    <footer>SAI Statistics · Bu kılavuz uygulamayla birlikte kurulur.</footer>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+.bar {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+}
+
+.input {
+  width: 160px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+}
+
+.count {
+  min-width: 56px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.iconButton:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+}
+
+.iconButton:disabled {
+  color: var(--color-text-secondary);
+  cursor: default;
+  opacity: 0.5;
+}
+
+.textButton {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
+.textButton:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+}
+
+.textButton:disabled {
+  color: var(--color-text-secondary);
+  cursor: default;
+  opacity: 0.5;
+}

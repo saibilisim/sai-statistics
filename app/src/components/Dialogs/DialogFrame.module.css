@@ -1,0 +1,95 @@
+/* Diyalog çerçevesi — TEK KAYNAK.
+ *
+ * Perde (overlay), pencere kutusu, başlık, gövde ve alt bölüm burada tanımlıdır.
+ * AnalysisDialogShell (analiz diyalogları) ve DialogBase (Veri/Dönüştür/Dosya
+ * diyalogları, ConfirmDialog) kendi sınıflarını buradan `composes` ile türetir;
+ * yalnız pencere boyutu gibi içeriğe özgü değerleri kendileri ekler.
+ * Variable View pencerelerinin global .sa-dialog* sınıfları (theme/global.css)
+ * aynı token'ları kullanır. Görünüm analiz diyaloglarınındır (kullanıcı kararı
+ * 2026-10-18). */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-scrim);
+  backdrop-filter: blur(var(--blur-modal));
+  -webkit-backdrop-filter: blur(var(--blur-modal));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-scrim);
+  animation: overlayIn var(--duration-base) ease;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dialog {
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-dialog);
+  box-shadow: var(--shadow-dialog);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: dialogIn var(--duration-slow) var(--easing-standard);
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--dialog-header-pad-y) var(--dialog-pad-x);
+  background: var(--color-bg-surface);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--dialog-body-pad-y) var(--dialog-pad-x);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--dialog-footer-pad-y) var(--dialog-pad-x);
+  background: var(--color-bg-surface);
+  border-top: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.footerLeft,
+.footerRight {
+  display: flex;
+  gap: var(--space-sm);
+}

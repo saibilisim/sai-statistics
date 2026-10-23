@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — Guía de estadística</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      code {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .path {
+        color: #0052a3;
+        font-weight: 600;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.55rem 0.7rem;
+        text-align: left;
+        font-size: 0.93em;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .step {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — Guía de estadística</h1>
+    <p>
+      Una cadena de decisión rápida para la pregunta «¿qué prueba debo usar?». No sustituye al
+      asesoramiento estadístico: relaciona preguntas frecuentes con la ruta de menú correspondiente.
+      Para diseños complejos (varios factores, modelos mixtos, medidas repetidas con covariables,
+      etc.) consulte a un estadístico.
+    </p>
+
+    <div class="step">
+      <strong>Paso 0 — Compruebe primero la normalidad.</strong> Si la variable dependiente es
+      continua (escala), abra la <strong>Vista de normalidad</strong> (<kbd>Ctrl+4</kbd>) antes de
+      elegir entre pruebas paramétricas y no paramétricas. Evalúa la variable automáticamente con
+      Shapiro-Wilk, Lilliefors (K-S corregida) y un gráfico Q-Q. Con muestras pequeñas (n &lt; 50)
+      confíe más en Shapiro-Wilk; con muestras grandes, en los gráficos (Q-Q, histograma).
+    </div>
+
+    <h2>Tabla de decisión</h2>
+    <table>
+      <tr>
+        <th>Pregunta</th>
+        <th>Variable dependiente</th>
+        <th>Paramétrica (se cumple la normalidad)</th>
+        <th>No paramétrica (normalidad dudosa / n pequeña)</th>
+      </tr>
+      <tr>
+        <td>Comparar un grupo con un valor conocido</td>
+        <td>Continua</td>
+        <td class="path">Analizar ▸ Comparar medias ▸ Prueba T para una muestra...</td>
+        <td>
+          No hay un elemento de menú propio: cree una columna con el valor de referencia mediante
+          <span class="path">Transformar ▸ Calcular variable</span> y compare ambas con
+          <span class="path">Analizar ▸ Pruebas no paramétricas ▸ 2 muestras relacionadas...</span>
+          (rangos con signo de Wilcoxon).
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 2 grupos <strong>independientes</strong></td>
+        <td>Continua</td>
+        <td class="path">Analizar ▸ Comparar medias ▸ Prueba T para muestras independientes...</td>
+        <td class="path">
+          Analizar ▸ Pruebas no paramétricas ▸ 2 muestras independientes...<br />(U de Mann-Whitney)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 2 mediciones <strong>emparejadas/relacionadas</strong> (antes–después)</td>
+        <td>Continua</td>
+        <td class="path">Analizar ▸ Comparar medias ▸ Prueba T para muestras relacionadas...</td>
+        <td class="path">
+          Analizar ▸ Pruebas no paramétricas ▸ 2 muestras relacionadas...<br />(Wilcoxon)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 3 o más grupos <strong>independientes</strong></td>
+        <td>Continua</td>
+        <td class="path">Analizar ▸ Comparar medias ▸ ANOVA de un factor...</td>
+        <td class="path">
+          Analizar ▸ Pruebas no paramétricas ▸ K muestras independientes...<br />(Kruskal-Wallis)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 3 o más mediciones <strong>relacionadas/repetidas</strong></td>
+        <td>Continua</td>
+        <td class="path">Analizar ▸ Modelo lineal general ▸ Medidas repetidas...</td>
+        <td class="path">
+          Analizar ▸ Pruebas no paramétricas ▸ K muestras relacionadas...<br />(Friedman)
+        </td>
+      </tr>
+      <tr>
+        <td>Asociación entre 2 variables categóricas</td>
+        <td>Categórica</td>
+        <td colspan="2" class="path">
+          Analizar ▸ Estadísticos descriptivos ▸ Tablas de contingencia...<br />(la prueba de
+          chi-cuadrado está activada por defecto en Estadísticos)
+        </td>
+      </tr>
+      <tr>
+        <td>¿Sigue una variable categórica las proporciones esperadas?</td>
+        <td>Categórica</td>
+        <td colspan="2" class="path">
+          Analizar ▸ Pruebas no paramétricas ▸ Chi-cuadrado...<br />(bondad de ajuste)
+        </td>
+      </tr>
+      <tr>
+        <td>Asociación entre 2 variables continuas</td>
+        <td>Continua</td>
+        <td class="path">Analizar ▸ Correlaciones ▸ Bivariadas...<br />(r de Pearson)</td>
+        <td class="path">Marque Spearman en Bivariadas...</td>
+      </tr>
+      <tr>
+        <td>Predecir un resultado continuo a partir de una o más variables</td>
+        <td>Continua</td>
+        <td colspan="2" class="path">Analizar ▸ Regresión ▸ Lineal...</td>
+      </tr>
+      <tr>
+        <td>Predecir un resultado binario (0/1)</td>
+        <td>Categórica binaria</td>
+        <td colspan="2" class="path">Analizar ▸ Regresión ▸ Logística binaria...</td>
+      </tr>
+      <tr>
+        <td>Consistencia interna de una escala o cuestionario (α de Cronbach)</td>
+        <td>Continua (varios ítems)</td>
+        <td colspan="2" class="path">Analizar ▸ Escala ▸ Análisis de fiabilidad...</td>
+      </tr>
+      <tr>
+        <td>Datos de supervivencia / tiempo hasta el evento</td>
+        <td>Duración + censura</td>
+        <td colspan="2" class="path">
+          Analizar ▸ Supervivencia ▸ Kaplan-Meier... / Regresión de Cox...
+        </td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <strong>K-S de 1 muestra...</strong> (Pruebas no paramétricas) comprueba si los datos siguen
+      una distribución dada; no contrasta si la mediana es igual a un valor. Para comprobar la
+      normalidad, utilice preferentemente la Vista de normalidad (Lilliefors y Shapiro-Wilk).
+    </div>
+
+    <div class="note">
+      <strong>¿No está seguro?</strong> El botón <strong>Pegar código R</strong> de cada cuadro de
+      diálogo muestra exactamente qué función de R se llamará con sus ajustes: una forma rápida de
+      comprobar qué hace realmente la prueba.
+    </div>
+
+    <h2>Muestras pequeñas o valores empatados</h2>
+    <p>
+      En las pruebas no paramétricas, SAI ofrece un p-valor <strong>exacto</strong> siempre que es
+      posible (con el valor predeterminado de R o con el paquete <code>coin</code>), incluso cuando
+      SPSS Base solo ofrece uno asintótico. La tabla de resultados muestra tanto Sig. asintótica
+      (Asymp. Sig., para comparar con SPSS) como Sig. exacta (Exact Sig., el valor más preciso). Con
+      muestras pequeñas o dispersas, confíe en la Sig. exacta.
+    </p>
+
+    <footer>SAI Statistics · Esta guía se instala junto con la aplicación.</footer>
+  </body>
+</html>

@@ -1,0 +1,443 @@
+/* Shared layout for WeightCasesDialog and SplitFileDialog */
+.pickerLayout {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.pickerLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.pickerRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Liste ile hedef kutusu arasındaki ok — analiz diyaloglarının aktarma
+   düğmesiyle aynı kutu; burada seçim tıklamayla yapıldığı için yalnız gösterge. */
+.pickerArrow {
+  composes: transferBox from './DialogFields.module.css';
+  margin-top: calc(var(--font-size-xs) * 1.5 + var(--space-xs));
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.colLabel {
+  composes: label from './DialogFields.module.css';
+  margin: 0 0 var(--space-xs);
+}
+
+/* Liste/hedef/giriş görünümü: tek kaynak DialogFields.module.css */
+.varList {
+  composes: varList from './DialogFields.module.css';
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-height: var(--picker-list-min);
+  max-height: var(--picker-list-max);
+}
+
+.varItem {
+  composes: varItem from './DialogFields.module.css';
+}
+
+.itemSelected {
+  composes: selected from './DialogFields.module.css';
+}
+
+.varName {
+  composes: varName from './DialogFields.module.css';
+}
+
+.varLabel {
+  composes: varLabel from './DialogFields.module.css';
+}
+
+.targetBox {
+  composes: fieldZone from './DialogFields.module.css';
+  padding: var(--space-sm);
+  min-height: var(--control-height-lg);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+.noneText {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.emptyNote {
+  padding: var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+.limitationNote {
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  border: var(--border-width-thin) solid var(--color-warning);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* SplitFileDialog */
+.splitRoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.radioRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+/* Radio-driven condition dialogs (Recode, Rank Cases, Replace Missing, etc.) */
+.selectRoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.conditionBox {
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-field);
+  background: var(--color-bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.conditionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.condLabel {
+  width: var(--form-label-width);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+/* Etiket, alanın üstünde (dikey) — Değerleri Say gibi uzun etiketler */
+.conditionRowStacked {
+  composes: conditionRow;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.conditionRowStacked .condLabel {
+  width: auto;
+}
+
+/* Giriş görünümü: tek kaynak DialogFields.module.css */
+.condSelect {
+  composes: input from './DialogFields.module.css';
+  flex: 1;
+}
+
+.condInput {
+  composes: input from './DialogFields.module.css';
+  flex: 1;
+}
+
+/* Recode dialog — value mapping table */
+.mappingHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr 28px;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding: 0 var(--space-xs) var(--space-xs);
+}
+
+.mappingRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr var(--icon-btn-size);
+  gap: var(--space-xs);
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.mappingInput {
+  composes: input from './DialogFields.module.css';
+  font-size: var(--font-size-sm);
+  width: 100%;
+}
+
+/* Aggregate dialog — summary-variable table (variable / function / target name) */
+.aggHeader {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr var(--icon-btn-size);
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  padding: 0 var(--space-xs) var(--space-xs);
+}
+
+.aggRow {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr var(--icon-btn-size);
+  gap: var(--space-xs);
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+/* Define Variable Properties — one box per scanned variable */
+.propsBox {
+  composes: conditionBox;
+  margin-bottom: var(--space-md);
+}
+
+.propsVarName {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.propsMeasureRow {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+/* Define Variable Properties — value / count / label / missing table */
+.propsHeader {
+  composes: aggHeader;
+  grid-template-columns: 1fr 1fr 2fr 1fr;
+}
+
+.propsRow {
+  composes: aggRow;
+  grid-template-columns: 1fr 1fr 2fr 1fr;
+}
+
+.addRowBtn {
+  background: none;
+  border: var(--border-width-thin) dashed var(--color-border);
+  border-radius: var(--radius-control);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.addRowBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.removeRowBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+  color: var(--color-text-secondary);
+  line-height: 1;
+  padding: 0;
+  width: var(--icon-btn-size);
+  text-align: center;
+  /* Liste satırında (ad … ×) en sağa yaslanır; tablo hücresinde etkisiz */
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.removeRowBtn:hover:not(:disabled) {
+  color: var(--color-error);
+}
+
+.removeRowBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ── Durum / açıklama metinleri (eski inline style'ların yerine) ── */
+.errorText {
+  composes: errorText from './DialogFields.module.css';
+  margin-top: var(--space-xs);
+}
+
+.errorTextFlush {
+  composes: errorText from './DialogFields.module.css';
+}
+
+.successText {
+  composes: successText from './DialogFields.module.css';
+  margin-top: var(--space-xs);
+}
+
+.hintText {
+  composes: hintText from './DialogFields.module.css';
+  margin-top: var(--space-xs);
+}
+
+.hintTextFlush {
+  composes: hintText from './DialogFields.module.css';
+}
+
+.hintTextXs {
+  composes: hintText from './DialogFields.module.css';
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-xs);
+}
+
+.noteText {
+  composes: hintText from './DialogFields.module.css';
+  margin-top: var(--space-sm);
+}
+
+.plainText {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* Bölüm başlığı satırı: solda başlık, sağda eylem (ör. "+ Ekle") */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.sectionTitle {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Yan yana radyo seçenekleri */
+.inlineOptions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+}
+
+.inlineOptionsWrap {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* Alt alta radyo seçenekleri */
+.radioStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.radioGroup {
+  composes: radioStack;
+  margin-top: var(--space-sm);
+}
+
+.conditionRowSpaced {
+  composes: conditionRow;
+  margin-top: var(--space-sm);
+}
+
+.selectRootPadded {
+  composes: selectRoot;
+  padding-top: var(--space-sm);
+}
+
+.setupRoot {
+  composes: selectRoot;
+  min-width: var(--dialog-width-confirm);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Gövde içindeki düğme satırı (Sorun Bildir: Kopyala / Günlük klasörü / E-posta) */
+.buttonRow {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+/* Paket listesi satırı: ad solda, durum sağda */
+.pkgRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+/* Sıralı listede "1." gibi sıra numarası */
+.orderIndex {
+  min-width: var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+/* PackageNeededDialog */
+.pkgBody {
+  min-width: var(--dialog-width-xs);
+  padding: var(--space-xs);
+}
+
+.pkgChecking {
+  min-width: var(--dialog-width-xs);
+  padding: var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.pkgInstallRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.pkgName {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+
+.pkgNote {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 0;
+}
+
+/* Dosya seç satırı: dosya adı + Gözat düğmesi */
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+/* Inline action buttons (PreferencesDialog AI section — mirrors DialogBase .btn) */
+
+/* Diyalog düğmeleri: tek kaynak DialogButtons.module.css */
+.btn {
+  composes: btn from './DialogButtons.module.css';
+  flex-shrink: 0;
+}
+
+.primary {
+  composes: primary from './DialogButtons.module.css';
+}

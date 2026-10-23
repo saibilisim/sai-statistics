@@ -1,0 +1,101 @@
+.statusbar {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-statusbar);
+  overflow: hidden;
+}
+
+.segment {
+  padding: 0 var(--space-sm);
+  white-space: nowrap;
+}
+
+.segment.active {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.segment.success {
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.segment.error {
+  font-weight: 600;
+  color: var(--color-error);
+}
+
+.divider {
+  width: 1px;
+  height: 12px;
+  background: var(--color-text-statusbar);
+  opacity: 0.25;
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.rStatus {
+  font-weight: 500;
+}
+
+.rStatus.ready {
+  color: var(--color-success);
+}
+.rStatus.starting {
+  color: var(--color-warning);
+}
+.rStatus.not-found {
+  color: var(--color-error);
+}
+.rStatus.error {
+  color: var(--color-error);
+}
+
+.updateAvailable {
+  background: none;
+  border: none;
+  font: inherit;
+  color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.updateAvailable:hover {
+  text-decoration: underline;
+}
+
+.downloading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: default;
+}
+
+.downloading:hover {
+  text-decoration: none;
+}
+
+.progressTrack {
+  position: relative;
+  width: 72px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0;
+  width: var(--progress, 0%);
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.2s ease;
+}

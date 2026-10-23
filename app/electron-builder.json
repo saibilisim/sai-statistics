@@ -1,0 +1,189 @@
+{
+  "appId": "com.sai.statistics",
+  "productName": "SAI Statistics",
+  "copyright": "Copyright © 2026 SAI",
+  "directories": {
+    "buildResources": "resources",
+    "output": "dist"
+  },
+  "npmRebuild": false,
+  "electronLanguages": ["en-US", "tr", "es", "fr", "pt-BR", "pt-PT", "it"],
+  "asarUnpack": ["**/*.node"],
+  "electronFuses": {
+    "runAsNode": false,
+    "enableNodeOptionsEnvironmentVariable": false,
+    "enableNodeCliInspectArguments": false,
+    "enableEmbeddedAsarIntegrityValidation": true,
+    "onlyLoadAppFromAsar": true
+  },
+  "files": ["out/**/*", "!out/**/*.map"],
+  "extraResources": [
+    {
+      "from": "r-scripts",
+      "to": "r-scripts",
+      "filter": ["**/*.R"]
+    },
+    {
+      "from": "resources/settings",
+      "to": "settings"
+    },
+    {
+      "from": "resources/sample-data",
+      "to": "sample-data"
+    },
+    {
+      "from": "resources/docs",
+      "to": "docs"
+    },
+    {
+      "from": "resources/legal",
+      "to": "legal"
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "resources/icons/icon.ico",
+    "artifactName": "SAI-Statistics-Setup-${version}-${arch}.${ext}",
+    "signtoolOptions": {
+      "publisherName": ["SAİ BİLİŞİM ANONİM ŞİRKETİ"],
+      "certificateSha1": "F25F8F0EE575B88A7BADE5377BBAF8389699C751",
+      "signingHashAlgorithms": ["sha256"],
+      "rfc3161TimeStampServer": "http://time.certum.pl"
+    },
+    "signExts": [
+      "SAI Statistics.exe",
+      "elevate.exe",
+      "-x64.exe",
+      "-arm64.exe",
+      "-ia32.exe",
+      "__uninstaller.exe",
+      "ffmpeg.dll",
+      "libEGL.dll",
+      "libGLESv2.dll",
+      "vk_swiftshader.dll",
+      "vulkan-1.dll",
+      "dxcompiler.dll",
+      "duckdb.node",
+      "!.exe"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/r-runtime-win",
+        "to": "r-runtime"
+      }
+    ],
+    "files": [
+      "out/**/*",
+      "!out/**/*.map",
+      "!node_modules/@duckdb/node-bindings-darwin-arm64",
+      "!node_modules/@duckdb/node-bindings-darwin-x64",
+      "!node_modules/@duckdb/node-bindings-linux-arm64",
+      "!node_modules/@duckdb/node-bindings-linux-arm64-musl",
+      "!node_modules/@duckdb/node-bindings-linux-x64",
+      "!node_modules/@duckdb/node-bindings-linux-x64-musl",
+      "!node_modules/@duckdb/node-bindings-win32-arm64"
+    ],
+    "publish": {
+      "provider": "generic",
+      "url": "https://api.saistatistics.com/downloads/win/",
+      "channel": "latest"
+    }
+  },
+  "nsis": {
+    "uninstallDisplayName": "SAI Statistics",
+    "license": "resources/legal/LICENSE.txt",
+    "oneClick": false,
+    "perMachine": false,
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "SAI Statistics",
+    "runAfterFinish": true,
+    "menuCategory": false,
+    "installerLanguages": ["en_US", "tr_TR", "es_ES", "fr_FR", "pt_BR", "it_IT"],
+    "displayLanguageSelector": true,
+    "installerSidebar": "resources/installer/installerSidebar.bmp",
+    "uninstallerSidebar": "resources/installer/installerSidebar.bmp",
+    "installerHeader": "resources/installer/installerHeader.bmp",
+    "include": "resources/installer/installer.nsh"
+  },
+  "mac": {
+    "target": ["dmg", "zip"],
+    "icon": "resources/icons/icon.icns",
+    "category": "public.app-category.productivity",
+    "identity": null,
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "extraResources": [
+      {
+        "from": "resources/r-runtime-mac",
+        "to": "r-runtime"
+      }
+    ],
+    "files": [
+      "out/**/*",
+      "!out/**/*.map",
+      "!node_modules/@duckdb/node-bindings-linux-arm64",
+      "!node_modules/@duckdb/node-bindings-linux-arm64-musl",
+      "!node_modules/@duckdb/node-bindings-linux-x64",
+      "!node_modules/@duckdb/node-bindings-linux-x64-musl",
+      "!node_modules/@duckdb/node-bindings-win32-arm64",
+      "!node_modules/@duckdb/node-bindings-win32-x64"
+    ],
+    "publish": {
+      "provider": "generic",
+      "url": "https://api.saistatistics.com/downloads/mac/",
+      "channel": "latest"
+    }
+  },
+  "dmg": {
+    "window": {
+      "width": 540,
+      "height": 380
+    }
+  },
+  "linux": {
+    "target": ["AppImage", "deb", "rpm"],
+    "icon": "resources/icons/icon.png",
+    "category": "Science",
+    "extraResources": [
+      {
+        "from": "resources/r-runtime",
+        "to": "r-runtime"
+      }
+    ],
+    "files": [
+      "out/**/*",
+      "!out/**/*.map",
+      "!node_modules/@duckdb/node-bindings-darwin-arm64",
+      "!node_modules/@duckdb/node-bindings-darwin-x64",
+      "!node_modules/@duckdb/node-bindings-linux-arm64",
+      "!node_modules/@duckdb/node-bindings-linux-arm64-musl",
+      "!node_modules/@duckdb/node-bindings-linux-x64-musl",
+      "!node_modules/@duckdb/node-bindings-win32-arm64",
+      "!node_modules/@duckdb/node-bindings-win32-x64"
+    ]
+  },
+  "rpm": {
+    "fpm": [
+      "--rpm-rpmbuild-define",
+      "debug_package %{nil}",
+      "--rpm-rpmbuild-define",
+      "__spec_rmbuild_pre true",
+      "--rpm-rpmbuild-define",
+      "__spec_rmbuild_post true"
+    ]
+  },
+  "fileAssociations": [
+    {
+      "ext": "sdf",
+      "name": "SAI Data File",
+      "description": "Statistical Data File"
+    }
+  ]
+}

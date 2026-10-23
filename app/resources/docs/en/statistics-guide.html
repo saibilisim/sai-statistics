@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — Statistics Guide</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      code {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .path {
+        color: #0052a3;
+        font-weight: 600;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.55rem 0.7rem;
+        text-align: left;
+        font-size: 0.93em;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .step {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — Statistics Guide</h1>
+    <p>
+      A quick decision chain for "which test should I use?". It is not statistical advice — it maps
+      common questions to the matching menu path. For complex designs (several factors, mixed
+      models, repeated measures with covariates, etc.) consult a statistician.
+    </p>
+
+    <div class="step">
+      <strong>Step 0 — Check normality first.</strong> If your dependent variable is continuous
+      (scale), open <strong>Normality View</strong> (<kbd>Ctrl+4</kbd>) before choosing between
+      parametric and nonparametric tests. It evaluates the variable automatically with Shapiro-Wilk,
+      Lilliefors (corrected K-S) and a Q-Q plot. With small samples (n &lt; 50) rely more on
+      Shapiro-Wilk; with large samples rely more on the plots (Q-Q, histogram).
+    </div>
+
+    <h2>Decision Table</h2>
+    <table>
+      <tr>
+        <th>Question</th>
+        <th>Dependent variable</th>
+        <th>Parametric (normality assumption holds)</th>
+        <th>Nonparametric (normality doubtful / small n)</th>
+      </tr>
+      <tr>
+        <td>Compare one group with a known value</td>
+        <td>Continuous</td>
+        <td class="path">Analyze ▸ Compare Means ▸ One-Sample T Test...</td>
+        <td>
+          No separate menu item: create a column holding the reference value with
+          <span class="path">Transform ▸ Compute Variable</span>, then compare the two with
+          <span class="path">Analyze ▸ Nonparametric Tests ▸ 2 Related Samples...</span> (Wilcoxon
+          signed-rank).
+        </td>
+      </tr>
+      <tr>
+        <td>Compare 2 <strong>independent</strong> groups</td>
+        <td>Continuous</td>
+        <td class="path">Analyze ▸ Compare Means ▸ Independent-Samples T Test...</td>
+        <td class="path">
+          Analyze ▸ Nonparametric Tests ▸ 2 Independent Samples...<br />(Mann-Whitney U)
+        </td>
+      </tr>
+      <tr>
+        <td>Compare 2 <strong>paired/related</strong> measurements (before–after)</td>
+        <td>Continuous</td>
+        <td class="path">Analyze ▸ Compare Means ▸ Paired-Samples T Test...</td>
+        <td class="path">Analyze ▸ Nonparametric Tests ▸ 2 Related Samples...<br />(Wilcoxon)</td>
+      </tr>
+      <tr>
+        <td>Compare 3+ <strong>independent</strong> groups</td>
+        <td>Continuous</td>
+        <td class="path">Analyze ▸ Compare Means ▸ One-Way ANOVA...</td>
+        <td class="path">
+          Analyze ▸ Nonparametric Tests ▸ K Independent Samples...<br />(Kruskal-Wallis)
+        </td>
+      </tr>
+      <tr>
+        <td>Compare 3+ <strong>related/repeated</strong> measurements</td>
+        <td>Continuous</td>
+        <td class="path">Analyze ▸ General Linear Model ▸ Repeated Measures...</td>
+        <td class="path">Analyze ▸ Nonparametric Tests ▸ K Related Samples...<br />(Friedman)</td>
+      </tr>
+      <tr>
+        <td>Association between 2 categorical variables</td>
+        <td>Categorical</td>
+        <td colspan="2" class="path">
+          Analyze ▸ Descriptive Statistics ▸ Crosstabs...<br />(the chi-square test is on by default
+          under Statistics)
+        </td>
+      </tr>
+      <tr>
+        <td>Does a categorical variable follow expected proportions?</td>
+        <td>Categorical</td>
+        <td colspan="2" class="path">
+          Analyze ▸ Nonparametric Tests ▸ Chi-Square...<br />(goodness of fit)
+        </td>
+      </tr>
+      <tr>
+        <td>Association between 2 continuous variables</td>
+        <td>Continuous</td>
+        <td class="path">Analyze ▸ Correlate ▸ Bivariate...<br />(Pearson r)</td>
+        <td class="path">Tick Spearman in Bivariate...</td>
+      </tr>
+      <tr>
+        <td>Predict a continuous outcome from one or more variables</td>
+        <td>Continuous</td>
+        <td colspan="2" class="path">Analyze ▸ Regression ▸ Linear...</td>
+      </tr>
+      <tr>
+        <td>Predict a binary (0/1) outcome</td>
+        <td>Binary categorical</td>
+        <td colspan="2" class="path">Analyze ▸ Regression ▸ Binary Logistic...</td>
+      </tr>
+      <tr>
+        <td>Internal consistency of a scale or questionnaire (Cronbach's α)</td>
+        <td>Continuous (several items)</td>
+        <td colspan="2" class="path">Analyze ▸ Scale ▸ Reliability Analysis...</td>
+      </tr>
+      <tr>
+        <td>Survival / time-to-event data</td>
+        <td>Duration + censoring</td>
+        <td colspan="2" class="path">Analyze ▸ Survival ▸ Kaplan-Meier... / Cox Regression...</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <strong>1-Sample K-S...</strong> (Nonparametric Tests) checks whether the data follow a given
+      distribution — it does not test whether the median equals a value. To check normality, prefer
+      Normality View (Lilliefors and Shapiro-Wilk).
+    </div>
+
+    <div class="note">
+      <strong>Not sure?</strong> Every dialog's <strong>Paste R</strong> button shows exactly which
+      R function your settings will call — a quick way to verify what the test actually does.
+    </div>
+
+    <h2>Small Samples or Tied Values</h2>
+    <p>
+      For nonparametric tests SAI reports an <strong>exact</strong> p-value whenever possible
+      (through R's own default or the <code>coin</code> package) — even where SPSS Base offers only
+      an asymptotic one. The result table shows both Asymp. Sig. (for comparison with SPSS) and
+      Exact Sig. (the more accurate value). With small or sparse samples, rely on Exact Sig.
+    </p>
+
+    <footer>SAI Statistics · This guide is installed together with the app.</footer>
+  </body>
+</html>

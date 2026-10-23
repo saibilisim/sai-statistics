@@ -1,0 +1,45 @@
+node_modules/
+out/
+dist/
+.DS_Store
+*.log
+
+# R runtime (platform-specific, not in repo)
+r-runtime/
+r-runtime-win/*
+r-runtime-mac/*
+!r-runtime-win/README.txt
+!r-runtime-mac/README.txt
+
+# Temp files
+tmp/
+temp/
+
+# Flatpak build output
+flatpak-build-dir/
+.flatpak-builder/
+
+# Local no-sudo rpmbuild (scripts/vendor-rpmbuild.sh)
+.rpmbuild-vendor/
+
+# Hidden source map archive (per release, written by the release pipeline)
+release-sourcemaps/
+
+# Generated during packaging (scripts/gen-third-party-notices.cjs)
+resources/legal/THIRD_PARTY_NOTICES.txt
+
+# SPSS output produced by the parity harness (tests/spss-parity/README.md).
+# It is IBM SPSS program output: regenerate it locally, never commit it.
+tests/spss-parity/*.htm
+tests/spss-parity/*-output.xml
+tests/spss-parity/cluster-cont.xml
+tests/spss-parity/spss-*.json
+tests/spss-parity/spss32*-values.json
+tests/spss-parity/knn-pred.csv
+
+# Synthetic fixtures re-included past the root data-file rules
+!tests/fixtures/import-excel.xlsx
+!tests/fixtures/import-excel-mixed.xlsx
+
+# Screenshots written by the diag-*.cjs e2e scripts (tests/e2e/)
+/diag-*.png

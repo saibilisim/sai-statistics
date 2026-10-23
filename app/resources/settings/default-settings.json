@@ -1,0 +1,28 @@
+{
+  "_comment": "Human-readable reference copy only — not read by the app. The app's real defaults come from the zod schema in shared/settings-types.ts (each field's .default(...)); electron-store applies those at runtime. Keep this file in sync with that schema if you change a default, so it stays useful as documentation.",
+  "appearance": {
+    "theme": "system",
+    "fontSize": 13,
+    "language": "tr"
+  },
+  "editor": {
+    "missingValue": -99,
+    "decimalSeparator": "comma"
+  },
+  "dataImport": {
+    "categoricalMaxDistinct": 24,
+    "detectDecimalComma": true,
+    "readStatLabels": true
+  },
+  "output": {
+    "significanceLevel": 0.05,
+    "tableStyle": "academic",
+    "decimalSeparator": "dot",
+    "dropLeadingZero": true
+  },
+  "r": {
+    "timeout": 120,
+    "consoleEnabled": true
+  },
+  "recentFiles": []
+}

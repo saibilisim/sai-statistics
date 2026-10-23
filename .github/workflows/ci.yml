@@ -1,0 +1,145 @@
+name: CI
+
+# While the repository is private, Actions minutes are capped (2,000/month)
+# and one full run of the R validation + E2E jobs used ~2 hours of them. So:
+#   - every push to main: the fast checks only (typecheck, lint, unit, build);
+#   - pull requests and manual runs (Actions → CI → Run workflow): everything.
+# Once the repository is public (minutes are free), the `if:` guards on the
+# two heavy jobs can be removed to run them on every push again.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  quality:
+    name: Typecheck, lint, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Node version
+        id: node-version
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint (ESLint + Prettier)
+        run: pnpm lint
+
+      - name: Unit tests (Vitest)
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  r-validation:
+    name: R script validation
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        id: setup-r
+        with:
+          use-public-rspm: true
+
+      # Prebuilt Linux binaries from the same dated Posit Package Manager
+      # snapshot the shipped runtimes use (shared/r-packages.json
+      # runtime.cranSnapshot). Without this, setup.R installed from
+      # cloud.r-project.org, which serves Linux only as source: ~50 minutes
+      # of compiling per run.
+      - name: Select binary R package repository
+        run: |
+          snapshot=$(node -p "require('./shared/r-packages.json').runtime.cranSnapshot")
+          echo "SAI_R_REPO=${snapshot/\/cran\//\/cran\/__linux__\/$(lsb_release -cs)\/}" >> "$GITHUB_ENV"
+
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: r-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ hashFiles('app/shared/r-packages.json') }}
+
+      - name: Install required R packages
+        run: Rscript r-scripts/setup.R
+
+      - name: Run r-validation suite
+        run: Rscript tests/r-validation/run-all.R
+
+  e2e:
+    name: E2E (Playwright-driven Electron)
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    # Non-blocking until the suite is green on CI: as of 2026-10-21 a set of
+    # scripts still fails there (see the run log) and is being worked through.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Node version
+        id: node-version
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: r-lib/actions/setup-r@v2
+        id: setup-r
+        with:
+          use-public-rspm: true
+
+      - name: Select binary R package repository
+        run: |
+          snapshot=$(node -p "require('./shared/r-packages.json').runtime.cranSnapshot")
+          echo "SAI_R_REPO=${snapshot/\/cran\//\/cran\/__linux__\/$(lsb_release -cs)\/}" >> "$GITHUB_ENV"
+
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: r-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ hashFiles('app/shared/r-packages.json') }}
+
+      - name: Install required R packages
+        run: Rscript r-scripts/setup.R
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install Playwright + Electron system dependencies
+        run: npx playwright install-deps chromium
+
+      - name: Install xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Generate e2e fixtures
+        run: node tests/e2e/setup-e2e-fixtures.cjs
+
+      - name: Run e2e suite
+        run: xvfb-run -a pnpm test:e2e

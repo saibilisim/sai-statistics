@@ -1,0 +1,100 @@
+/* AiConsentDialog — veri paylaşım onayı. Yalnız tema token'ları (CLAUDE.md §7). */
+
+.dialog {
+  min-width: 0;
+  width: min(520px, calc(100vw - 2 * var(--space-xl)));
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  line-height: 1.5;
+}
+
+.intro {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.sectionLabel {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  align-items: start;
+  column-gap: var(--space-sm);
+  color: var(--color-text-primary);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  margin-top: 0.2em;
+  flex-shrink: 0;
+}
+
+.checkIcon {
+  composes: icon;
+  color: var(--color-accent);
+}
+
+.assurance {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  align-items: start;
+  column-gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-success);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.shieldIcon {
+  composes: icon;
+  color: var(--color-success);
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-md);
+  row-gap: var(--space-xs);
+  margin: 0;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+
+.meta dt {
+  color: var(--color-text-secondary);
+}
+
+.meta dd {
+  margin: 0;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.model {
+  font-family: var(--font-family-mono);
+}

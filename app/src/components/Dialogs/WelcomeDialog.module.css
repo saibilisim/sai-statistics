@@ -1,0 +1,226 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-scrim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-scrim);
+}
+
+.dialog {
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-dialog);
+  box-shadow: var(--shadow-lg);
+  width: min(var(--dialog-width-lg), 94vw);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.subtitle {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--space-xl);
+  padding: var(--space-lg) var(--space-xl);
+  min-height: 0;
+  flex: 1;
+}
+
+.start {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.groupTitle {
+  margin: var(--space-md) 0 var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.action {
+  background: none;
+  border: none;
+  padding: var(--space-xs) 0;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  color: var(--color-accent);
+  cursor: pointer;
+  text-align: left;
+}
+
+.action:hover {
+  text-decoration: underline;
+}
+
+.action:focus-visible,
+.tab:focus-visible,
+.list:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-border-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.tab {
+  background: none;
+  border: none;
+  border-bottom: var(--border-width-thick) solid transparent;
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--color-text-primary);
+}
+
+.tabActive {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
+}
+
+.list {
+  flex: 1;
+  min-height: calc(var(--control-height-lg) * 7);
+  max-height: 44vh;
+  overflow-y: auto;
+  margin-top: var(--space-sm);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-xs) var(--space-sm);
+  cursor: default;
+  user-select: none;
+}
+
+.item:hover {
+  background: var(--color-bg-hover);
+}
+
+.itemSelected,
+.itemSelected:hover {
+  background: var(--color-bg-selected);
+}
+
+.itemDisabled {
+  opacity: var(--opacity-disabled);
+}
+
+.itemDisabled:hover {
+  background: none;
+}
+
+.itemTitle {
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemDetail {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--color-bg-surface);
+  border-top: var(--border-width-thin) solid var(--color-border);
+}
+
+.dontShow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.footerRight {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Düğmeler analiz diyaloglarıyla aynı görünüm — tek kaynak AnalysisDialogShell. */
+
+/* Diyalog düğmeleri: tek kaynak DialogButtons.module.css */
+.closeBtn {
+  composes: closeBtn from './DialogButtons.module.css';
+}
+
+.btn {
+  composes: btn from './DialogButtons.module.css';
+}
+
+.primary {
+  composes: primary from './DialogButtons.module.css';
+}

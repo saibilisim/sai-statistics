@@ -1,0 +1,1668 @@
+/* Sözdizimi / Terminal sekmesi — tek araç çubuğu satırı, solda değişken paneli,
+   ortada çalışma sütunu (SPSS: editör ↕ konsol · R: konsol ↕ giriş), R'da sağda
+   grafik paneli. Yalnız token'lar (CLAUDE.md §7). */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* ── Panes (both mounted; inactive is hidden) ────────────────────────── */
+.pane {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.paneHidden {
+  display: none;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ── Toolbar (one row: mode switch + mode controls) ──────────────────── */
+.subToolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-lg);
+  min-height: var(--toolbar-height);
+  background: var(--color-bg-header);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.toolbarDivider {
+  width: var(--border-width-thin);
+  height: var(--space-lg);
+  margin: 0 var(--space-xs);
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+/* ── Mode segmented control — same track/pill language as TabBar ────────── */
+.modeSwitch {
+  display: inline-flex;
+  padding: calc(var(--space-xs) / 2);
+  gap: calc(var(--space-xs) / 2);
+  background: var(--color-bg-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-control);
+}
+
+.modeBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+.modeBtn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-hover);
+}
+
+.modeActive,
+.modeActive:hover {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+/* ── Icon buttons ────────────────────────────────────────────────────── */
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.iconBtn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.iconBtnActive {
+  background: var(--color-bg-selected);
+  color: var(--color-accent);
+}
+
+/* ── Buttons — same radius/border as the dialog buttons ─────────────────── */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: var(--control-height-sm);
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-ui);
+  border-radius: var(--radius-control);
+  border: var(--border-width-thin) solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background var(--duration-fast) var(--easing-standard),
+    border-color var(--duration-fast) var(--easing-standard);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+}
+
+.button:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.buttonActive {
+  background: var(--color-bg-selected);
+  border-color: var(--color-accent);
+}
+
+.staleBadge {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+/* ── Work area: [variables] [main column] [plots] ─────────────────────── */
+.workRow {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.workCol {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ── Side panels (variables / plots) ─────────────────────────────────── */
+.sidePanelHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  min-height: var(--control-height-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.sideEmpty {
+  display: block;
+  padding: var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.varPanel {
+  display: flex;
+  flex-direction: column;
+  width: var(--terminal-side-width);
+  flex-shrink: 0;
+  min-height: 0;
+  background: var(--color-bg-surface);
+  border-right: var(--border-width-thin) solid var(--color-border);
+}
+
+.varSearch {
+  margin: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  outline: none;
+  transition:
+    border-color var(--duration-base),
+    box-shadow var(--duration-base);
+}
+
+.varSearch:focus {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-halo);
+}
+
+.varItems {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-sm);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.varItemBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: var(--space-xs) var(--space-md);
+  border: none;
+  background: none;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.varItemBtn:hover {
+  background: var(--color-bg-hover);
+}
+
+.varItemName {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.varItemLabel {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ── SPSS editor ─────────────────────────────────────────────────────── */
+.editorWrap {
+  flex: 0 0 38%;
+  min-height: 0;
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-bg-header);
+}
+
+/* Highlighted editor: gutter + text area. In the text area an aria-hidden
+   <pre> (coloured tokens) sits behind a transparent-text <textarea> (real
+   caret + selection); both layers share padding/font/line-height so
+   characters line up pixel-for-pixel. Lines don't wrap, so gutter numbers
+   stay aligned. */
+.editorSurface {
+  position: relative;
+  display: flex;
+  height: 100%;
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-field);
+  background: var(--color-bg-base);
+  overflow: hidden;
+  transition:
+    border-color var(--duration-base),
+    box-shadow var(--duration-base);
+}
+
+.editorSurface:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-halo);
+}
+
+.gutter {
+  flex-shrink: 0;
+  min-width: calc(var(--space-xl) + var(--space-md));
+  padding: var(--space-sm) 0;
+  overflow: hidden;
+  background: var(--color-bg-header);
+  border-right: var(--border-width-thin) solid var(--color-border);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-disabled);
+  text-align: right;
+  user-select: none;
+}
+
+.gutterNum {
+  padding: 0 var(--space-sm) 0 var(--space-xs);
+}
+
+.gutterError {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-weight: var(--font-weight-bold);
+  box-shadow: inset calc(var(--space-xs) / 2) 0 0 var(--color-error);
+}
+
+.editorText {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.editorHighlight,
+.editor {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: transparent;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  white-space: pre;
+  overflow-wrap: normal;
+  tab-size: 4;
+}
+
+.editorHighlight {
+  color: var(--color-text-primary);
+  overflow: auto;
+  pointer-events: none;
+  scrollbar-width: none;
+}
+
+.editorHighlight::-webkit-scrollbar {
+  display: none;
+}
+
+.editor {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  color: transparent;
+  caret-color: var(--color-text-primary);
+  outline: none;
+  overflow: auto;
+}
+
+.editor::placeholder {
+  color: var(--color-text-disabled);
+  white-space: pre-wrap;
+}
+
+.tok_command {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tok_comment {
+  color: var(--color-text-disabled);
+  font-style: italic;
+}
+
+.tok_string {
+  color: var(--color-info);
+}
+
+/* R tokens (lib/code-highlight.ts kinds) */
+.tok_keyword {
+  color: var(--color-code-keyword);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tok_number {
+  color: var(--color-code-number);
+}
+
+.tok_function {
+  color: var(--color-code-function);
+}
+
+.tok_operator {
+  color: var(--color-code-operator);
+}
+
+/* ── Command autocomplete dropdown ───────────────────────────────────── */
+.suggestBox {
+  position: absolute;
+  left: var(--space-xl);
+  right: var(--space-sm);
+  bottom: var(--space-sm);
+  max-height: calc(var(--control-height-md) * 5);
+  overflow-y: auto;
+  padding: var(--space-xs);
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-popover);
+  z-index: var(--z-popover);
+}
+
+.suggestItem {
+  display: block;
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggestItem:hover,
+.suggestItemActive {
+  background: var(--color-bg-selected);
+  color: var(--color-accent);
+}
+
+.suggestDetail {
+  margin-left: var(--space-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* ── "Komutlar" popover ──────────────────────────────────────────────── */
+.menuRoot {
+  position: relative;
+}
+
+.menuPopover {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  left: 0;
+  width: var(--terminal-menu-width);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: var(--space-sm);
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-popover);
+}
+
+.menuSection {
+  padding: var(--space-sm) var(--space-md) var(--space-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--space-xs) / 2);
+  margin: 0 var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.menuItemLabel {
+  font-size: var(--font-size-sm);
+}
+
+.menuItemCode {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+}
+
+.menuCommandGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md);
+}
+
+.menuCommand {
+  padding: calc(var(--space-xs) / 2) var(--space-sm);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.menuCommand:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Splitter between editor and console (also the console header) ──────── */
+.splitter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: calc(var(--space-xs) / 2) var(--space-lg);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface);
+  border-top: var(--border-width-thin) solid var(--color-border);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  cursor: row-resize;
+  flex-shrink: 0;
+  user-select: none;
+  touch-action: none;
+}
+
+.splitter:hover,
+.splitter:focus-visible {
+  background: var(--color-bg-hover);
+}
+
+.splitterTitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.splitter .iconBtn {
+  cursor: pointer;
+}
+
+/* ── SPSS run log ────────────────────────────────────────────────────── */
+.console {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-surface);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  user-select: text;
+  cursor: text;
+}
+
+.consoleEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  height: 100%;
+  padding: var(--space-xl);
+  text-align: center;
+  font-family: var(--font-family-ui);
+  color: var(--color-text-secondary);
+}
+
+.consoleEmptyIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--control-height-lg) + 2px);
+  height: calc(var(--control-height-lg) + 2px);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+}
+
+.consoleEmptyHint {
+  max-width: 40ch;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.info {
+  color: var(--color-text-secondary);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+/* Echo / failed lines — click to show the statement in the editor */
+.echoLine {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.echoLine:hover {
+  background: var(--color-bg-hover);
+}
+
+/* "→ sent to Output" lines — click to open the Output tab */
+.linkLine {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+
+.linkLine:hover {
+  background: var(--color-bg-hover);
+  text-decoration-style: solid;
+}
+
+/* ── R console ───────────────────────────────────────────────────────── */
+.rConsole {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-surface);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+  cursor: text;
+}
+
+.rChunk {
+  white-space: pre-wrap;
+}
+
+.rInput {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Messages from SAI itself (not R): session stopped, could not start… */
+.rNotice {
+  color: var(--color-warning);
+  font-family: var(--font-family-ui);
+}
+
+/* "R is not running — [Start R]" */
+.deadBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-bg-surface));
+  border-top: var(--border-width-thin) solid var(--color-warning);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.deadBanner svg {
+  color: var(--color-warning);
+}
+
+.rInputWrap {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-top: var(--border-width-thin) solid var(--color-border);
+  background: var(--color-bg-header);
+  flex-shrink: 0;
+}
+
+/* Console input: a compact CodeEditor (highlight + completion + F1). */
+.rInputEditor {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  /* 3 lines visible, then it scrolls. */
+  height: calc(3lh + 2 * var(--space-sm) + 2 * var(--border-width-thick));
+}
+
+/* Marker class on the console textarea (tests, focus); looks come from .editor. */
+.rInputArea {
+  min-width: 0;
+}
+
+/* Compact editor: no gutter; the suggestion list opens above the input. */
+.editorSurfaceCompact {
+  overflow: visible;
+}
+
+.editorSurfaceCompact .suggestBox {
+  left: 0;
+  right: 0;
+  bottom: calc(100% + var(--space-xs));
+}
+
+/* ── ANSI colours from cli / crayon (src/lib/ansi.ts) ────────────────── */
+.ansi_red {
+  color: var(--color-error);
+}
+
+.ansi_green {
+  color: var(--color-success);
+}
+
+.ansi_yellow {
+  color: var(--color-warning);
+}
+
+.ansi_blue {
+  color: var(--color-info);
+}
+
+.ansi_magenta {
+  color: var(--color-code-function);
+}
+
+.ansi_cyan {
+  color: var(--color-code-number);
+}
+
+.ansi_grey {
+  color: var(--color-text-secondary);
+}
+
+.ansiBold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* ── Error traceback (collapsed) ─────────────────────────────────────── */
+.traceback {
+  margin: 0 0 var(--space-xs);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  white-space: normal;
+}
+
+.traceback summary {
+  cursor: pointer;
+  width: max-content;
+}
+
+.tracebackList {
+  margin: var(--space-xs) 0 0;
+  padding-left: calc(var(--space-xl) + var(--space-xs));
+  font-family: var(--font-family-mono);
+  white-space: pre-wrap;
+}
+
+.rInputActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* ── "Send plots to Output" toggle ───────────────────────────────────── */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-left: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+/* ── R plot panel ────────────────────────────────────────────────────── */
+.plotPanel {
+  display: flex;
+  flex-direction: column;
+  width: var(--terminal-plot-width);
+  flex-shrink: 0;
+  min-height: 0;
+  background: var(--color-bg-header);
+  border-left: var(--border-width-thin) solid var(--color-border);
+}
+
+.plotList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+
+.plotCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  margin: 0;
+}
+
+.plotThumbBtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-base);
+  overflow: hidden;
+  cursor: zoom-in;
+  box-shadow: var(--shadow-sm);
+}
+
+.plotThumbBtn:hover {
+  border-color: var(--color-accent);
+}
+
+.plotImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Enlarged plot */
+.lightboxOverlay {
+  composes: overlay from '../../components/Dialogs/DialogFrame.module.css';
+}
+
+.lightbox {
+  composes: dialog from '../../components/Dialogs/DialogFrame.module.css';
+  max-width: 90vw;
+  outline: none;
+}
+
+.lightboxBar {
+  composes: header from '../../components/Dialogs/DialogFrame.module.css';
+  font-weight: var(--font-weight-semibold);
+}
+
+.lightboxImg {
+  display: block;
+  max-width: 90vw;
+  max-height: calc(88vh - var(--control-height-lg) * 2);
+  object-fit: contain;
+  background: var(--color-bg-base);
+}
+
+/* ── R status badge ──────────────────────────────────────────────────── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm);
+  height: var(--control-height-sm);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.statusDot {
+  width: calc(var(--space-xs) * 1.5);
+  height: calc(var(--space-xs) * 1.5);
+  border-radius: 50%;
+  background: var(--color-text-disabled);
+  flex-shrink: 0;
+}
+
+.status_idle .statusDot {
+  background: var(--color-success);
+}
+
+.status_busy .statusDot,
+.status_starting .statusDot {
+  background: var(--color-warning);
+}
+
+.status_dead .statusDot {
+  background: var(--color-error);
+}
+
+.status_debug .statusDot {
+  background: var(--color-info);
+}
+
+/* ── Debugger bar (browser() waiting) ────────────────────────────────── */
+.debugBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-lg);
+  border-top: var(--border-width-thin) solid var(--color-info);
+  background: var(--color-bg-surface);
+  flex-shrink: 0;
+}
+
+.debugTitle {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-info);
+  margin-right: var(--space-sm);
+}
+
+.debugHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-left: var(--space-sm);
+}
+
+.envFrame {
+  margin: 0 0 var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-info);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── R guidance panel ────────────────────────────────────────────────── */
+.rGuide {
+  flex-shrink: 0;
+  max-height: 40%;
+  overflow-y: auto;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  background: var(--color-bg-header);
+}
+
+.rIntro {
+  margin: 0 0 var(--space-md);
+  max-width: 70ch;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.rGuideCols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl);
+}
+
+.rGuideCol {
+  flex: 1 1 calc(var(--space-xl) * 11);
+  min-width: 0;
+}
+
+.rGuideTitle {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rList {
+  margin: 0;
+  padding-left: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+}
+
+/* ── R script editor: tab strip (script + View() grids) ───────────────── */
+.editorTabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-lg) 0;
+  background: var(--color-bg-header);
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.editorTabList {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.editorTab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border: var(--border-width-thin) solid transparent;
+  border-bottom: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: none;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.editorTab:hover {
+  background: var(--color-bg-hover);
+}
+
+.editorTabActive,
+.editorTabActive:hover {
+  background: var(--color-bg-base);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.editorTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editorTabClose {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--space-xs) / 2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.editorTabClose:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.dirtyDot {
+  width: var(--space-xs);
+  height: var(--space-xs);
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.rEditorWrap {
+  position: relative;
+  flex-basis: 45%;
+  padding-top: 0;
+}
+
+.editorLayer {
+  height: 100%;
+}
+
+/* Console header when there is no editor above it (not draggable). */
+.splitterStatic {
+  cursor: default;
+}
+
+/* ── View() grid ─────────────────────────────────────────────────────── */
+.viewPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-field);
+  overflow: hidden;
+  background: var(--color-bg-base);
+}
+
+.viewInfo {
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}
+
+.viewGrid {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  /* Same density/colours as the Data View grid (DataView.module.css). */
+  --ag-background-color: var(--color-bg-base);
+  --ag-foreground-color: var(--color-text-primary);
+  --ag-header-background-color: var(--color-bg-header);
+  --ag-header-foreground-color: var(--color-accent);
+  --ag-border-color: var(--color-border);
+  --ag-row-hover-color: var(--color-bg-hover);
+  --ag-font-family: var(--font-family-ui);
+  --ag-font-size: var(--font-size-body);
+  --ag-row-height: 24px;
+  --ag-header-height: 32px;
+}
+
+.viewRowNum {
+  color: var(--color-text-disabled);
+  text-align: right;
+}
+
+/* ── R side panel tabs (Environment / Plots / Help) ──────────────────── */
+.sideTabs {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--space-xs) / 2);
+  padding: var(--space-xs) var(--space-sm);
+  min-height: var(--control-height-md);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.sideTab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.sideTab:hover {
+  background: var(--color-bg-hover);
+}
+
+.sideTabActive,
+.sideTabActive:hover {
+  background: var(--color-bg-selected);
+  color: var(--color-accent);
+}
+
+.sideTabCount {
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+}
+
+.sideTabBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sideTabToolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.envList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.envGroup {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md) var(--space-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.envRow {
+  display: flex;
+  align-items: center;
+  padding-right: var(--space-sm);
+}
+
+.envRow .varItemBtn {
+  flex: 1;
+  min-width: 0;
+}
+
+.helpSearch {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.helpSearch .varSearch {
+  flex: 1;
+}
+
+.helpText {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  overflow: auto;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  white-space: pre-wrap;
+  color: var(--color-text-primary);
+  user-select: text;
+}
+
+/* ── Plot export dialog ──────────────────────────────────────────────── */
+.fieldLabel {
+  composes: label from '../../components/Dialogs/DialogFields.module.css';
+}
+
+.fieldInput {
+  composes: input from '../../components/Dialogs/DialogFields.module.css';
+}
+
+.exportFormats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  border: none;
+}
+
+.exportFormats legend {
+  float: left;
+  margin-right: var(--space-sm);
+}
+
+.exportGrid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+}
+
+.exportHint {
+  margin: var(--space-md) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* ── Packages pane ───────────────────────────────────────────────────── */
+.pkgInstall,
+.pkgFilterRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-right: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.pkgInstall .varSearch,
+.pkgFilterRow .varSearch {
+  flex: 1;
+  min-width: 0;
+}
+
+.pkgStatus {
+  padding: 0 var(--space-md) var(--space-xs);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.pkgList {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-sm);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.pkgRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: calc(var(--space-xs) / 2) var(--space-md);
+}
+
+.pkgRow:hover {
+  background: var(--color-bg-hover);
+}
+
+.pkgLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.pkgVersion {
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+}
+
+.pkgBadge {
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+}
+
+/* ── htmlwidget Viewer tab ───────────────────────────────────────────── */
+.widgetFrame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-field);
+  /* Widgets draw on a light page of their own (htmlwidgets default). */
+  background: var(--color-bg-base);
+}
+
+/* ── Find in console output ──────────────────────────────────────────── */
+.consoleFind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: default;
+}
+
+.consoleFindInput {
+  width: calc(var(--terminal-side-width) * 0.8);
+  padding: calc(var(--space-xs) / 2) var(--space-sm);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  outline: none;
+}
+
+.consoleFindInput:focus {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-halo);
+}
+
+.consoleFindCount {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
+/* Highlight API matches (ConsoleFind.tsx) — on the console's text spans. */
+.rChunk::highlight(sai-console-find),
+.tracebackList li::highlight(sai-console-find) {
+  background-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
+}
+
+.rChunk::highlight(sai-console-find-current),
+.tracebackList li::highlight(sai-console-find-current) {
+  background-color: var(--color-warning);
+  color: var(--color-bg-base);
+}
+
+/* ── R report tab (Faz T3 P2) ────────────────────────────────────────── */
+.reportPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-field);
+  background: var(--color-bg-base);
+}
+
+.reportToolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  background: var(--color-bg-header);
+  flex-shrink: 0;
+}
+
+.reportMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.reportDoc {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-md) var(--space-xl);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.reportTitle {
+  margin: 0 0 var(--space-md);
+  font-size: var(--font-size-xl);
+}
+
+.reportH1 {
+  margin: var(--space-lg) 0 var(--space-sm);
+  font-size: var(--font-size-lg);
+}
+
+.reportH2 {
+  margin: var(--space-md) 0 var(--space-xs);
+  font-size: var(--font-size-body);
+}
+
+.reportP {
+  margin: 0 0 var(--space-sm);
+  max-width: 80ch;
+}
+
+.reportList {
+  margin: 0 0 var(--space-sm);
+  padding-left: var(--space-xl);
+}
+
+.reportInlineCode {
+  font-family: var(--font-family-mono);
+  background: var(--color-bg-code);
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
+}
+
+.reportChunk {
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.reportPre {
+  margin: 0 0 var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  white-space: pre-wrap;
+  border-radius: var(--radius-sm);
+}
+
+.reportCode {
+  background: var(--color-bg-code);
+  border-left: var(--border-width-thick) solid var(--color-border-strong);
+}
+
+.reportOut {
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.reportErr {
+  border-color: var(--color-error-border);
+  background: var(--color-error-bg);
+}
+
+.reportTableWrap {
+  overflow-x: auto;
+  margin: var(--space-xs) 0 var(--space-sm);
+}
+
+.reportCaption {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.reportTable {
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+}
+
+.reportTable th,
+.reportTable td {
+  border: var(--border-width-thin) solid var(--color-border);
+  padding: var(--space-xs) var(--space-sm);
+  text-align: left;
+}
+
+.reportTable th {
+  background: var(--color-bg-header);
+}
+
+.reportTable td.reportNum {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.reportImg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: var(--space-xs) 0;
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.reportIncomplete {
+  color: var(--color-warning);
+}
+
+/* ── Editor find / replace (EditorFindBar.tsx) ───────────────────────── */
+.editorFind {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-md);
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-overlay);
+  box-shadow: var(--shadow-popover);
+}
+
+.editorFindRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.editorFindIndent {
+  width: calc(var(--space-md) + var(--space-sm));
+  flex: none;
+}
+
+/* Replace-row toggle: chevron points right when closed, down when open. */
+.editorFindRow > button[aria-expanded='false'] svg {
+  transform: rotate(-90deg);
+}
+
+.editorFindUp svg {
+  transform: rotate(180deg);
+}
+
+.editorFindToggleOn {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Matches are painted on their own layer under the token highlight. */
+.findLayer {
+  color: transparent;
+}
+
+.findMatch {
+  background-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
+  color: transparent;
+  border-radius: var(--radius-sm);
+}
+
+.findCurrent {
+  background-color: color-mix(in srgb, var(--color-warning) 75%, transparent);
+  color: transparent;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Files / History panes (RSidePanel.tsx) ──────────────────────────── */
+.wdPath {
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.wdLabel {
+  display: block;
+  direction: ltr;
+  font-family: var(--font-family-ui);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.fileIcon {
+  display: inline-flex;
+  flex: none;
+  color: var(--color-text-secondary);
+}
+
+.historyItem {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: calc(var(--line-height-normal) * 3em);
+  text-align: left;
+}

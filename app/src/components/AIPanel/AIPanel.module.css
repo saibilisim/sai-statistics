@@ -1,0 +1,795 @@
+/* AIPanel — sağ dock sohbet paneli (spec §5.1). Tüm görsel değerler tema
+   token'larından (CLAUDE.md §7); modern sohbet istemcisi (Claude Code /
+   Codex tarzı) düzenine yakın: bubble'sız asistan mesajları, tek parça
+   composer, düz/nötr renk paleti. */
+
+.panel {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--color-bg-base);
+  border-left: 1px solid var(--color-border);
+  min-width: 0;
+}
+
+.resizeHandle {
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 1;
+}
+
+.resizeHandle:hover {
+  background: var(--color-accent);
+  opacity: 0.4;
+}
+
+.topBar {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-header);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-sm) var(--space-xs) var(--space-md);
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.aiBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.iconBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.closeBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+/* Model/düşünme seçici + kredi rozeti — composer'ın hemen ÜSTÜNDE, modern
+   sohbet istemcilerindeki (ChatGPT/Claude) "altta model seçimi" düzeni.
+   Eskiden topBar'ın ikinci satırıydı (2026-08-25'te taşındı). */
+.bottomBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.modelSelect {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 0;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-ui);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  outline: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modelSelect:hover,
+.modelSelect:focus {
+  color: var(--color-text-primary);
+}
+
+/* Düşünme seçici: modelSelect ile aynı görünüm ama içeriğe göre boyutlanır —
+   uzun model adı yanında sabit genişlikte kalmalı. */
+.reasoningSelect {
+  flex: 0 0 auto;
+  padding: 2px 0;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-ui);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  outline: none;
+}
+
+.reasoningSelect:hover,
+.reasoningSelect:focus {
+  color: var(--color-text-primary);
+}
+
+.capabilityTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.capabilityDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-info);
+  flex-shrink: 0;
+}
+
+.capabilityTag[data-supported='true'] .capabilityDot {
+  background: var(--color-success);
+}
+
+.notice {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-base);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.messageList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* Sohbet boşken karşılama ekranı — örnek istem butonları yok, sade durum. */
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.emptyStateIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+}
+
+.emptyStateTitle {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.emptyStateHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 30ch;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.message.user {
+  align-items: flex-end;
+}
+
+.message.assistant {
+  align-items: stretch;
+}
+
+.messageRole {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  padding: 0 2px;
+}
+
+.messageContentWrapper {
+  position: relative;
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.message.user .messageContentWrapper {
+  max-width: 88%;
+}
+
+/* Footer: saat solda + eylem ikonları sağda, mesajın ALTINDA sabit bir satır
+   (2026-08-25 redesign — eskiden hover'da üstte beliren yüzen kutuydu).
+   Normal akışta olduğu için opacity geçişi layout kaymasına yol açmaz. */
+.messageFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: 3px;
+  min-height: 20px;
+  opacity: 0.55;
+  transition: opacity var(--duration-fast) var(--easing-standard);
+}
+
+.messageContentWrapper:hover .messageFooter,
+.messageContentWrapper:focus-within .messageFooter {
+  opacity: 1;
+}
+
+.messageTimestamp {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.messageActions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  transition:
+    background var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard);
+}
+
+.actionBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.messageContent {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  /* body genelinde `user-select: none` (masaüstü davranışı) — sohbet metni
+     okunup alıntılanan içerik, fare ile seçilebilmeli. Üstteki "Metni Seç"
+     düğmesi tüm mesajı tek tıkla seçmek için kalıyor. */
+  user-select: text;
+  cursor: auto;
+}
+
+/* Kullanıcı mesajı: modern istemcilerde tek taraflı, sade bir balon. */
+.message.user .messageContent {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+/* Asistan mesajı: balonsuz, tam genişlik akan metin (Claude/Codex düzeni).
+   Markdown blokları kendi düşey ritmini yönetir → pre-wrap devre dışı,
+   aksi halde bloklar arasındaki satır sonları ikinci kez boşluk üretiyordu. */
+.message.assistant .messageContent {
+  padding: 2px 2px;
+  white-space: normal;
+}
+
+.thinking {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Geçen süre — beklemenin sürdüğünü gösterir, dikkat çekmemeli. */
+.thinkingElapsed {
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-disabled);
+}
+
+.typingDots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.typingDots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentcolor;
+  animation: aiTypingBounce 1.1s infinite ease-in-out both;
+}
+
+.typingDots span:nth-child(1) {
+  animation-delay: -0.24s;
+}
+
+.typingDots span:nth-child(2) {
+  animation-delay: -0.12s;
+}
+
+@keyframes aiTypingBounce {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.7);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.message.user .messageContent.errorContent,
+.message.assistant .messageContent.errorContent {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-error-border);
+  background: var(--color-error-bg);
+  color: var(--color-text-primary);
+}
+
+.message.assistant .messageContent.noticeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-info);
+  background: var(--color-bg-alt);
+  color: var(--color-text-primary);
+}
+
+.noticeContinueBtn {
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.noticeContinueBtn:hover {
+  background: var(--color-bg-hover);
+}
+
+.noticeContinueBtn:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+
+.errorSettingsBtn {
+  align-self: flex-start;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.errorSettingsBtn:hover {
+  background: var(--color-bg-hover);
+}
+
+.creditCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  margin-top: var(--space-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg-secondary);
+}
+
+.creditCardStatus {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.creditCardPacks {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.creditCardPackBtn {
+  padding: 4px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.creditCardPackBtn:hover {
+  background: var(--color-bg-hover);
+}
+
+.creditCardPackBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.toolCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 5px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  align-self: flex-start;
+  max-width: 100%;
+  /* Bir önceki tool durumunun YERİNE geçtiğini belli eden kısa fade —
+     ChatMessageList her tool değişiminde bu kartı key={tool} ile yeniden
+     monte eder. */
+  animation: aiStatusSwap var(--duration-fast, 120ms) var(--easing-standard, ease-out);
+}
+
+@keyframes aiStatusSwap {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toolCard[data-status='error'] {
+  border-color: var(--color-error-border);
+  color: var(--color-error);
+}
+
+.toolCard[data-status='done'] {
+  color: var(--color-text-secondary);
+}
+
+.toolStatus {
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.toolCard[data-status='running'] .toolStatus {
+  animation: aiToolSpin 1s linear infinite;
+}
+
+@keyframes aiToolSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.toolLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toolOutputNotice {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 5px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--color-border);
+  background: var(--color-bg-hover);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* propose_syntax onay kartı — ✓/✗ düğmeleri sol-altta; kod bloğu
+   MarkdownText codeBlockWrapper görünümüne yakın. */
+.syntaxProposal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-self: stretch;
+  max-width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  font-size: var(--font-size-sm);
+}
+
+.syntaxProposal[data-status='rejected'] {
+  opacity: var(--opacity-disabled);
+}
+
+.syntaxProposalDesc {
+  color: var(--color-text-secondary);
+}
+
+.syntaxProposalCode {
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-code);
+  font-family: var(--font-family-mono);
+  font-variant-ligatures: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  user-select: text;
+  cursor: auto;
+}
+
+/* Düzenleme kipi: aynı kutu, aynı tipografi — kart "yerinde düzenlenebilir"
+   hissi versin (renklendirme yalnız salt-okur kipte, textarea span alamaz). */
+.syntaxProposalEditor {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: var(--space-xs) var(--space-sm);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-code);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  font-variant-ligatures: none;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  user-select: text;
+}
+
+.syntaxProposalEditor:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+.syntaxProposalError {
+  padding: 4px var(--space-xs);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-error-border);
+  background: var(--color-error-bg);
+  color: var(--color-text-primary);
+}
+
+.syntaxProposalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-xs);
+}
+
+.syntaxProposalStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.syntaxProposal[data-status='accepted'] .syntaxProposalStatus {
+  color: var(--color-success);
+}
+
+.inputArea {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+  flex-shrink: 0;
+}
+
+.mentionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+}
+
+/* Tek parça composer: textarea + gönder düğmesi aynı kart içinde
+   (Claude Code / Codex kompozer düzeni). */
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  padding: var(--space-xs);
+  transition: border-color var(--duration-fast) var(--easing-standard);
+}
+
+.composer:focus-within {
+  border-color: var(--color-border-focus);
+}
+
+.textarea {
+  flex: 1;
+  resize: none;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  padding: 6px var(--space-xs);
+  min-height: 20px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.textarea:focus {
+  outline: none;
+}
+
+.textarea::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.sendBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--easing-standard);
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.sendBtn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.mentionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-hover);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  max-width: 100%;
+}
+
+.mentionLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mentionRemove {
+  display: inline-flex;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.mentionRemove:hover {
+  color: var(--color-text-primary);
+}

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — Guia de Estatística</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      code {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .path {
+        color: #0052a3;
+        font-weight: 600;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.55rem 0.7rem;
+        text-align: left;
+        font-size: 0.93em;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .step {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — Guia de Estatística</h1>
+    <p>
+      Uma cadeia de decisão rápida para a pergunta "qual teste devo usar?". Não é aconselhamento
+      estatístico: ela relaciona perguntas comuns ao caminho de menu correspondente. Para
+      delineamentos complexos (vários fatores, modelos mistos, medidas repetidas com covariáveis
+      etc.), consulte um estatístico.
+    </p>
+
+    <div class="step">
+      <strong>Passo 0 — Verifique primeiro a normalidade.</strong> Se a sua variável dependente for
+      contínua (escala), abra a <strong>Visualização de Normalidade</strong> (<kbd>Ctrl+4</kbd>)
+      antes de escolher entre testes paramétricos e não paramétricos. Ela avalia a variável
+      automaticamente com Shapiro-Wilk, Lilliefors (K-S corrigido) e um gráfico Q-Q. Com amostras
+      pequenas (n &lt; 50), confie mais no Shapiro-Wilk; com amostras grandes, confie mais nos
+      gráficos (Q-Q, histograma).
+    </div>
+
+    <h2>Tabela de decisão</h2>
+    <table>
+      <tr>
+        <th>Pergunta</th>
+        <th>Variável dependente</th>
+        <th>Paramétrico (pressuposto de normalidade atendido)</th>
+        <th>Não paramétrico (normalidade duvidosa / n pequeno)</th>
+      </tr>
+      <tr>
+        <td>Comparar um grupo com um valor conhecido</td>
+        <td>Contínua</td>
+        <td class="path">Analisar ▸ Comparar Médias ▸ Teste t para Uma Amostra...</td>
+        <td>
+          Não há um item de menu próprio: crie uma coluna com o valor de referência usando
+          <span class="path">Transformar ▸ Calcular Variável</span> e compare as duas com
+          <span class="path">Analisar ▸ Testes Não Paramétricos ▸ 2 Amostras Relacionadas...</span>
+          (postos sinalizados de Wilcoxon).
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 2 grupos <strong>independentes</strong></td>
+        <td>Contínua</td>
+        <td class="path">Analisar ▸ Comparar Médias ▸ Teste t para Amostras Independentes...</td>
+        <td class="path">
+          Analisar ▸ Testes Não Paramétricos ▸ 2 Amostras Independentes...<br />(U de Mann-Whitney)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 2 medidas <strong>pareadas/relacionadas</strong> (antes–depois)</td>
+        <td>Contínua</td>
+        <td class="path">Analisar ▸ Comparar Médias ▸ Teste t para Amostras Emparelhadas...</td>
+        <td class="path">
+          Analisar ▸ Testes Não Paramétricos ▸ 2 Amostras Relacionadas...<br />(Wilcoxon)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 3 ou mais grupos <strong>independentes</strong></td>
+        <td>Contínua</td>
+        <td class="path">Analisar ▸ Comparar Médias ▸ ANOVA de Um Fator...</td>
+        <td class="path">
+          Analisar ▸ Testes Não Paramétricos ▸ K Amostras Independentes...<br />(Kruskal-Wallis)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparar 3 ou mais medidas <strong>relacionadas/repetidas</strong></td>
+        <td>Contínua</td>
+        <td class="path">Analisar ▸ Modelo Linear Geral ▸ Medidas Repetidas...</td>
+        <td class="path">
+          Analisar ▸ Testes Não Paramétricos ▸ K Amostras Relacionadas...<br />(Friedman)
+        </td>
+      </tr>
+      <tr>
+        <td>Associação entre 2 variáveis categóricas</td>
+        <td>Categórica</td>
+        <td colspan="2" class="path">
+          Analisar ▸ Estatísticas Descritivas ▸ Tabelas de Contingência...<br />(o teste
+          qui-quadrado vem ativado por padrão em Estatísticas)
+        </td>
+      </tr>
+      <tr>
+        <td>Uma variável categórica segue as proporções esperadas?</td>
+        <td>Categórica</td>
+        <td colspan="2" class="path">
+          Analisar ▸ Testes Não Paramétricos ▸ Qui-Quadrado...<br />(qualidade do ajuste)
+        </td>
+      </tr>
+      <tr>
+        <td>Associação entre 2 variáveis contínuas</td>
+        <td>Contínua</td>
+        <td class="path">Analisar ▸ Correlacionar ▸ Bivariada...<br />(r de Pearson)</td>
+        <td class="path">Marque Spearman em Bivariada...</td>
+      </tr>
+      <tr>
+        <td>Prever um resultado contínuo a partir de uma ou mais variáveis</td>
+        <td>Contínua</td>
+        <td colspan="2" class="path">Analisar ▸ Regressão ▸ Linear...</td>
+      </tr>
+      <tr>
+        <td>Prever um resultado binário (0/1)</td>
+        <td>Categórica binária</td>
+        <td colspan="2" class="path">Analisar ▸ Regressão ▸ Logística Binária...</td>
+      </tr>
+      <tr>
+        <td>Consistência interna de uma escala ou questionário (α de Cronbach)</td>
+        <td>Contínua (vários itens)</td>
+        <td colspan="2" class="path">Analisar ▸ Escala ▸ Análise de Confiabilidade...</td>
+      </tr>
+      <tr>
+        <td>Dados de sobrevivência / tempo até o evento</td>
+        <td>Duração + censura</td>
+        <td colspan="2" class="path">
+          Analisar ▸ Sobrevivência ▸ Kaplan-Meier... / Regressão de Cox...
+        </td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <strong>K-S para 1 Amostra...</strong> (Testes Não Paramétricos) verifica se os dados seguem
+      uma determinada distribuição — não testa se a mediana é igual a um valor. Para verificar a
+      normalidade, prefira a Visualização de Normalidade (Lilliefors e Shapiro-Wilk).
+    </div>
+
+    <div class="note">
+      <strong>Em dúvida?</strong> O botão <strong>Colar Código R</strong> de cada caixa de diálogo
+      mostra exatamente qual função do R será chamada com as suas configurações — um jeito rápido de
+      conferir o que o teste realmente faz.
+    </div>
+
+    <h2>Amostras pequenas ou valores empatados</h2>
+    <p>
+      Nos testes não paramétricos, o SAI informa um valor-p <strong>exato</strong> sempre que
+      possível (pelo comportamento padrão do R ou pelo pacote <code>coin</code>), mesmo onde o SPSS
+      Base oferece apenas um valor assintótico. A tabela de resultados mostra tanto Asymp. Sig.
+      (significância assintótica, para comparar com o SPSS) quanto Exact Sig. (significância exata,
+      o valor mais preciso). Com amostras pequenas ou esparsas, confie na Exact Sig.
+    </p>
+
+    <footer>SAI Statistics · Este guia é instalado junto com o aplicativo.</footer>
+  </body>
+</html>

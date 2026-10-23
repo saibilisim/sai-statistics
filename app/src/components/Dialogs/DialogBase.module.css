@@ -1,0 +1,58 @@
+/* Çerçeve: tek kaynak DialogFrame.module.css — burada yalnız pencere boyutu. */
+.overlay {
+  composes: overlay from './DialogFrame.module.css';
+}
+
+.dialog {
+  composes: dialog from './DialogFrame.module.css';
+  min-width: var(--dialog-width-sm);
+  max-width: var(--dialog-width-md);
+}
+
+/* Onay penceresi (ConfirmDialog) — daha dar */
+.dialogNarrow {
+  composes: dialog from './DialogFrame.module.css';
+  min-width: var(--dialog-width-xs);
+  max-width: var(--dialog-width-confirm);
+}
+
+.header {
+  composes: header from './DialogFrame.module.css';
+}
+
+.title {
+  composes: title from './DialogFrame.module.css';
+}
+
+.body {
+  composes: body from './DialogFrame.module.css';
+}
+
+.footer {
+  composes: footer from './DialogFrame.module.css';
+}
+
+.footerLeft {
+  composes: footerLeft from './DialogFrame.module.css';
+}
+
+.footerRight {
+  composes: footerRight from './DialogFrame.module.css';
+}
+
+/* Diyalog düğmeleri: tek kaynak DialogButtons.module.css */
+.closeBtn {
+  composes: closeBtn from './DialogButtons.module.css';
+}
+
+.btn {
+  composes: btn from './DialogButtons.module.css';
+}
+
+.primary {
+  composes: primary from './DialogButtons.module.css';
+}
+
+.danger {
+  composes: danger from './DialogButtons.module.css';
+}

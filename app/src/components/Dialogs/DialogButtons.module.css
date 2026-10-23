@@ -1,0 +1,80 @@
+/* Diyalog düğmeleri — TEK KAYNAK.
+ *
+ * Tüm diyalog modülleri (AnalysisDialogShell, DialogBase, DataDialogs, Preferences,
+ * Welcome, About, ComputeVariable, FindReplace) kendi .btn / .primary / .closeBtn
+ * sınıflarını buradan `composes` ile türetir; burada değişen her yerde değişir.
+ * Görünüm analiz diyaloglarının düğmeleridir (kullanıcı kararı 2026-10-17).
+ * Kullanım: <button className={cx(styles.btn, styles.primary)}> — .primary ve .danger
+ * yalnız .btn ile birlikte çalışır (bileşik seçici). */
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: var(--font-size-close);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  padding: var(--space-xs) var(--space-xs);
+  border-radius: var(--radius-md);
+  transition:
+    background var(--duration-fast),
+    color var(--duration-fast);
+}
+.closeBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+.btn {
+  padding: var(--btn-pad-y) var(--space-lg);
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+  min-width: var(--btn-min-width);
+  text-align: center;
+  transition: all var(--duration-fast) var(--easing-standard);
+  box-shadow: var(--shadow-sm);
+}
+.btn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+  transform: translateY(calc(var(--border-width-thin) * -1));
+  box-shadow: var(--shadow-md);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+.btn.primary {
+  background: var(--color-accent);
+  border-color: transparent;
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-semibold);
+}
+.btn.primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: transparent;
+  box-shadow: 0 var(--space-xs) var(--space-lg)
+    color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Yıkıcı eylem (Hesabı sil gibi) — .btn ile birlikte. */
+.btn.danger {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+.btn.danger:hover:not(:disabled) {
+  background: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--color-accent-text);
+}

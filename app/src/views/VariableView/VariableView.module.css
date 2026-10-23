@@ -1,0 +1,623 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  position: relative;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-surface);
+  border-bottom: var(--border-width-thin) solid var(--color-border-strong);
+  height: var(--view-toolbar-height);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  margin-left: auto;
+  color: var(--color-text-secondary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--menu-item-pad);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+  border: var(--border-width-thin) solid var(--color-border);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--duration-base) ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(var(--border-width-thin));
+}
+
+.btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: transparent;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+/* ── Variable search box (toolbar) ─────────────────────────── */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  min-width: var(--search-width-min);
+  max-width: var(--search-width-max);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-base);
+  color: var(--color-text-secondary);
+  transition:
+    border-color var(--duration-fast),
+    box-shadow var(--duration-fast);
+}
+
+.searchBox:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-halo);
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.searchInput:focus,
+.searchInput:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.searchCount {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.searchNavBtn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body);
+  line-height: 1;
+  padding: calc(var(--space-xs) / 2) var(--space-xs);
+  border-radius: var(--radius-sm);
+}
+
+.searchNavBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.searchNavBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* The rules below land on AG Grid's own `.ag-row`, whose background rule
+   would otherwise win — hence the doubled selector plus !important, the same
+   escape hatch the theme overrides further down use. */
+.searchMatch.searchMatch {
+  background-color: color-mix(in srgb, var(--color-warning) 20%, transparent) !important;
+}
+
+.searchCurrent.searchCurrent {
+  background-color: color-mix(in srgb, var(--color-accent) 26%, transparent) !important;
+  box-shadow: inset var(--accent-bar-width) 0 0 var(--color-accent);
+}
+
+.gridContainer {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+/* Custom AG Grid Dark/Light Mode Adaptations */
+.grid {
+  width: 100%;
+  height: 100%;
+}
+
+.rowInputs {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-end;
+}
+
+/* Only the value/label fields grow; the button stays content-sized and aligns
+   to the input bottoms (no stray margin under the form groups in this row). */
+.rowInputs :global(.sa-form-group) {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.addBtn {
+  flex: 0 0 auto;
+  padding: var(--space-sm) var(--space-lg);
+  white-space: nowrap;
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-lg);
+  background: var(--color-bg-statusbar);
+  border-top: var(--border-width-thin) solid var(--color-border-strong);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  user-select: none;
+  height: var(--view-statusbar-height);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(var(--space-md));
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── AG Grid theme overrides ──────────────────────────────── */
+/* Must live here (after ag-grid CSS imports) so our tokens win
+   the specificity race. Both light and dark variants are covered
+   because JS switches the class and CSS vars do the colouring.  */
+:global(.ag-theme-quartz),
+:global(.ag-theme-quartz-dark) {
+  --ag-background-color: var(--color-bg-base);
+  --ag-foreground-color: var(--color-text-primary);
+  --ag-border-color: var(--color-border);
+  --ag-secondary-border-color: var(--color-border);
+  --ag-header-background-color: var(--color-bg-header);
+  --ag-header-foreground-color: var(--color-text-primary);
+  --ag-odd-row-background-color: var(--color-bg-base);
+  --ag-row-hover-color: var(--color-bg-hover);
+  --ag-selected-row-background-color: var(--color-bg-selected);
+  --ag-input-focus-border-color: var(--color-accent);
+  --ag-range-selection-border-color: var(--color-accent);
+  --ag-range-selection-background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  --ag-font-family: var(--font-family-ui);
+  --ag-font-size: var(--font-size-body);
+  --ag-cell-horizontal-border: solid var(--color-border);
+  --ag-row-border-color: var(--color-border);
+  --ag-secondary-foreground-color: var(--color-text-secondary);
+  --ag-disabled-foreground-color: var(--color-text-disabled);
+  --ag-chip-background-color: var(--color-bg-surface);
+  --ag-input-disabled-background-color: var(--color-bg-hover);
+  --ag-popup-background-color: var(--color-bg-overlay);
+  --ag-card-shadow: var(--shadow-md);
+  --ag-borders: solid var(--border-width-thin);
+  --ag-borders-critical: solid var(--border-width-thin);
+  --ag-border-radius: var(--radius-md);
+  --ag-card-radius: var(--radius-md);
+  --ag-wrapper-border-radius: var(--radius-md);
+  --ag-cell-editing-border-radius: var(--radius-md);
+}
+
+/* Ensure long text in grid cells is cleanly clipped with ellipsis */
+:global(.ag-cell) {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+:global(.ag-cell-value) {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.dropdownContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.dropdownTrigger {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-sm) 0 var(--space-md);
+  background: transparent;
+  border: var(--border-width-thin) solid transparent;
+  border-radius: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition: background-color var(--duration-fast) ease;
+}
+
+.dropdownTrigger:hover {
+  background: var(--color-bg-hover);
+}
+
+.dropdownTriggerOpen {
+  background: var(--color-bg-hover);
+}
+
+.dropdownValue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdownIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dropdownArrow {
+  flex-shrink: 0;
+  width: var(--space-md);
+  height: var(--space-md);
+  color: var(--color-text-secondary);
+  transition: transform var(--duration-base) ease;
+}
+
+.dropdownArrowOpen {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu,
+.dropdownMenuPortal {
+  position: fixed;
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md);
+  padding: var(--space-xs);
+  z-index: var(--z-context-menu);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-xs) / 2);
+  overflow: hidden;
+  animation: dropdownFadeIn var(--duration-fast) var(--easing-standard);
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--menu-item-pad);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm) !important;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dropdownItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.dropdownItemSelected {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-xs) * -1));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* AG Grid dropdown popups and editor overrides */
+:global(.ag-popup-editor),
+:global(.ag-select-list),
+:global(.ag-picker-field-wrapper) {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-md) !important;
+  border: var(--border-width-thin) solid var(--color-border-strong) !important;
+  background-color: var(--color-bg-overlay) !important;
+  overflow: hidden !important;
+}
+
+:global(.ag-select-list-item) {
+  padding: var(--menu-item-pad) !important;
+  border-radius: var(--radius-sm) !important;
+  margin: calc(var(--space-xs) / 2) var(--space-xs) !important;
+  transition: background-color var(--duration-fast) ease !important;
+}
+
+:global(.ag-select-list-item:hover),
+:global(.ag-select-list-item.ag-active-item) {
+  background-color: var(--color-bg-hover) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* ── Row Drag Handle & Selection Styling for # Column ─────── */
+:global(.ag-cell[col-id='#']) {
+  padding: 0 !important;
+}
+
+:global(.ag-cell[col-id='#']) :global(.ag-cell-wrapper) {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:global(.ag-cell[col-id='#']) :global(.ag-drag-handle) {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: grab !important;
+  z-index: 1 !important;
+  opacity: 0 !important;
+}
+
+:global(.ag-cell[col-id='#']) :global(.ag-drag-handle:active) {
+  cursor: grabbing !important;
+}
+
+:global(.ag-cell[col-id='#']) :global(.ag-cell-value) {
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  font-weight: bold;
+  color: var(--color-text-secondary);
+}
+
+.fieldHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Status bar segments: "Variables: N · Selected: n · N names copied" */
+.statusBar > span + span {
+  margin-left: var(--space-lg);
+}
+
+.copiedNote {
+  color: var(--color-success);
+}
+
+/* '#' column header — click to select / clear all variables */
+.numberHeader {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+  user-select: none;
+}
+
+/* Name column: a click selects (cell edits on double-click / typing) */
+:global(.ag-cell[col-id='name']:not(.ag-cell-inline-editing)) {
+  cursor: default;
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+
+.errorBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-bottom: var(--border-width-thin) solid var(--color-error-border);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.errorDismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+  color: inherit;
+  padding: 0 var(--space-xs);
+}
+
+/* ── Grid cell classes (AG Grid cellClass — no inline cellStyle) ──
+   Scoped under .grid + .ag-cell so they outrank the quartz theme's rules. */
+.grid :global(.ag-cell).cellNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.grid :global(.ag-cell).cellEllipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grid :global(.ag-cell).cellFlush {
+  padding: 0;
+}
+
+/* Values / Missing cells: summary text + "…" editor button */
+.editCell {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--space-xs) 0 var(--space-sm);
+}
+
+.editCellText {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editCellBtn {
+  margin-left: var(--space-xs);
+  padding: calc(var(--space-xs) / 2) var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  background: var(--color-bg-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-primary);
+}
+
+.editCellBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Width / Decimals: value + ▲▼ spinner */
+.spinnerCell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding-right: var(--space-xs);
+}
+
+.spinnerBtns {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: var(--border-width-thin);
+}
+
+.spinnerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--space-md) - var(--border-width-thin));
+  padding: 0 var(--space-xs);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-size: calc(var(--font-size-xs) * 0.73);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.spinnerBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Small inline icons in cells / dropdowns */
+.cellIcon {
+  flex-shrink: 0;
+  margin-right: var(--space-xs);
+  color: var(--color-accent);
+}
+
+.iconInfo {
+  color: var(--color-info);
+}
+
+.iconWarning {
+  color: var(--color-warning);
+}
+
+.iconNoShrink {
+  flex-shrink: 0;
+}

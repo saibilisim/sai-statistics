@@ -1,0 +1,152 @@
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: var(--z-context-menu);
+  background: transparent;
+}
+
+.menu {
+  position: fixed;
+  min-width: 210px;
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+  padding: 5px;
+  z-index: var(--z-context-menu);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  user-select: none;
+  animation: contextMenuFadeIn var(--duration-base) var(--easing-standard);
+  overflow: hidden;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 10px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: inherit;
+  line-height: var(--line-height-normal);
+  transition:
+    background-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+  white-space: nowrap;
+}
+
+.item:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+}
+
+.item:disabled {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}
+
+.danger {
+  color: var(--color-error);
+}
+
+.danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-error) 8%, transparent);
+  color: var(--color-error);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: color var(--duration-fast) ease;
+}
+
+.item:hover:not(:disabled) .icon {
+  color: var(--color-text-primary);
+}
+
+.danger .icon {
+  color: var(--color-error);
+}
+
+.danger:hover:not(:disabled) .icon {
+  color: var(--color-error);
+}
+
+.label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.separator {
+  height: 1px;
+  margin: 3px 0;
+  background: var(--color-border);
+}
+
+/* Icon toolbar row (icon-only buttons, hover tooltip via native title).
+   Buttons share the row's full width equally, so 3-icon and 4-icon rows both
+   span the menu edge-to-edge instead of huddling on the left. */
+.iconRow {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  padding: 2px 4px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition:
+    background-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.iconBtn:disabled {
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}

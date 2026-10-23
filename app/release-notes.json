@@ -1,0 +1,989 @@
+{
+  "$comment": "Son kullanıcıya dönük sürüm notları — tek kaynak. Kurallar: app/scripts/check-release-notes.cjs başı ve CLAUDE.md §10.",
+  "releases": [
+    {
+      "version": "0.2.36",
+      "date": "2026-10-21",
+      "notes": {
+        "tr": [
+          "Çıktıyı Word ve Excel'e aktarma artık gerçek .docx ve .xlsx dosyaları üretiyor: tablolar ve grafikler Word'de düzgün görünüyor, Excel'de her analiz ayrı bir sayfada ve sayılar hesaplanabilir sayı olarak geliyor.",
+          "Sözdiziminde DO REPEAT, ADD VALUE LABELS, FORMATS, STRING, NUMERIC, VARIABLE LEVEL ve DELETE VARIABLES komutları çalışıyor; VALUE LABELS artık SPSS'teki gibi eski etiketlerin yerine yenilerini yazıyor.",
+          "R terminalinde ggplot2, readxl ve lubridate kurulumla birlikte geliyor; betikler sekmelerde açılıyor, kaydedilmemiş betikler uygulama yeniden açıldığında geri geliyor ve Kaydet aynı dosyanın üzerine yazıyor.",
+          "Windows'ta R'da çalışan bir komutu Durdur ile kestiğinizde oturum kapanmıyor; tanımladığınız nesneler yerinde kalıyor.",
+          "R ve sözdizimi editörüne Bul/Değiştir (Ctrl+F, Ctrl+H), R'a satırları yorum yapma (Ctrl+Shift+C) eklendi; R Markdown ve Quarto belgelerinden (.Rmd, .qmd) rapor oluşturulabiliyor.",
+          "R terminaline Dosyalar ve Geçmiş panelleri eklendi; R artık Belgeler klasöründe başlıyor, böylece veri dosyalarınızı yalnızca adlarıyla okuyabiliyorsunuz."
+        ],
+        "en": [
+          "Exporting output to Word and Excel now produces real .docx and .xlsx files: tables and charts look right in Word, and in Excel each analysis gets its own sheet with numbers you can calculate with.",
+          "Syntax now runs DO REPEAT, ADD VALUE LABELS, FORMATS, STRING, NUMERIC, VARIABLE LEVEL and DELETE VARIABLES; VALUE LABELS now replaces the old labels, as in SPSS.",
+          "The R terminal ships with ggplot2, readxl and lubridate; scripts open in tabs, unsaved scripts come back when you reopen the app, and Save writes over the same file.",
+          "On Windows, stopping a running R command with Stop no longer closes the session; the objects you created stay where they are.",
+          "The R and syntax editors gain Find/Replace (Ctrl+F, Ctrl+H) and R gains comment toggling (Ctrl+Shift+C); reports can be built from R Markdown and Quarto documents (.Rmd, .qmd).",
+          "The R terminal has new Files and History panes; R now starts in your Documents folder, so you can read your data files by name alone."
+        ],
+        "es": [
+          "Exportar los resultados a Word y Excel ahora genera archivos .docx y .xlsx reales: las tablas y los gráficos se ven bien en Word y, en Excel, cada análisis va en su propia hoja con números con los que se puede calcular.",
+          "La sintaxis ahora ejecuta DO REPEAT, ADD VALUE LABELS, FORMATS, STRING, NUMERIC, VARIABLE LEVEL y DELETE VARIABLES; VALUE LABELS ahora sustituye las etiquetas anteriores, como en SPSS.",
+          "El terminal de R incluye ggplot2, readxl y lubridate; los scripts se abren en pestañas, los scripts sin guardar vuelven al reabrir la aplicación y Guardar sobrescribe el mismo archivo.",
+          "En Windows, detener con Detener un comando de R en ejecución ya no cierra la sesión; los objetos que creó siguen ahí.",
+          "Los editores de R y de sintaxis incorporan Buscar/Reemplazar (Ctrl+F, Ctrl+H) y R permite comentar líneas (Ctrl+Shift+C); se pueden crear informes a partir de documentos R Markdown y Quarto (.Rmd, .qmd).",
+          "El terminal de R tiene nuevos paneles Archivos e Historial; R ahora se inicia en su carpeta Documentos, así que puede leer sus archivos de datos solo por su nombre."
+        ],
+        "fr": [
+          "L’exportation des résultats vers Word et Excel produit désormais de vrais fichiers .docx et .xlsx : tableaux et graphiques s’affichent correctement dans Word, et dans Excel chaque analyse a sa propre feuille avec des nombres utilisables dans les calculs.",
+          "La syntaxe exécute désormais DO REPEAT, ADD VALUE LABELS, FORMATS, STRING, NUMERIC, VARIABLE LEVEL et DELETE VARIABLES ; VALUE LABELS remplace maintenant les anciennes étiquettes, comme dans SPSS.",
+          "Le terminal R inclut ggplot2, readxl et lubridate ; les scripts s’ouvrent dans des onglets, les scripts non enregistrés reviennent à la réouverture de l’application et Enregistrer écrase le même fichier.",
+          "Sous Windows, arrêter une commande R en cours avec Arrêter ne ferme plus la session ; les objets que vous avez créés restent en place.",
+          "Les éditeurs R et de syntaxe gagnent Rechercher/Remplacer (Ctrl+F, Ctrl+H) et R permet de commenter des lignes (Ctrl+Maj+C) ; on peut créer des rapports à partir de documents R Markdown et Quarto (.Rmd, .qmd).",
+          "Le terminal R propose de nouveaux panneaux Fichiers et Historique ; R démarre maintenant dans votre dossier Documents, vous pouvez donc lire vos fichiers de données par leur seul nom."
+        ],
+        "pt": [
+          "Exportar os resultados para Word e Excel agora gera arquivos .docx e .xlsx de verdade: tabelas e gráficos aparecem corretamente no Word e, no Excel, cada análise fica em sua própria planilha, com números que podem ser usados em cálculos.",
+          "A sintaxe agora executa DO REPEAT, ADD VALUE LABELS, FORMATS, STRING, NUMERIC, VARIABLE LEVEL e DELETE VARIABLES; VALUE LABELS agora substitui os rótulos antigos, como no SPSS.",
+          "O terminal do R inclui ggplot2, readxl e lubridate; os scripts abrem em abas, scripts não salvos voltam quando você reabre o aplicativo e Salvar grava sobre o mesmo arquivo.",
+          "No Windows, interromper um comando do R em execução com Parar não fecha mais a sessão; os objetos que você criou continuam lá.",
+          "Os editores do R e de sintaxe ganham Localizar/Substituir (Ctrl+F, Ctrl+H) e o R permite comentar linhas (Ctrl+Shift+C); é possível gerar relatórios a partir de documentos R Markdown e Quarto (.Rmd, .qmd).",
+          "O terminal do R tem novos painéis Arquivos e Histórico; o R agora começa na sua pasta Documentos, então você pode ler seus arquivos de dados só pelo nome."
+        ],
+        "it": [
+          "L’esportazione dei risultati in Word ed Excel ora produce veri file .docx e .xlsx: tabelle e grafici si vedono correttamente in Word e, in Excel, ogni analisi ha il proprio foglio con numeri utilizzabili nei calcoli.",
+          "La sintassi ora esegue DO REPEAT, ADD VALUE LABELS, FORMATS, STRING, NUMERIC, VARIABLE LEVEL e DELETE VARIABLES; VALUE LABELS ora sostituisce le vecchie etichette, come in SPSS.",
+          "Il terminale R include ggplot2, readxl e lubridate; gli script si aprono in schede, quelli non salvati tornano alla riapertura dell’app e Salva sovrascrive lo stesso file.",
+          "Su Windows, fermare un comando R in esecuzione con Interrompi non chiude più la sessione; gli oggetti creati restano al loro posto.",
+          "Gli editor R e di sintassi aggiungono Trova/Sostituisci (Ctrl+F, Ctrl+H) e in R si possono commentare le righe (Ctrl+Maiusc+C); si possono creare report da documenti R Markdown e Quarto (.Rmd, .qmd).",
+          "Il terminale R ha i nuovi pannelli File e Cronologia; R ora parte dalla cartella Documenti, così puoi leggere i tuoi file di dati solo con il nome."
+        ]
+      }
+    },
+    {
+      "version": "0.2.35",
+      "date": "2026-10-20",
+      "notes": {
+        "tr": [
+          "Bağımsız Örneklem t Testi, Tek Yönlü ANOVA ve Means artık gruplama değişkeni kendiliğinden seçilmiş olarak açılmıyor; Doğrusal Regresyon bağımsız değişkenler listesini yalnız Değişken Görünümü'nde rol atadıysanız dolduruyor.",
+          "Bir analiz penceresi son seçimlerinizi yalnız aynı veri setinde hatırlıyor; başka bir veri seti açtığınızda önceki dosyanın seçimleri yanlış değişkenlere taşınmıyor."
+        ],
+        "en": [
+          "Independent-Samples T Test, One-Way ANOVA and Means no longer open with a grouping variable already chosen; Linear Regression fills its independent variables only if you have assigned roles in Variable View.",
+          "An analysis dialog remembers your last selections only on the same dataset; when you open another dataset, the previous file's selections no longer land on the wrong variables."
+        ],
+        "es": [
+          "Prueba T para muestras independientes, ANOVA de un factor y Medias ya no se abren con una variable de agrupación elegida; Regresión lineal rellena sus variables independientes solo si ha asignado roles en la Vista de variables.",
+          "Un cuadro de análisis recuerda sus últimas selecciones solo en el mismo conjunto de datos; al abrir otro, las selecciones del archivo anterior ya no caen en variables equivocadas."
+        ],
+        "fr": [
+          "Le test T pour échantillons indépendants, l’ANOVA à un facteur et Moyennes ne s’ouvrent plus avec une variable de regroupement déjà choisie ; la Régression linéaire ne remplit ses variables indépendantes que si vous avez attribué des rôles dans la vue Variables.",
+          "Une boîte d’analyse ne mémorise vos dernières sélections que pour le même jeu de données ; quand vous en ouvrez un autre, les sélections du fichier précédent ne tombent plus sur de mauvaises variables."
+        ],
+        "pt": [
+          "Teste T para amostras independentes, ANOVA de um fator e Médias não abrem mais com uma variável de agrupamento já escolhida; a Regressão linear preenche as variáveis independentes só se você atribuiu papéis na Visão de variáveis.",
+          "Uma janela de análise lembra suas últimas seleções apenas no mesmo conjunto de dados; ao abrir outro, as seleções do arquivo anterior não caem mais em variáveis erradas."
+        ],
+        "it": [
+          "Test T per campioni indipendenti, ANOVA a una via e Medie non si aprono più con una variabile di raggruppamento già scelta; la Regressione lineare compila le variabili indipendenti solo se hai assegnato ruoli nella vista Variabili.",
+          "Una finestra di analisi ricorda le ultime selezioni solo sullo stesso dataset; quando apri un altro dataset, le selezioni del file precedente non finiscono più su variabili sbagliate."
+        ]
+      }
+    },
+    {
+      "version": "0.2.34",
+      "date": "2026-10-19",
+      "notes": {
+        "tr": [
+          "Hücre düzenleme, yapıştırma, satır veya sütun ekleyip silme ve geri almadan sonra başlıktaki * işareti artık her zaman görünüyor; Yeni, Aç ve İçe Aktar kaydedilmemiş değişiklikleri sormadan kapatmıyor.",
+          "Büyük bir veri seti yüklenirken satır sürüklemek artık satır kaybettirmiyor; yükleme bitene kadar sürükleme bekletiliyor.",
+          "Silinen bir sütunun filtresi ve Dosyayı Böl ayarı geride kalmıyor. Değişken görünümünde birden çok değişkeni silmek tek adımda geri alınabiliyor ve son değişken silinemiyor.",
+          "Normallik sekmesi başka sekmeye geçince takılı kalmıyor; veri, filtre veya ağırlık değişince sonuçlar kendiliğinden yenileniyor ve ondalık ayırıcı ayarınıza uyuyor.",
+          "Sözdizimindeki COMPUTE, IF, COUNT ve DO IF ile Değişken Hesapla, 50.000 satırdan büyük ve boş veri setlerinde de çalışıyor. Çok geniş sütun genişliği içeren dosyalar artık açılıyor.",
+          "Çıktı bloklarının özet ve sözdizimi satırları dosyayla birlikte kaydediliyor, tablo dipnotları tüm dışa aktarımlarda yer alıyor. Topla, Devrik ve Yeniden Yapılandır kaydedilmemiş verinizi sormadan değiştirmiyor."
+        ],
+        "en": [
+          "After editing or pasting cells, adding or deleting rows or columns, and undoing, the * in the title now always appears; New, Open and Import no longer close unsaved changes without asking.",
+          "Dragging rows while a large dataset is still loading no longer loses rows; dragging waits until loading has finished.",
+          "The filter and Split File setting of a deleted column no longer stay behind. Deleting several variables in Variable View can be undone in one step, and the last variable cannot be deleted.",
+          "The Normality tab no longer gets stuck when you switch tabs; results refresh on their own when the data, filter or weight changes, and they follow your decimal separator setting.",
+          "COMPUTE, IF, COUNT and DO IF in syntax, and Compute Variable, now also work on datasets with more than 50,000 rows and on empty ones. Files with very wide column widths now open.",
+          "Summary and syntax lines of Output blocks are saved with the file, and table footnotes appear in every export. Aggregate, Transpose and Restructure no longer replace unsaved data without asking."
+        ],
+        "es": [
+          "Tras editar o pegar celdas, añadir o eliminar filas o columnas y deshacer, el * del título ahora siempre aparece; Nuevo, Abrir e Importar ya no cierran cambios sin guardar sin preguntar.",
+          "Arrastrar filas mientras se carga un conjunto de datos grande ya no pierde filas; el arrastre espera a que termine la carga.",
+          "El filtro y el ajuste Dividir archivo de una columna eliminada ya no quedan atrás. Eliminar varias variables en la Vista de variables se deshace en un solo paso y la última variable no se puede eliminar.",
+          "La pestaña Normalidad ya no se queda bloqueada al cambiar de pestaña; los resultados se actualizan solos cuando cambian los datos, el filtro o la ponderación, y respetan su separador decimal.",
+          "COMPUTE, IF, COUNT y DO IF en la sintaxis, y Calcular variable, ahora funcionan también con más de 50.000 filas y con conjuntos vacíos. Los archivos con anchos de columna muy grandes ya se abren.",
+          "Las líneas de resumen y sintaxis de los bloques de resultados se guardan con el archivo y las notas al pie aparecen en todas las exportaciones. Agregar, Transponer y Reestructurar ya no reemplazan datos sin guardar sin preguntar."
+        ],
+        "fr": [
+          "Après la modification ou le collage de cellules, l’ajout ou la suppression de lignes ou de colonnes et l’annulation, le * du titre apparaît toujours ; Nouveau, Ouvrir et Importer ne ferment plus les modifications non enregistrées sans demander.",
+          "Faire glisser des lignes pendant le chargement d’un grand jeu de données ne fait plus perdre de lignes ; le glissement attend la fin du chargement.",
+          "Le filtre et le réglage Fractionner le fichier d’une colonne supprimée ne restent plus. Supprimer plusieurs variables dans la vue Variables s’annule en une seule étape, et la dernière variable ne peut pas être supprimée.",
+          "L’onglet Normalité ne reste plus bloqué quand vous changez d’onglet ; les résultats se mettent à jour seuls quand les données, le filtre ou la pondération changent, et suivent votre séparateur décimal.",
+          "COMPUTE, IF, COUNT et DO IF dans la syntaxe, ainsi que Calculer une variable, fonctionnent aussi au-delà de 50 000 lignes et sur des jeux vides. Les fichiers avec des largeurs de colonne très grandes s’ouvrent.",
+          "Les lignes de résumé et de syntaxe des blocs de résultats sont enregistrées avec le fichier, et les notes de bas de tableau figurent dans tous les exports. Agréger, Transposer et Restructurer ne remplacent plus les données non enregistrées sans demander."
+        ],
+        "pt": [
+          "Depois de editar ou colar células, adicionar ou excluir linhas ou colunas e desfazer, o * no título agora sempre aparece; Novo, Abrir e Importar não fecham mais alterações não salvas sem perguntar.",
+          "Arrastar linhas enquanto um conjunto de dados grande ainda carrega não perde mais linhas; o arraste espera o carregamento terminar.",
+          "O filtro e a configuração Dividir Arquivo de uma coluna excluída não ficam mais para trás. Excluir várias variáveis na Visão de variáveis é desfeito em um único passo, e a última variável não pode ser excluída.",
+          "A aba Normalidade não fica mais travada ao trocar de aba; os resultados se atualizam sozinhos quando os dados, o filtro ou a ponderação mudam, e seguem seu separador decimal.",
+          "COMPUTE, IF, COUNT e DO IF na sintaxe, e Calcular Variável, agora também funcionam com mais de 50.000 linhas e com conjuntos vazios. Arquivos com larguras de coluna muito grandes agora abrem.",
+          "As linhas de resumo e sintaxe dos blocos de resultados são salvas com o arquivo, e as notas de rodapé aparecem em todas as exportações. Agregar Dados, Transpor e Reestruturar não substituem mais dados não salvos sem perguntar."
+        ],
+        "it": [
+          "Dopo aver modificato o incollato celle, aggiunto o eliminato righe o colonne e annullato, l’* nel titolo ora compare sempre; Nuovo, Apri e Importa non chiudono più modifiche non salvate senza chiedere.",
+          "Trascinare righe mentre un dataset grande è ancora in caricamento non fa più perdere righe; il trascinamento attende la fine del caricamento.",
+          "Il filtro e l’impostazione Suddividi file di una colonna eliminata non restano più. L’eliminazione di più variabili nella vista Variabili si annulla in un solo passo e l’ultima variabile non può essere eliminata.",
+          "La scheda Normalità non resta più bloccata quando cambi scheda; i risultati si aggiornano da soli quando cambiano dati, filtro o ponderazione e seguono il separatore decimale impostato.",
+          "COMPUTE, IF, COUNT e DO IF nella sintassi, e Calcola variabile, ora funzionano anche oltre 50.000 righe e su dataset vuoti. I file con larghezze di colonna molto grandi ora si aprono.",
+          "Le righe di riepilogo e di sintassi dei blocchi di output vengono salvate con il file e le note a piè di tabella compaiono in tutte le esportazioni. Aggrega, Trasponi e Ristruttura non sostituiscono più dati non salvati senza chiedere."
+        ]
+      }
+    },
+    {
+      "version": "0.2.33",
+      "date": "2026-10-18",
+      "notes": {
+        "tr": [
+          "Sözdiziminde DO IF … ELSE IF … ELSE … END IF blokları artık doğru çalışıyor: her durum yalnız kendi dalındaki hesaplamayı alıyor. Desteklenmeyen LOOP ve DO REPEAT blokları atlanıyor ve bu bildiriliyor.",
+          "IF ve COMPUTE'ta 'A' gibi tek tırnaklı metinler, EQ, NE, ~=, & ve | işleçleri ile RND, TRUNC, MISSING, SYSMIS, NVALID, SD, CONCAT, UPCASE, ANY, RANGE gibi fonksiyonlar kullanılabiliyor.",
+          "score1 TO score4 gibi değişken aralıkları artık aradaki tüm değişkenleri kapsıyor. FREQ, DESC, CORR gibi kısaltılmış komutlar tanınıyor.",
+          "COUNT tüm değer gruplarını ve aralıkları sayıyor; RECODE eksik değerleri (SYSMIS=…) ve LO THRU HI aralığını doğru kodluyor; RENAME VARIABLES liste biçiminde ve takasta çalışıyor; SELECT IF parantezli koşulları kabul ediyor.",
+          "R Terminal'de Durdur'dan sonra veri setiniz yeniden yükleniyor; komutlar arasında açık bırakılan sink() ve scan() artık konsolu kilitlemiyor.",
+          "R çıktıları ile mesajlar yazıldıkları sırayla görünüyor; options(warn = 2) uyarıları hataya çeviriyor ve Türkçe R hata iletileri bozuk karaktersiz geliyor."
+        ],
+        "en": [
+          "DO IF … ELSE IF … ELSE … END IF blocks in syntax now work correctly: each case gets only the computations of its own branch. Unsupported LOOP and DO REPEAT blocks are skipped and reported.",
+          "IF and COMPUTE accept single-quoted text such as 'A', the EQ, NE, ~=, & and | operators, and functions such as RND, TRUNC, MISSING, SYSMIS, NVALID, SD, CONCAT, UPCASE, ANY and RANGE.",
+          "Variable ranges such as score1 TO score4 now include every variable in between. Abbreviated commands such as FREQ, DESC and CORR are recognized.",
+          "COUNT counts every value group and range; RECODE codes missing values (SYSMIS=…) and the LO THRU HI range correctly; RENAME VARIABLES works in list form and for swaps; SELECT IF accepts parenthesized conditions.",
+          "In the R Terminal your dataset is loaded again after Stop, and a sink() or scan() left open between commands no longer locks the console.",
+          "R output and messages appear in the order they were written; options(warn = 2) turns warnings into errors, and Turkish R error messages no longer show garbled characters."
+        ],
+        "es": [
+          "Los bloques DO IF … ELSE IF … ELSE … END IF de la sintaxis ahora funcionan correctamente: cada caso recibe solo los cálculos de su propia rama. Los bloques LOOP y DO REPEAT no compatibles se omiten y se indica.",
+          "IF y COMPUTE aceptan texto entre comillas simples como 'A', los operadores EQ, NE, ~=, & y |, y funciones como RND, TRUNC, MISSING, SYSMIS, NVALID, SD, CONCAT, UPCASE, ANY y RANGE.",
+          "Los rangos de variables como score1 TO score4 ahora incluyen todas las variables intermedias. Se reconocen comandos abreviados como FREQ, DESC y CORR.",
+          "COUNT cuenta todos los grupos de valores y rangos; RECODE codifica bien los valores perdidos (SYSMIS=…) y el rango LO THRU HI; RENAME VARIABLES funciona en forma de lista y para intercambios; SELECT IF acepta condiciones entre paréntesis.",
+          "En el Terminal R su conjunto de datos se vuelve a cargar tras Detener, y un sink() o scan() abierto entre comandos ya no bloquea la consola.",
+          "La salida y los mensajes de R aparecen en el orden en que se escribieron; options(warn = 2) convierte las advertencias en errores y los mensajes de error de R en turco ya no muestran caracteres dañados."
+        ],
+        "fr": [
+          "Les blocs DO IF … ELSE IF … ELSE … END IF de la syntaxe fonctionnent désormais correctement : chaque observation ne reçoit que les calculs de sa propre branche. Les blocs LOOP et DO REPEAT non pris en charge sont ignorés et signalés.",
+          "IF et COMPUTE acceptent le texte entre apostrophes comme 'A', les opérateurs EQ, NE, ~=, & et |, et des fonctions comme RND, TRUNC, MISSING, SYSMIS, NVALID, SD, CONCAT, UPCASE, ANY et RANGE.",
+          "Les plages de variables comme score1 TO score4 incluent désormais toutes les variables intermédiaires. Les commandes abrégées comme FREQ, DESC et CORR sont reconnues.",
+          "COUNT compte tous les groupes de valeurs et plages ; RECODE code correctement les valeurs manquantes (SYSMIS=…) et la plage LO THRU HI ; RENAME VARIABLES fonctionne en liste et pour les échanges ; SELECT IF accepte les conditions entre parenthèses.",
+          "Dans le Terminal R, votre jeu de données est rechargé après Arrêter, et un sink() ou un scan() laissé ouvert entre deux commandes ne bloque plus la console.",
+          "Les sorties et messages de R apparaissent dans l’ordre où ils ont été écrits ; options(warn = 2) transforme les avertissements en erreurs et les messages d’erreur R en turc ne comportent plus de caractères altérés."
+        ],
+        "pt": [
+          "Os blocos DO IF … ELSE IF … ELSE … END IF da sintaxe agora funcionam corretamente: cada caso recebe apenas os cálculos do seu próprio ramo. Blocos LOOP e DO REPEAT não suportados são ignorados e isso é informado.",
+          "IF e COMPUTE aceitam texto entre aspas simples como 'A', os operadores EQ, NE, ~=, & e |, e funções como RND, TRUNC, MISSING, SYSMIS, NVALID, SD, CONCAT, UPCASE, ANY e RANGE.",
+          "Intervalos de variáveis como score1 TO score4 agora incluem todas as variáveis intermediárias. Comandos abreviados como FREQ, DESC e CORR são reconhecidos.",
+          "COUNT conta todos os grupos de valores e intervalos; RECODE codifica corretamente valores ausentes (SYSMIS=…) e o intervalo LO THRU HI; RENAME VARIABLES funciona em lista e para trocas; SELECT IF aceita condições entre parênteses.",
+          "No Terminal R, seu conjunto de dados é recarregado após Parar, e um sink() ou scan() deixado aberto entre comandos não trava mais o console.",
+          "A saída e as mensagens do R aparecem na ordem em que foram escritas; options(warn = 2) transforma avisos em erros e as mensagens de erro do R em turco não mostram mais caracteres corrompidos."
+        ],
+        "it": [
+          "I blocchi DO IF … ELSE IF … ELSE … END IF della sintassi ora funzionano correttamente: ogni caso riceve solo i calcoli del proprio ramo. I blocchi LOOP e DO REPEAT non supportati vengono saltati e segnalati.",
+          "IF e COMPUTE accettano testo tra apici singoli come 'A', gli operatori EQ, NE, ~=, & e |, e funzioni come RND, TRUNC, MISSING, SYSMIS, NVALID, SD, CONCAT, UPCASE, ANY e RANGE.",
+          "Gli intervalli di variabili come score1 TO score4 ora includono tutte le variabili intermedie. I comandi abbreviati come FREQ, DESC e CORR vengono riconosciuti.",
+          "COUNT conta tutti i gruppi di valori e gli intervalli; RECODE codifica correttamente i valori mancanti (SYSMIS=…) e l’intervallo LO THRU HI; RENAME VARIABLES funziona in forma di elenco e per gli scambi; SELECT IF accetta condizioni tra parentesi.",
+          "Nel Terminale R il dataset viene ricaricato dopo Interrompi, e un sink() o scan() lasciato aperto tra un comando e l’altro non blocca più la console.",
+          "Output e messaggi di R compaiono nell’ordine in cui sono stati scritti; options(warn = 2) trasforma gli avvisi in errori e i messaggi di errore di R in turco non mostrano più caratteri danneggiati."
+        ]
+      }
+    },
+    {
+      "version": "0.2.32",
+      "date": "2026-10-18",
+      "notes": {
+        "tr": [
+          "R Terminal'e betik editörü geldi: Ctrl+Enter ile satırı ya da tüm ifadeyi çalıştırın, yazarken R'ın kendi önerilerini görün, F1 ile yardım açın; Ortam paneli nesnelerinizi listeler, View() tabloları sıralanabilir bir ızgarada açar.",
+          "R'da hazırladığınız bir tabloyu sai_commit() ile yeni veri seti olarak açabilirsiniz. R grafiklerini PNG, SVG ya da PDF olarak istediğiniz boyut ve çözünürlükte kaydedebilirsiniz.",
+          "R Terminal'de paketleri listeleyip yükleyebileceğiniz ve kurabileceğiniz bir Paketler sekmesi ile etkileşimli grafik ve tablo görüntüleyicisi var. Hatalar R biçiminde, açılır çağrı listesiyle gösteriliyor.",
+          "R hata ayıklayıcı: browser() ya da debugonce() ile kodu satır satır yürütüp değişkenleri inceleyin. Betiğinizden kod, çıktı ve grafikleri içeren bir rapor oluşturup HTML ya da PDF olarak kaydedin.",
+          "AI asistanı artık R kodu da yazıyor; önerilen kodu tek tıkla R betiğinize gönderip inceledikten sonra kendiniz çalıştırırsınız.",
+          "Çıktılar artık yukarıdan aşağı sıralanıyor: en yeni sonuç en altta ve dışa aktarılan dosya ekrandaki sırayla aynı. Güncellemeleri Kontrol Et sonucu artık bir pencerede gösteriliyor."
+        ],
+        "en": [
+          "The R Terminal now has a script editor: run the line or whole statement with Ctrl+Enter, get R's own suggestions as you type, open help with F1; the Environment pane lists your objects and View() opens tables in a sortable grid.",
+          "Open a table you built in R as a new dataset with sai_commit(). Save R plots as PNG, SVG or PDF at the size and resolution you choose.",
+          "The R Terminal has a Packages tab to list, load and install packages, and a viewer for interactive charts and tables. Errors appear in R's own wording with an expandable call list.",
+          "R debugger: step through code line by line with browser() or debugonce() and inspect variables. Build a report with code, output and plots from your script and save it as HTML or PDF.",
+          "The AI assistant now writes R code too; send the proposed code to your R script with one click, review it, then run it yourself.",
+          "Output now reads top to bottom: the newest result is at the end, and exported files follow the same order as the screen. Check for Updates now shows its result in a window."
+        ],
+        "es": [
+          "El Terminal R ahora tiene un editor de scripts: ejecute la línea o la instrucción completa con Ctrl+Enter, vea las sugerencias de R al escribir y abra la ayuda con F1; el panel Entorno lista sus objetos y View() abre tablas en una cuadrícula ordenable.",
+          "Abra como nuevo conjunto de datos una tabla creada en R con sai_commit(). Guarde los gráficos de R en PNG, SVG o PDF con el tamaño y la resolución que elija.",
+          "El Terminal R incluye una pestaña Paquetes para listar, cargar e instalar paquetes, y un visor de gráficos y tablas interactivos. Los errores se muestran con la redacción de R y una lista de llamadas desplegable.",
+          "Depurador de R: ejecute el código línea a línea con browser() o debugonce() e inspeccione las variables. Genere un informe con código, resultados y gráficos a partir de su script y guárdelo en HTML o PDF.",
+          "El asistente de IA ahora también escribe código R; envíe el código propuesto a su script de R con un clic, revíselo y ejecútelo usted mismo.",
+          "Los resultados ahora se leen de arriba abajo: el más reciente queda al final y los archivos exportados siguen el mismo orden que la pantalla. Buscar actualizaciones muestra ahora su resultado en una ventana."
+        ],
+        "fr": [
+          "Le Terminal R dispose d’un éditeur de scripts : exécutez la ligne ou l’instruction entière avec Ctrl+Entrée, voyez les suggestions de R pendant la saisie, ouvrez l’aide avec F1 ; le panneau Environnement liste vos objets et View() ouvre les tableaux dans une grille triable.",
+          "Ouvrez un tableau construit dans R comme nouveau jeu de données avec sai_commit(). Enregistrez les graphiques R en PNG, SVG ou PDF à la taille et à la résolution voulues.",
+          "Le Terminal R propose un onglet Packages pour lister, charger et installer des packages, ainsi qu’une visionneuse de graphiques et tableaux interactifs. Les erreurs s’affichent dans la formulation de R avec une liste d’appels dépliable.",
+          "Débogueur R : exécutez le code ligne par ligne avec browser() ou debugonce() et examinez les variables. Générez à partir de votre script un rapport avec code, résultats et graphiques, et enregistrez-le en HTML ou PDF.",
+          "L’assistant IA écrit désormais aussi du code R ; envoyez le code proposé vers votre script R en un clic, relisez-le, puis exécutez-le vous-même.",
+          "Les résultats se lisent désormais de haut en bas : le plus récent est à la fin, et les fichiers exportés suivent le même ordre qu’à l’écran. Rechercher les mises à jour affiche maintenant son résultat dans une fenêtre."
+        ],
+        "pt": [
+          "O Terminal R agora tem um editor de scripts: execute a linha ou a instrução inteira com Ctrl+Enter, veja as sugestões do R enquanto digita e abra a ajuda com F1; o painel Ambiente lista seus objetos e View() abre tabelas numa grade ordenável.",
+          "Abra como novo conjunto de dados uma tabela criada no R com sai_commit(). Salve gráficos do R em PNG, SVG ou PDF no tamanho e na resolução que quiser.",
+          "O Terminal R tem uma aba Pacotes para listar, carregar e instalar pacotes, e um visualizador de gráficos e tabelas interativos. Os erros aparecem na redação do próprio R, com uma lista de chamadas expansível.",
+          "Depurador do R: execute o código linha a linha com browser() ou debugonce() e inspecione as variáveis. Gere a partir do seu script um relatório com código, saída e gráficos e salve-o em HTML ou PDF.",
+          "O assistente de IA agora também escreve código R; envie o código proposto para o seu script R com um clique, revise-o e execute-o você mesmo.",
+          "Os resultados agora são lidos de cima para baixo: o mais recente fica no final, e os arquivos exportados seguem a mesma ordem da tela. Verificar atualizações agora mostra o resultado numa janela."
+        ],
+        "it": [
+          "Il Terminale R ora ha un editor di script: esegui la riga o l’intera istruzione con Ctrl+Invio, ricevi i suggerimenti di R mentre scrivi e apri la guida con F1; il pannello Ambiente elenca i tuoi oggetti e View() apre le tabelle in una griglia ordinabile.",
+          "Apri come nuovo dataset una tabella creata in R con sai_commit(). Salva i grafici R in PNG, SVG o PDF con la dimensione e la risoluzione che preferisci.",
+          "Il Terminale R ha una scheda Pacchetti per elencare, caricare e installare pacchetti, e un visualizzatore di grafici e tabelle interattivi. Gli errori compaiono con la formulazione di R e un elenco di chiamate espandibile.",
+          "Debugger R: esegui il codice riga per riga con browser() o debugonce() e ispeziona le variabili. Crea dal tuo script un report con codice, output e grafici e salvalo in HTML o PDF.",
+          "L’assistente IA ora scrive anche codice R; invia il codice proposto al tuo script R con un clic, controllalo e poi eseguilo tu stesso.",
+          "I risultati ora si leggono dall’alto verso il basso: il più recente è in fondo e i file esportati seguono lo stesso ordine dello schermo. Controlla aggiornamenti ora mostra il risultato in una finestra."
+        ]
+      }
+    },
+    {
+      "version": "0.2.31",
+      "date": "2026-10-18",
+      "notes": {
+        "tr": [
+          "Tüm pencereler aynı görünüme kavuştu: Veri menüsü, analiz ve Değişken Görünümü pencerelerinde köşeler, kenarlıklar, listeler ve düğmeler artık tek tip.",
+          "Sözdizimi sekmesi yenilendi: satır numaraları, hatalı satırın işaretlenmesi, yalnız seçili satırları çalıştırma, .sps açma/kaydetme, veri setinizle hazır örnekler sunan Komutlar menüsü ve tıklayınca adı ekleyen değişken listesi.",
+          "R Terminal'de grafikler sağdaki bir panelde toplanıyor; büyütüp tek tıkla Çıktılar'a gönderebilirsiniz. Oturum kapanırsa nedeni gösteriliyor ve tek tıkla yeniden başlatılabiliyor.",
+          "Değişken Görünümü'nde değişken adlarını seçip kopyalayabilirsiniz: tıklayarak, Ctrl/Shift ile veya sürükleyerek seçin, Ctrl+C ya da sağ tık menüsüyle alt alta, yan yana veya etiketleriyle kopyalayın. Ad artık çift tıklayarak düzenleniyor."
+        ],
+        "en": [
+          "All windows now share one look: corners, borders, lists and buttons are consistent across the Data menu, analysis and Variable View windows.",
+          "The Syntax tab has been refreshed: line numbers, failing lines marked, run only the selected lines, open/save .sps files, a Commands menu with ready-made examples for your dataset, and a variable list that inserts a name with one click.",
+          "In the R Terminal, plots are collected in a side panel; enlarge them and send them to Output with one click. If the session stops, the reason is shown and it can be restarted with one click.",
+          "In Variable View you can select and copy variable names: select by clicking, with Ctrl/Shift or by dragging, then copy with Ctrl+C or the right-click menu — one per line, on one line or with their labels. A name is now edited with a double-click."
+        ],
+        "es": [
+          "Todas las ventanas comparten ahora el mismo aspecto: esquinas, bordes, listas y botones son uniformes en las ventanas del menú Datos, de análisis y de la Vista de variables.",
+          "La pestaña Sintaxis se ha renovado: números de línea, líneas con error marcadas, ejecución solo de lo seleccionado, abrir/guardar .sps, un menú Comandos con ejemplos para su conjunto de datos y una lista de variables que inserta un nombre con un clic.",
+          "En el Terminal de R, los gráficos se reúnen en un panel lateral; puede ampliarlos y enviarlos a Resultados con un clic. Si la sesión se detiene, se muestra el motivo y se puede reiniciar con un clic.",
+          "En la Vista de variables puede seleccionar y copiar nombres de variables: seleccione con un clic, con Ctrl/Mayús o arrastrando, y copie con Ctrl+C o el menú contextual, uno por línea, en una línea o con sus etiquetas. Ahora un nombre se edita con doble clic."
+        ],
+        "fr": [
+          "Toutes les fenêtres partagent désormais le même aspect : coins, bordures, listes et boutons sont homogènes dans les fenêtres du menu Données, d’analyse et de la Vue des variables.",
+          "L’onglet Syntaxe a été repensé : numéros de ligne, lignes en erreur signalées, exécution de la sélection seule, ouverture/enregistrement de .sps, un menu Commandes avec des exemples pour vos données et une liste de variables qui insère un nom en un clic.",
+          "Dans le Terminal R, les graphiques sont regroupés dans un panneau latéral ; agrandissez-les et envoyez-les vers Résultats en un clic. Si la session s’arrête, la raison est affichée et elle peut être redémarrée en un clic.",
+          "Dans la Vue des variables, sélectionnez des noms de variables (clic, Ctrl/Maj ou glisser) et copiez-les avec Ctrl+C ou le menu contextuel : un par ligne, sur une ligne ou avec leurs étiquettes. Un nom se modifie désormais par double-clic."
+        ],
+        "pt": [
+          "Todas as janelas agora têm a mesma aparência: cantos, bordas, listas e botões são uniformes nas janelas do menu Dados, de análise e da Visualização de variáveis.",
+          "A aba Sintaxe foi renovada: números de linha, linhas com erro marcadas, execução só do que foi selecionado, abrir/salvar .sps, um menu Comandos com exemplos para seus dados e uma lista de variáveis que insere um nome com um clique.",
+          "No Terminal R, os gráficos ficam reunidos em um painel lateral; amplie-os e envie-os para Resultados com um clique. Se a sessão parar, o motivo é mostrado e ela pode ser reiniciada com um clique.",
+          "Na Visualização de variáveis você pode selecionar e copiar nomes de variáveis: selecione com um clique, com Ctrl/Shift ou arrastando, e copie com Ctrl+C ou o menu de contexto — um por linha, em uma linha ou com seus rótulos. Agora um nome é editado com clique duplo."
+        ],
+        "it": [
+          "Tutte le finestre hanno ora lo stesso aspetto: angoli, bordi, elenchi e pulsanti sono uniformi nelle finestre del menu Dati, di analisi e della Vista variabili.",
+          "La scheda Sintassi è stata rinnovata: numeri di riga, righe con errore segnalate, esecuzione della sola selezione, apertura/salvataggio di .sps, un menu Comandi con esempi per i tuoi dati e un elenco di variabili che inserisce un nome con un clic.",
+          "Nel Terminale R i grafici sono raccolti in un pannello laterale; puoi ingrandirli e inviarli all’Output con un clic. Se la sessione si interrompe, ne viene mostrato il motivo e può essere riavviata con un clic.",
+          "Nella Vista variabili puoi selezionare e copiare i nomi delle variabili: seleziona con un clic, con Ctrl/Maiusc o trascinando, poi copia con Ctrl+C o il menu contestuale, uno per riga, su una riga o con le etichette. Ora un nome si modifica con un doppio clic."
+        ]
+      }
+    },
+    {
+      "version": "0.2.30",
+      "date": "2026-10-17",
+      "notes": {
+        "tr": [
+          "Veri görünümünde sütun filtresi artık değer etiketlerini gösteriyor; filtrede etiket adıyla arama yapabilirsiniz.",
+          "Karşılama penceresinin ve diyalogların düğmeleri tek tip, daha düzenli bir görünüme kavuştu."
+        ],
+        "en": [
+          "The column filter in Data View now shows value labels, and you can search the filter by label name.",
+          "Buttons in the welcome window and dialogs now share one consistent, tidier look."
+        ],
+        "es": [
+          "El filtro de columna de la vista de datos ahora muestra las etiquetas de valor, y puede buscar en el filtro por el nombre de la etiqueta.",
+          "Los botones de la ventana de bienvenida y de los cuadros de diálogo ahora tienen un aspecto uniforme y más ordenado."
+        ],
+        "fr": [
+          "Le filtre de colonne de la vue des données affiche désormais les étiquettes de valeur, et vous pouvez y rechercher par nom d'étiquette.",
+          "Les boutons de la fenêtre d'accueil et des boîtes de dialogue ont désormais une apparence uniforme et plus soignée."
+        ],
+        "pt": [
+          "O filtro de coluna da visualização de dados agora mostra os rótulos de valor, e você pode pesquisar no filtro pelo nome do rótulo.",
+          "Os botões da janela de boas-vindas e das caixas de diálogo agora têm uma aparência uniforme e mais organizada."
+        ],
+        "it": [
+          "Il filtro di colonna della vista dati ora mostra le etichette dei valori, ed è possibile cercare nel filtro per nome dell'etichetta.",
+          "I pulsanti della finestra di benvenuto e delle finestre di dialogo ora hanno un aspetto uniforme e più ordinato."
+        ]
+      }
+    },
+    {
+      "version": "0.2.29",
+      "date": "2026-10-12",
+      "notes": {
+        "tr": [
+          "Bayes bağımsız örneklem t testinin, gruplama değişkeninde boş değer bulunan verilerde \"x or y must not contain missing or infinite values\" hatası vermesi düzeltildi."
+        ],
+        "en": [
+          "Fixed the Bayesian independent-samples t test failing with \"x or y must not contain missing or infinite values\" when the grouping variable had empty values."
+        ],
+        "es": [
+          "Se corrigió que la prueba t bayesiana para muestras independientes fallara con \"x or y must not contain missing or infinite values\" cuando la variable de agrupación tenía valores vacíos."
+        ],
+        "fr": [
+          "Correction du test t bayésien pour échantillons indépendants qui échouait avec « x or y must not contain missing or infinite values » lorsque la variable de regroupement contenait des valeurs vides."
+        ],
+        "pt": [
+          "Corrigido o teste t bayesiano para amostras independentes que falhava com \"x or y must not contain missing or infinite values\" quando a variável de agrupamento tinha valores vazios."
+        ],
+        "it": [
+          "Risolto il test t bayesiano per campioni indipendenti che falliva con \"x or y must not contain missing or infinite values\" quando la variabile di raggruppamento aveva valori vuoti."
+        ]
+      }
+    },
+    {
+      "version": "0.2.28",
+      "date": "2026-10-11",
+      "notes": {
+        "tr": [
+          "Karma modeller, Bayes analizleri, çoklu atama, GEE, kesin testler ve diğer ileri analizlerin ihtiyaç duyduğu tüm paketler artık uygulamayla birlikte geliyor: bu analizler ilk seferde, internet bağlantısı olmadan ve beklemeden çalışıyor.",
+          "Artık gerekmediği için Araçlar menüsündeki \"R Paketleri\" kaldırıldı."
+        ],
+        "en": [
+          "Every package needed by mixed models, Bayesian analyses, multiple imputation, GEE, exact tests and the other advanced analyses now comes with the app: these analyses run the first time, without an internet connection and without waiting.",
+          "\"R Packages\" has been removed from the Utilities menu, as it is no longer needed."
+        ],
+        "es": [
+          "Todos los paquetes que necesitan los modelos mixtos, los análisis bayesianos, la imputación múltiple, GEE, las pruebas exactas y los demás análisis avanzados ahora vienen con la aplicación: estos análisis funcionan desde la primera vez, sin conexión a internet y sin esperas.",
+          "Se eliminó \"Paquetes de R\" del menú Herramientas, ya que ya no es necesario."
+        ],
+        "fr": [
+          "Les paquets des modèles mixtes, analyses bayésiennes, imputation multiple, GEE, tests exacts et autres analyses avancées sont désormais fournis avec l'application : ces analyses fonctionnent dès la première fois, sans Internet et sans attente.",
+          "« Paquets R » a été retiré du menu Utilitaires, car il n'est plus nécessaire."
+        ],
+        "pt": [
+          "Todos os pacotes necessários para modelos mistos, análises bayesianas, imputação múltipla, GEE, testes exatos e as demais análises avançadas agora vêm com o aplicativo: essas análises funcionam já na primeira vez, sem conexão com a internet e sem espera.",
+          "\"Pacotes R\" foi removido do menu Utilitários, pois não é mais necessário."
+        ],
+        "it": [
+          "Tutti i pacchetti necessari a modelli misti, analisi bayesiane, imputazione multipla, GEE, test esatti e alle altre analisi avanzate ora sono inclusi nell'app: queste analisi funzionano fin dalla prima volta, senza connessione a Internet e senza attese.",
+          "\"Pacchetti R\" è stato rimosso dal menu Strumenti, perché non è più necessario."
+        ]
+      }
+    },
+    {
+      "version": "0.2.27",
+      "date": "2026-10-11",
+      "notes": {
+        "tr": [
+          "Otomatik güncellemenin indirme tamamlandıktan sonra kurulmaması düzeltildi; bundan sonraki güncellemeler uygulama içinden sorunsuz kurulur.",
+          "Bir güncelleme kurulamazsa Ayarlar ▸ Güncelleme bölümünde indirme sayfasını açan bir düğme çıkıyor."
+        ],
+        "en": [
+          "Fixed automatic updates not installing after the download finished; future updates now install from within the app without trouble.",
+          "If an update cannot be installed, Settings ▸ Update now shows a button that opens the download page."
+        ],
+        "es": [
+          "Se corrigió que las actualizaciones automáticas no se instalaran al terminar la descarga; las próximas actualizaciones se instalarán sin problemas desde la aplicación.",
+          "Si una actualización no se puede instalar, Configuración ▸ Actualización muestra un botón que abre la página de descarga."
+        ],
+        "fr": [
+          "Correction des mises à jour automatiques qui ne s'installaient pas une fois le téléchargement terminé ; les prochaines mises à jour s'installeront sans problème depuis l'application.",
+          "Si une mise à jour ne peut pas être installée, Paramètres ▸ Mise à jour affiche un bouton qui ouvre la page de téléchargement."
+        ],
+        "pt": [
+          "Corrigido o problema em que as atualizações automáticas não eram instaladas após o término do download; as próximas atualizações serão instaladas sem problemas pelo aplicativo.",
+          "Se uma atualização não puder ser instalada, Configurações ▸ Atualização mostra um botão que abre a página de download."
+        ],
+        "it": [
+          "Risolto il problema per cui gli aggiornamenti automatici non venivano installati al termine del download; i prossimi aggiornamenti si installeranno senza problemi dall'app.",
+          "Se un aggiornamento non può essere installato, Impostazioni ▸ Aggiornamento mostra un pulsante che apre la pagina di download."
+        ]
+      }
+    },
+    {
+      "version": "0.2.26",
+      "date": "2026-10-11",
+      "notes": {
+        "tr": [
+          "AI asistanının bazı kullanıcılarda \"unknown_model\" hatasıyla yanıt vermemesi düzeltildi; kullanımdan kalkan bir model seçiliyse güncel model kendiliğinden kullanılıyor.",
+          "Sohbet panelindeki kalan bakiye artık her yanıttan sonra güncelleniyor.",
+          "AI veri paylaşım onayı Ayarlar ▸ AI bölümünden görüntülenebiliyor, verilebiliyor ya da geri çekilebiliyor; onay penceresi daha okunaklı hale geldi.",
+          "Tekrarlı Ölçümler analizinde gruplar arası faktör ve betimsel istatistikler birlikte seçildiğinde sonucun görüntülenememesi düzeltildi.",
+          "Hesap silme, Ayarlar'da ayrı bir onay penceresine taşındı."
+        ],
+        "en": [
+          "Fixed the AI assistant failing to answer for some users with an \"unknown_model\" error; if a retired model is selected, the current model is now used automatically.",
+          "The remaining balance in the chat panel now updates after every answer.",
+          "AI data-sharing consent can now be reviewed, given or withdrawn in Settings ▸ AI, and the consent window is easier to read.",
+          "Fixed Repeated Measures results not being shown when a between-subjects factor and descriptive statistics were selected together.",
+          "Deleting your account has moved to a separate confirmation window in Settings."
+        ],
+        "es": [
+          "Se corrigió que el asistente de IA no respondiera a algunos usuarios con el error \"unknown_model\"; si hay un modelo retirado seleccionado, ahora se usa automáticamente el modelo actual.",
+          "El saldo restante en el panel de chat ahora se actualiza después de cada respuesta.",
+          "El consentimiento para compartir datos con la IA ahora se puede consultar, otorgar o retirar en Configuración ▸ IA, y la ventana de consentimiento es más fácil de leer.",
+          "Se corrigió que los resultados de Medidas repetidas no se mostraran al seleccionar a la vez un factor entre sujetos y estadísticos descriptivos.",
+          "La eliminación de la cuenta se trasladó a una ventana de confirmación aparte en Configuración."
+        ],
+        "fr": [
+          "Correction de l'assistant IA qui ne répondait pas chez certains utilisateurs avec une erreur « unknown_model » ; si un modèle retiré est sélectionné, le modèle actuel est désormais utilisé automatiquement.",
+          "Le solde restant dans le panneau de discussion est désormais mis à jour après chaque réponse.",
+          "Le consentement au partage de données avec l'IA peut désormais être consulté, donné ou retiré dans Paramètres ▸ IA, et la fenêtre de consentement est plus lisible.",
+          "Correction des résultats de Mesures répétées qui ne s'affichaient pas lorsqu'un facteur inter-sujets et des statistiques descriptives étaient sélectionnés ensemble.",
+          "La suppression du compte se fait désormais dans une fenêtre de confirmation distincte dans Paramètres."
+        ],
+        "pt": [
+          "Corrigido o assistente de IA que não respondia para alguns usuários com o erro \"unknown_model\"; se um modelo descontinuado estiver selecionado, o modelo atual agora é usado automaticamente.",
+          "O saldo restante no painel de chat agora é atualizado após cada resposta.",
+          "O consentimento de compartilhamento de dados com a IA agora pode ser consultado, dado ou retirado em Configurações ▸ IA, e a janela de consentimento ficou mais fácil de ler.",
+          "Corrigido o problema em que os resultados de Medidas Repetidas não eram exibidos quando um fator entre sujeitos e estatísticas descritivas eram selecionados juntos.",
+          "A exclusão da conta foi movida para uma janela de confirmação separada em Configurações."
+        ],
+        "it": [
+          "Risolto il problema per cui l'assistente IA non rispondeva ad alcuni utenti con l'errore \"unknown_model\"; se è selezionato un modello dismesso, ora viene usato automaticamente il modello attuale.",
+          "Il saldo residuo nel pannello della chat ora si aggiorna dopo ogni risposta.",
+          "Il consenso alla condivisione dei dati con l'IA ora si può consultare, dare o revocare in Impostazioni ▸ IA, e la finestra del consenso è più leggibile.",
+          "Risolto il problema per cui i risultati di Misure ripetute non venivano mostrati selezionando insieme un fattore tra soggetti e le statistiche descrittive.",
+          "L'eliminazione dell'account è stata spostata in una finestra di conferma separata in Impostazioni."
+        ]
+      }
+    },
+    {
+      "version": "0.2.25",
+      "date": "2026-10-11",
+      "notes": {
+        "tr": [
+          "Bazı bilgisayarlarda, kullanıcı klasörünün adı yüzünden analizlerin hiç çalışmayıp \"dosya ismi dönüştürme sorunu\" hatası vermesi düzeltildi."
+        ],
+        "en": [
+          "Fixed analyses failing to run on some computers with a \"file name conversion problem\" error caused by the name of the user folder."
+        ],
+        "es": [
+          "Se corrigió que en algunos equipos los análisis no se ejecutaran y mostraran el error \"problema de conversión del nombre de archivo\" debido al nombre de la carpeta del usuario."
+        ],
+        "fr": [
+          "Correction des analyses qui ne s'exécutaient pas sur certains ordinateurs, avec une erreur « problème de conversion du nom de fichier » due au nom du dossier utilisateur."
+        ],
+        "pt": [
+          "Corrigido o problema em que, em alguns computadores, as análises não eram executadas e mostravam o erro \"problema de conversão do nome do arquivo\" por causa do nome da pasta do usuário."
+        ],
+        "it": [
+          "Risolto il problema per cui su alcuni computer le analisi non partivano e mostravano l'errore \"problema di conversione del nome del file\" a causa del nome della cartella utente."
+        ]
+      }
+    },
+    {
+      "version": "0.2.24",
+      "date": "2026-10-11",
+      "notes": {
+        "tr": [
+          "Güncellemeden sonraki ilk açılışta bazı bilgisayarlarda yersiz yere çıkan \"Kurulum Gerekli\" paket listesi artık gösterilmiyor; gerçekten eksik bir paket olursa uygulama onu arka planda kendisi kuruyor."
+        ],
+        "en": [
+          "The \"Setup Required\" package list that some computers showed for no reason on the first start after an update no longer appears; if a package is genuinely missing, the app now installs it by itself in the background."
+        ],
+        "es": [
+          "La lista de paquetes \"Configuración requerida\" que algunos equipos mostraban sin motivo en el primer inicio tras una actualización ya no aparece; si realmente falta un paquete, la aplicación lo instala sola en segundo plano."
+        ],
+        "fr": [
+          "La liste de paquets « Configuration requise » que certains ordinateurs affichaient sans raison au premier démarrage après une mise à jour n'apparaît plus ; si un paquet manque réellement, l'application l'installe d'elle-même en arrière-plan."
+        ],
+        "pt": [
+          "A lista de pacotes \"Configuração Necessária\" que alguns computadores mostravam sem motivo na primeira abertura após uma atualização não aparece mais; se um pacote realmente estiver faltando, o aplicativo o instala sozinho em segundo plano."
+        ],
+        "it": [
+          "L'elenco di pacchetti \"Configurazione richiesta\" che alcuni computer mostravano senza motivo al primo avvio dopo un aggiornamento non compare più; se un pacchetto manca davvero, l'app lo installa da sola in background."
+        ]
+      }
+    },
+    {
+      "version": "0.2.23",
+      "date": "2026-10-10",
+      "notes": {
+        "tr": [
+          "İstatistik motoru R'ın en güncel kararlı sürümüne (4.6.1) yükseltildi; kurulum dosyası belirgin biçimde küçüldü.",
+          "Ek olarak kurduğunuz R paketleri yeni sürüme arka planda kendiliğinden uyarlanıyor; yarım kalmış bir paket kurulumu da bir sonraki denemede kendini tamamlıyor.",
+          "Bir analizi iptal ettiğinizde arka planda çalışmaya devam eden hesaplama kalmıyor."
+        ],
+        "en": [
+          "The statistics engine has been upgraded to the latest stable R (4.6.1), and the installer is noticeably smaller.",
+          "R packages you installed yourself are adapted to the new version automatically in the background, and an interrupted package installation now completes itself on the next attempt.",
+          "Cancelling an analysis no longer leaves a calculation running in the background."
+        ],
+        "es": [
+          "El motor estadístico se actualizó a la última versión estable de R (4.6.1) y el instalador es notablemente más pequeño.",
+          "Los paquetes de R que instaló usted mismo se adaptan automáticamente a la nueva versión en segundo plano, y una instalación de paquete interrumpida ahora se completa sola en el siguiente intento.",
+          "Al cancelar un análisis ya no queda ningún cálculo ejecutándose en segundo plano."
+        ],
+        "fr": [
+          "Le moteur statistique passe à la dernière version stable de R (4.6.1) et le programme d'installation est nettement plus léger.",
+          "Les paquets R que vous avez installés vous-même sont adaptés automatiquement à la nouvelle version en arrière-plan, et une installation de paquet interrompue se termine désormais d'elle-même à la tentative suivante.",
+          "Annuler une analyse ne laisse plus aucun calcul tourner en arrière-plan."
+        ],
+        "pt": [
+          "O motor estatístico foi atualizado para a versão estável mais recente do R (4.6.1), e o instalador ficou bem menor.",
+          "Os pacotes R que você mesmo instalou são adaptados automaticamente à nova versão em segundo plano, e uma instalação de pacote interrompida agora se completa sozinha na próxima tentativa.",
+          "Cancelar uma análise não deixa mais nenhum cálculo em execução em segundo plano."
+        ],
+        "it": [
+          "Il motore statistico è stato aggiornato all'ultima versione stabile di R (4.6.1) e il programma di installazione è notevolmente più leggero.",
+          "I pacchetti R installati da te vengono adattati automaticamente alla nuova versione in background, e un'installazione di pacchetto interrotta ora si completa da sola al tentativo successivo.",
+          "Annullare un'analisi non lascia più alcun calcolo in esecuzione in background."
+        ]
+      }
+    },
+    {
+      "version": "0.2.22",
+      "date": "2026-10-10",
+      "notes": {
+        "tr": [
+          "Kullanım kılavuzu ve istatistik kılavuzu artık İspanyolca, Fransızca, Portekizce ve İtalyanca da açılıyor; tüm dillerde menü yolları ve açıklamalar güncellendi.",
+          "Bayes analizlerinde sonsal özet artık aynı veride her çalıştırmada aynı değerleri veriyor; kullanılan rastgele sayı tohumu çıktıda yazıyor.",
+          "Ek olarak kurduğunuz R paketleri, ileride uygulama güncellendiğinde arka planda kendiliğinden yeniden hazırlanıyor; tekrar kurmanız gerekmiyor.",
+          "Kararlılık ve güvenlik iyileştirmeleri."
+        ],
+        "en": [
+          "The User Guide and Statistics Guide now also open in Spanish, French, Portuguese and Italian, with updated menu paths and explanations in every language.",
+          "Bayesian analyses now give the same posterior summary every time you run them on the same data; the random seed used is shown in the output.",
+          "R packages you install yourself are now set up again automatically in the background when a future update needs it, so you don't have to reinstall them.",
+          "Stability and security improvements."
+        ],
+        "es": [
+          "La Guía del usuario y la Guía de estadística ahora también se abren en español, francés, portugués e italiano, con rutas de menú y explicaciones actualizadas en todos los idiomas.",
+          "Los análisis bayesianos ahora dan el mismo resumen posterior cada vez que se ejecutan con los mismos datos; la semilla aleatoria utilizada se muestra en los resultados.",
+          "Los paquetes de R que instale usted mismo ahora se vuelven a preparar automáticamente en segundo plano cuando una actualización futura lo requiera, sin que tenga que reinstalarlos.",
+          "Mejoras de estabilidad y seguridad."
+        ],
+        "fr": [
+          "Le Guide de l'utilisateur et le Guide des statistiques s'ouvrent désormais aussi en espagnol, français, portugais et italien, avec des chemins de menu et des explications mis à jour dans toutes les langues.",
+          "Les analyses bayésiennes donnent désormais le même résumé a posteriori à chaque exécution sur les mêmes données ; la graine aléatoire utilisée est indiquée dans les résultats.",
+          "Les paquets R que vous installez vous-même sont désormais réinstallés automatiquement en arrière-plan lorsqu'une future mise à jour l'exige ; vous n'avez pas à les réinstaller.",
+          "Améliorations de la stabilité et de la sécurité."
+        ],
+        "pt": [
+          "O Guia do usuário e o Guia de estatística agora também abrem em espanhol, francês, português e italiano, com caminhos de menu e explicações atualizados em todos os idiomas.",
+          "As análises bayesianas agora fornecem o mesmo resumo posterior sempre que são executadas com os mesmos dados; a semente aleatória utilizada é exibida nos resultados.",
+          "Os pacotes R que você mesmo instala agora são preparados novamente de forma automática em segundo plano quando uma atualização futura exigir, sem que você precise reinstalá-los.",
+          "Melhorias de estabilidade e segurança."
+        ],
+        "it": [
+          "La Guida utente e la Guida statistica ora si aprono anche in spagnolo, francese, portoghese e italiano, con percorsi dei menu e spiegazioni aggiornati in tutte le lingue.",
+          "Le analisi bayesiane ora danno lo stesso riepilogo a posteriori ogni volta che vengono eseguite sugli stessi dati; il seme casuale utilizzato è indicato nei risultati.",
+          "I pacchetti R installati da te vengono ora ripreparati automaticamente in background quando un aggiornamento futuro lo richiede, senza doverli reinstallare.",
+          "Miglioramenti di stabilità e sicurezza."
+        ]
+      }
+    },
+    {
+      "version": "0.2.21",
+      "date": "2026-10-10",
+      "notes": {
+        "tr": [
+          "Kurulum dosyası küçüldü ve uygulama, dosyalarının değiştirilmesine karşı daha iyi korunuyor.",
+          "Bilgisayarınızda ayrıca kurulu R paketleri olsa bile analizler artık her zaman uygulamayla gelen, doğrulanmış paket sürümleriyle çalışıyor."
+        ],
+        "en": [
+          "The installer is smaller, and the app is now better protected against tampering with its files.",
+          "Analyses now always use the verified package versions that ship with the app, even if other R packages are installed on your computer."
+        ],
+        "es": [
+          "El instalador es más pequeño y la aplicación ahora está mejor protegida contra la manipulación de sus archivos.",
+          "Los análisis ahora usan siempre las versiones de paquetes verificadas que incluye la aplicación, aunque haya otros paquetes de R instalados en su equipo."
+        ],
+        "fr": [
+          "Le programme d'installation est plus léger et l'application est désormais mieux protégée contre la modification de ses fichiers.",
+          "Les analyses utilisent désormais toujours les versions de paquets vérifiées fournies avec l'application, même si d'autres paquets R sont installés sur votre ordinateur."
+        ],
+        "pt": [
+          "O instalador ficou menor e o aplicativo agora está mais protegido contra a adulteração de seus arquivos.",
+          "As análises agora sempre usam as versões de pacotes verificadas que acompanham o aplicativo, mesmo que haja outros pacotes R instalados no seu computador."
+        ],
+        "it": [
+          "Il programma di installazione è più leggero e l'app è ora meglio protetta contro la manomissione dei suoi file.",
+          "Le analisi ora usano sempre le versioni dei pacchetti verificate incluse nell'app, anche se sul computer sono installati altri pacchetti R."
+        ]
+      }
+    },
+    {
+      "version": "0.2.20",
+      "date": "2026-10-09",
+      "notes": {
+        "tr": [
+          "Windows'ta Akıllı Uygulama Denetimi açık olan bilgisayarlarda analizlerin çalışmaması ve \"Kurulum Gerekli\" uyarısı çıkması düzeltildi."
+        ],
+        "en": [
+          "Fixed analyses not running and a \"Setup Required\" message appearing on Windows PCs with Smart App Control turned on."
+        ],
+        "es": [
+          "Se corrigió que los análisis no se ejecutaran y apareciera el aviso \"Instalación necesaria\" en equipos Windows con Control inteligente de aplicaciones activado."
+        ],
+        "fr": [
+          "Correction des analyses qui ne s'exécutaient pas et du message « Installation requise » sur les PC Windows où le Contrôle intelligent des applications est activé."
+        ],
+        "pt": [
+          "Corrigido o problema em que as análises não eram executadas e aparecia o aviso \"Instalação necessária\" em PCs Windows com o Controle Inteligente de Aplicativos ativado."
+        ],
+        "it": [
+          "Risolto il problema per cui le analisi non venivano eseguite e compariva l'avviso \"Installazione richiesta\" sui PC Windows con Smart App Control attivo."
+        ]
+      }
+    },
+    {
+      "version": "0.2.19",
+      "date": "2026-10-07",
+      "notes": {
+        "tr": [
+          "Windows kurulumu artık yönetici izni gerekmeden yalnızca kendi hesabınıza yapılabiliyor; dilerseniz tüm kullanıcılar için kurmayı seçmeye devam edebilirsiniz."
+        ],
+        "en": [
+          "On Windows you can now install just for your own account without administrator rights, or still choose to install for all users."
+        ],
+        "es": [
+          "En Windows ahora puede instalar solo para su propia cuenta sin permisos de administrador, o seguir eligiendo instalar para todos los usuarios."
+        ],
+        "fr": [
+          "Sous Windows, vous pouvez désormais installer l'application uniquement pour votre compte sans droits d'administrateur, ou toujours choisir de l'installer pour tous les utilisateurs."
+        ],
+        "pt": [
+          "No Windows agora é possível instalar apenas para a sua conta, sem permissões de administrador, ou continuar escolhendo instalar para todos os usuários."
+        ],
+        "it": [
+          "Su Windows ora puoi installare solo per il tuo account senza diritti di amministratore, oppure scegliere comunque l'installazione per tutti gli utenti."
+        ]
+      }
+    },
+    {
+      "version": "0.2.18",
+      "date": "2026-10-06",
+      "notes": {
+        "tr": [
+          "AI asistanında model seçmek kolaylaştı: her modelin ne kadar yetenekli, hızlı ve ekonomik olduğu kartında bir bakışta görünüyor."
+        ],
+        "en": [
+          "Choosing an AI assistant model is easier: each model card shows at a glance how capable, fast and economical it is."
+        ],
+        "es": [
+          "Elegir un modelo del asistente de IA es más fácil: la tarjeta de cada modelo muestra de un vistazo lo capaz, rápido y económico que es."
+        ],
+        "fr": [
+          "Choisir un modèle de l'assistant IA est plus simple : la fiche de chaque modèle montre d'un coup d'œil ses capacités, sa rapidité et son coût."
+        ],
+        "pt": [
+          "Escolher um modelo do assistente de IA ficou mais fácil: o cartão de cada modelo mostra de relance o quão capaz, rápido e econômico ele é."
+        ],
+        "it": [
+          "Scegliere un modello dell'assistente IA è più semplice: la scheda di ogni modello mostra a colpo d'occhio quanto è capace, veloce ed economico."
+        ]
+      }
+    },
+    {
+      "version": "0.2.17",
+      "date": "2026-10-06",
+      "notes": {
+        "tr": [
+          "AI asistanındaki modeller artık karmaşık fiyat rakamları yerine anlaşılır bir maliyet düzeyiyle listeleniyor."
+        ],
+        "en": [
+          "AI assistant models are now listed with a simple cost level instead of complicated price figures."
+        ],
+        "es": [
+          "Los modelos del asistente de IA se muestran ahora con un nivel de coste sencillo en lugar de cifras de precio complicadas."
+        ],
+        "fr": [
+          "Les modèles de l'assistant IA sont désormais présentés avec un niveau de coût simple plutôt qu'avec des tarifs compliqués."
+        ],
+        "pt": [
+          "Os modelos do assistente de IA agora aparecem com um nível de custo simples em vez de valores de preço complicados."
+        ],
+        "it": [
+          "I modelli dell'assistente IA sono ora elencati con un livello di costo semplice invece di cifre di prezzo complicate."
+        ]
+      }
+    },
+    {
+      "version": "0.2.16",
+      "date": "2026-10-05",
+      "notes": {
+        "tr": [
+          "Windows kurulumu artık doğrulanmış yayıncı imzası taşıyor; kurarken çıkan güvenlik uyarıları azaldı.",
+          "Genel Doğrusal Model, Karma Modeller, ROC analizi, nonparametrik testler, oran testleri ve kayıp değer analizinde yeni seçenekler.",
+          "Kurulum sırasında lisans sözleşmesini görebilirsiniz; hesap oluştururken lisans ve gizlilik koşullarını onaylarsınız."
+        ],
+        "en": [
+          "The Windows installer now carries a verified publisher signature, so you see fewer security warnings during installation.",
+          "New options in the General Linear Model, Mixed Models, ROC analysis, nonparametric tests, proportion tests and missing value analysis.",
+          "You can read the license agreement during installation; when creating an account you accept the license and privacy terms."
+        ],
+        "es": [
+          "El instalador de Windows lleva ahora una firma de editor verificada, por lo que verá menos avisos de seguridad al instalar.",
+          "Nuevas opciones en el Modelo Lineal General, Modelos Mixtos, análisis ROC, pruebas no paramétricas, pruebas de proporciones y análisis de valores perdidos.",
+          "Puede leer el acuerdo de licencia durante la instalación; al crear una cuenta acepta la licencia y la política de privacidad."
+        ],
+        "fr": [
+          "Le programme d'installation Windows porte désormais une signature d'éditeur vérifiée : moins d'avertissements de sécurité pendant l'installation.",
+          "Nouvelles options dans le Modèle Linéaire Général, les Modèles Mixtes, l'analyse ROC, les tests non paramétriques, les tests de proportions et l'analyse des valeurs manquantes.",
+          "Vous pouvez lire le contrat de licence pendant l'installation ; en créant un compte, vous acceptez la licence et la politique de confidentialité."
+        ],
+        "pt": [
+          "O instalador do Windows agora tem uma assinatura de editor verificada, então você vê menos avisos de segurança ao instalar.",
+          "Novas opções no Modelo Linear Geral, Modelos Mistos, análise ROC, testes não paramétricos, testes de proporções e análise de valores ausentes.",
+          "Você pode ler o contrato de licença durante a instalação; ao criar uma conta, você aceita a licença e a política de privacidade."
+        ],
+        "it": [
+          "Il programma di installazione per Windows ora ha una firma dell'editore verificata: meno avvisi di sicurezza durante l'installazione.",
+          "Nuove opzioni nel Modello Lineare Generale, nei Modelli Misti, nell'analisi ROC, nei test non parametrici, nei test sulle proporzioni e nell'analisi dei valori mancanti.",
+          "Puoi leggere il contratto di licenza durante l'installazione; creando un account accetti la licenza e l'informativa sulla privacy."
+        ]
+      }
+    },
+    {
+      "version": "0.2.15",
+      "date": "2026-09-29",
+      "notes": {
+        "tr": [
+          "Analiz sonuçlarınız artık veri dosyanızla birlikte kaydediliyor; dosyayı yeniden açtığınızda sonuçlar da yerinde.",
+          "Uygulamayı kapatırken tek bir \"Kaydetmek istiyor musunuz?\" sorusu çıkıyor.",
+          "Açılışta karşılama penceresi: yeni dosya, son açılan dosyalar ve hazır örnek veri setleriyle hızlı başlangıç.",
+          "AI asistanı uzun sohbetlerde takılmıyor; yarıda kalan bir yanıtı \"Devam et\" ile sürdürebilirsiniz."
+        ],
+        "en": [
+          "Your analysis results are now saved together with your data file; reopen the file and the results are still there.",
+          "When closing the app you get a single \"Do you want to save?\" question.",
+          "A welcome window on startup: a new file, recent files and ready-made sample datasets to get going quickly.",
+          "The AI assistant no longer gets stuck in long conversations; you can resume an interrupted answer with \"Continue\"."
+        ],
+        "es": [
+          "Los resultados de sus análisis se guardan ahora junto con su archivo de datos; al volver a abrirlo, los resultados siguen ahí.",
+          "Al cerrar la aplicación aparece una única pregunta: \"¿Desea guardar?\".",
+          "Ventana de bienvenida al iniciar: archivo nuevo, archivos recientes y conjuntos de datos de ejemplo para empezar rápido.",
+          "El asistente de IA ya no se atasca en conversaciones largas; puede retomar una respuesta interrumpida con \"Continuar\"."
+        ],
+        "fr": [
+          "Vos résultats d'analyse sont désormais enregistrés avec votre fichier de données : en le rouvrant, vous retrouvez vos résultats.",
+          "À la fermeture de l'application, une seule question : « Voulez-vous enregistrer ? ».",
+          "Une fenêtre d'accueil au démarrage : nouveau fichier, fichiers récents et jeux de données d'exemple pour démarrer rapidement.",
+          "L'assistant IA ne se bloque plus dans les longues conversations ; vous pouvez reprendre une réponse interrompue avec « Continuer »."
+        ],
+        "pt": [
+          "Os resultados das suas análises agora são salvos junto com o arquivo de dados; ao reabri-lo, os resultados continuam lá.",
+          "Ao fechar o aplicativo aparece uma única pergunta: \"Deseja salvar?\".",
+          "Janela de boas-vindas ao iniciar: novo arquivo, arquivos recentes e conjuntos de dados de exemplo para começar rapidamente.",
+          "O assistente de IA não trava mais em conversas longas; você pode retomar uma resposta interrompida com \"Continuar\"."
+        ],
+        "it": [
+          "I risultati delle tue analisi vengono ora salvati insieme al file di dati: riaprendo il file, i risultati sono ancora lì.",
+          "Alla chiusura dell'app compare un'unica domanda: «Vuoi salvare?».",
+          "Una finestra di benvenuto all'avvio: nuovo file, file recenti e set di dati di esempio per iniziare subito.",
+          "L'assistente IA non si blocca più nelle conversazioni lunghe; puoi riprendere una risposta interrotta con «Continua»."
+        ]
+      }
+    },
+    {
+      "version": "0.2.14",
+      "date": "2026-09-29",
+      "notes": {
+        "tr": [
+          "Verilerinizi SPSS (.sav) dosyası olarak kaydedebilirsiniz; değişken ve değer etiketleri ile kayıp değer tanımları korunur.",
+          "SPSS dosyalarını açarken kayıp değer tanımları ve etiketler artık eksiksiz geliyor.",
+          "Excel'den aktarmada tarihler doğru görünüyor, \"001\" gibi baştaki sıfırlı kodlar korunuyor.",
+          "Veri ve Dönüştür menülerindeki hatalar giderildi."
+        ],
+        "en": [
+          "You can save your data as an SPSS (.sav) file, keeping variable and value labels and missing value definitions.",
+          "Opening SPSS files now brings in missing value definitions and labels completely.",
+          "When importing from Excel, dates appear correctly and codes with leading zeros such as \"001\" are kept.",
+          "Fixes in the Data and Transform menus."
+        ],
+        "es": [
+          "Puede guardar sus datos como archivo SPSS (.sav), conservando las etiquetas de variables y valores y las definiciones de valores perdidos.",
+          "Al abrir archivos SPSS ahora se importan completas las definiciones de valores perdidos y las etiquetas.",
+          "Al importar desde Excel, las fechas se muestran correctamente y se conservan los códigos con ceros a la izquierda como \"001\".",
+          "Correcciones en los menús Datos y Transformar."
+        ],
+        "fr": [
+          "Vous pouvez enregistrer vos données au format SPSS (.sav) en conservant les étiquettes de variables et de valeurs ainsi que les définitions des valeurs manquantes.",
+          "À l'ouverture des fichiers SPSS, les définitions des valeurs manquantes et les étiquettes sont désormais importées entièrement.",
+          "Lors de l'import depuis Excel, les dates s'affichent correctement et les codes avec zéros initiaux comme « 001 » sont conservés.",
+          "Corrections dans les menus Données et Transformer."
+        ],
+        "pt": [
+          "Você pode salvar seus dados como arquivo SPSS (.sav), mantendo os rótulos de variáveis e valores e as definições de valores ausentes.",
+          "Ao abrir arquivos SPSS, as definições de valores ausentes e os rótulos agora vêm completos.",
+          "Ao importar do Excel, as datas aparecem corretamente e códigos com zeros à esquerda como \"001\" são mantidos.",
+          "Correções nos menus Dados e Transformar."
+        ],
+        "it": [
+          "Puoi salvare i dati come file SPSS (.sav), mantenendo le etichette di variabili e valori e le definizioni dei valori mancanti.",
+          "All'apertura dei file SPSS, le definizioni dei valori mancanti e le etichette vengono ora importate per intero.",
+          "Importando da Excel, le date vengono mostrate correttamente e i codici con zeri iniziali come «001» vengono mantenuti.",
+          "Correzioni nei menu Dati e Trasforma."
+        ]
+      }
+    },
+    {
+      "version": "0.2.13",
+      "date": "2026-09-28",
+      "notes": {
+        "tr": [
+          "Pencere başlığında açık dosyanın adı ve kaydedilmemiş değişiklik işareti görünüyor.",
+          "Veri görünümünde kaç hücre seçtiğinizi alt çubukta görebilirsiniz.",
+          "AI sohbetiniz veri dosyanızla birlikte kaydediliyor.",
+          "Güncellemeleri Tercihler ▸ Güncelleme bölümünden kendiniz kontrol edip indirebilirsiniz.",
+          "Tek yönlü ANOVA'da bazı post hoc test sonuçları düzeltildi; hesaplama formüllerinde alt çizgili değişken adları ve AND/OR/NOT kullanılabiliyor."
+        ],
+        "en": [
+          "The window title shows the name of the open file and a marker for unsaved changes.",
+          "The status bar shows how many cells you have selected in the data view.",
+          "Your AI chat is saved together with your data file.",
+          "You can check for and download updates yourself under Preferences ▸ Update.",
+          "Some one-way ANOVA post hoc results were corrected; calculation formulas accept variable names with underscores and AND/OR/NOT."
+        ],
+        "es": [
+          "El título de la ventana muestra el nombre del archivo abierto y una marca de cambios sin guardar.",
+          "La barra de estado muestra cuántas celdas tiene seleccionadas en la vista de datos.",
+          "Su chat de IA se guarda junto con su archivo de datos.",
+          "Puede buscar y descargar actualizaciones usted mismo en Preferencias ▸ Actualización.",
+          "Se corrigieron algunos resultados post hoc del ANOVA de un factor; las fórmulas de cálculo aceptan nombres de variables con guion bajo y AND/OR/NOT."
+        ],
+        "fr": [
+          "Le titre de la fenêtre affiche le nom du fichier ouvert et un indicateur de modifications non enregistrées.",
+          "La barre d'état indique combien de cellules vous avez sélectionnées dans la vue des données.",
+          "Votre conversation avec l'IA est enregistrée avec votre fichier de données.",
+          "Vous pouvez rechercher et télécharger vous-même les mises à jour dans Préférences ▸ Mise à jour.",
+          "Certains résultats post hoc de l'ANOVA à un facteur ont été corrigés ; les formules de calcul acceptent les noms de variables avec tiret bas et AND/OR/NOT."
+        ],
+        "pt": [
+          "O título da janela mostra o nome do arquivo aberto e um indicador de alterações não salvas.",
+          "A barra de status mostra quantas células você selecionou na visualização de dados.",
+          "Seu chat de IA é salvo junto com o arquivo de dados.",
+          "Você mesmo pode verificar e baixar atualizações em Preferências ▸ Atualização.",
+          "Alguns resultados post hoc da ANOVA de um fator foram corrigidos; as fórmulas de cálculo aceitam nomes de variáveis com sublinhado e AND/OR/NOT."
+        ],
+        "it": [
+          "Il titolo della finestra mostra il nome del file aperto e un indicatore di modifiche non salvate.",
+          "La barra di stato mostra quante celle hai selezionato nella vista dati.",
+          "La chat con l'IA viene salvata insieme al file di dati.",
+          "Puoi cercare e scaricare tu stesso gli aggiornamenti da Preferenze ▸ Aggiornamento.",
+          "Corretti alcuni risultati post hoc dell'ANOVA a una via; le formule di calcolo accettano nomi di variabili con trattino basso e AND/OR/NOT."
+        ]
+      }
+    },
+    {
+      "version": "0.2.11",
+      "date": "2026-09-25",
+      "notes": {
+        "tr": [
+          "İndirilen güncelleme \"Yeniden başlat\" ile sorunsuz kuruluyor; indirme ilerlemesini alt çubukta izleyebilirsiniz.",
+          "Çapraz tablolarda kategoriler kod yerine tanımladığınız etiketlerle gösteriliyor.",
+          "Oran testlerinde kayıp değer tanımlarınız dikkate alınıyor; seçtiğiniz başarı değeri veride yoksa uyarı veriliyor."
+        ],
+        "en": [
+          "A downloaded update now installs reliably with \"Restart\"; you can follow the download progress in the status bar.",
+          "Crosstabs show categories with the labels you defined instead of codes.",
+          "Proportion tests respect your missing value definitions and warn you if the chosen success value does not occur in the data."
+        ],
+        "es": [
+          "Una actualización descargada se instala ahora sin problemas con \"Reiniciar\"; puede seguir el progreso de la descarga en la barra de estado.",
+          "Las tablas cruzadas muestran las categorías con las etiquetas que definió en lugar de códigos.",
+          "Las pruebas de proporciones respetan sus definiciones de valores perdidos y le avisan si el valor de éxito elegido no aparece en los datos."
+        ],
+        "fr": [
+          "Une mise à jour téléchargée s'installe désormais sans problème avec « Redémarrer » ; vous pouvez suivre le téléchargement dans la barre d'état.",
+          "Les tableaux croisés affichent les catégories avec les étiquettes que vous avez définies au lieu des codes.",
+          "Les tests de proportions tiennent compte de vos définitions de valeurs manquantes et vous avertissent si la valeur de succès choisie n'apparaît pas dans les données."
+        ],
+        "pt": [
+          "Uma atualização baixada agora é instalada sem problemas com \"Reiniciar\"; você pode acompanhar o download na barra de status.",
+          "As tabelas cruzadas mostram as categorias com os rótulos que você definiu em vez de códigos.",
+          "Os testes de proporções respeitam suas definições de valores ausentes e avisam se o valor de sucesso escolhido não aparece nos dados."
+        ],
+        "it": [
+          "Un aggiornamento scaricato ora si installa senza problemi con «Riavvia»; puoi seguire il download nella barra di stato.",
+          "Le tabelle di contingenza mostrano le categorie con le etichette che hai definito invece dei codici.",
+          "I test sulle proporzioni rispettano le tue definizioni dei valori mancanti e ti avvisano se il valore di successo scelto non compare nei dati."
+        ]
+      }
+    },
+    {
+      "version": "0.2.2",
+      "date": "2026-09-23",
+      "notes": {
+        "tr": [
+          "Uygulama yeni sürümleri kendiliğinden kontrol edip size haber veriyor.",
+          "Yeni analizler: Multinomial Lojistik Regresyon ve Ordinal Regresyon. Regresyon analizlerinde ve Mann-Whitney, Kruskal-Wallis, Wilcoxon testlerinde iyileştirmeler."
+        ],
+        "en": [
+          "The app checks for new versions on its own and lets you know.",
+          "New analyses: Multinomial Logistic Regression and Ordinal Regression. Improvements to regression analyses and to the Mann-Whitney, Kruskal-Wallis and Wilcoxon tests."
+        ],
+        "es": [
+          "La aplicación busca nuevas versiones por sí sola y le avisa.",
+          "Nuevos análisis: Regresión Logística Multinomial y Regresión Ordinal. Mejoras en los análisis de regresión y en las pruebas de Mann-Whitney, Kruskal-Wallis y Wilcoxon."
+        ],
+        "fr": [
+          "L'application recherche elle-même les nouvelles versions et vous prévient.",
+          "Nouvelles analyses : Régression Logistique Multinomiale et Régression Ordinale. Améliorations des analyses de régression et des tests de Mann-Whitney, Kruskal-Wallis et Wilcoxon."
+        ],
+        "pt": [
+          "O aplicativo verifica sozinho se há novas versões e avisa você.",
+          "Novas análises: Regressão Logística Multinomial e Regressão Ordinal. Melhorias nas análises de regressão e nos testes de Mann-Whitney, Kruskal-Wallis e Wilcoxon."
+        ],
+        "it": [
+          "L'app controlla da sola la presenza di nuove versioni e ti avvisa.",
+          "Nuove analisi: Regressione Logistica Multinomiale e Regressione Ordinale. Miglioramenti alle analisi di regressione e ai test di Mann-Whitney, Kruskal-Wallis e Wilcoxon."
+        ]
+      }
+    },
+    {
+      "version": "0.2.1",
+      "date": "2026-09-21",
+      "notes": {
+        "tr": [
+          "Güncellemeler yalnızca siz \"Yeniden başlat\" dediğinizde kuruluyor; uygulamayı kapatmak kurulumu başlatmıyor."
+        ],
+        "en": [
+          "Updates are installed only when you choose \"Restart\"; simply closing the app no longer starts the installation."
+        ],
+        "es": [
+          "Las actualizaciones solo se instalan cuando elige \"Reiniciar\"; cerrar la aplicación ya no inicia la instalación."
+        ],
+        "fr": [
+          "Les mises à jour ne s'installent que lorsque vous choisissez « Redémarrer » ; fermer l'application ne lance plus l'installation."
+        ],
+        "pt": [
+          "As atualizações só são instaladas quando você escolhe \"Reiniciar\"; fechar o aplicativo não inicia mais a instalação."
+        ],
+        "it": [
+          "Gli aggiornamenti vengono installati solo quando scegli «Riavvia»; chiudere l'app non avvia più l'installazione."
+        ]
+      }
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-09-21",
+      "notes": {
+        "tr": [
+          "Otomatik güncelleme: yeni sürüm çıktığında size haber verilir, arka planda indirilir ve tek tıkla kurulur."
+        ],
+        "en": [
+          "Automatic updates: you are notified when a new version is out; it downloads in the background and installs with one click."
+        ],
+        "es": [
+          "Actualizaciones automáticas: se le avisa cuando sale una nueva versión, se descarga en segundo plano y se instala con un clic."
+        ],
+        "fr": [
+          "Mises à jour automatiques : vous êtes prévenu lorsqu'une nouvelle version sort ; elle se télécharge en arrière-plan et s'installe en un clic."
+        ],
+        "pt": [
+          "Atualizações automáticas: você é avisado quando sai uma nova versão; ela é baixada em segundo plano e instalada com um clique."
+        ],
+        "it": [
+          "Aggiornamenti automatici: ricevi un avviso quando esce una nuova versione, che viene scaricata in background e installata con un clic."
+        ]
+      }
+    }
+  ]
+}

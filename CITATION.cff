@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use SAI Statistics in published research, please cite it as below."
+title: "SAI Statistics"
+abstract: "Cross-platform desktop statistics application built on the R engine."
+type: software
+authors:
+  - name: "SAI Bilişim"
+    website: "https://saibilisim.com"
+version: "0.2.36"
+license: AGPL-3.0-only
+url: "https://saistatistics.com"
+repository-code: "https://github.com/saibilisim/sai-statistics"
+keywords:
+  - statistics
+  - R
+  - data analysis
+  - desktop application

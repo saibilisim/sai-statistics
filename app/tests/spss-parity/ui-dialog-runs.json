@@ -1,0 +1,2144 @@
+[
+  {
+    "id": "frequencies-age",
+    "channel": "menu:analyze:frequencies",
+    "spss32": false,
+    "syntax": "FREQUENCIES VARIABLES=age\n  /STATISTICS=MEAN STDDEV MINIMUM MAXIMUM.",
+    "okRequest": {
+      "analysisId": "frequencies",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "frequencies.R",
+      "params": {
+        "variables": [
+          "col_4"
+        ],
+        "varNames": {
+          "col_4": "age"
+        },
+        "valueLabels": {
+          "col_4": {}
+        },
+        "options": {
+          "showTable": true,
+          "order": "ascending",
+          "statistics": {
+            "quartiles": false,
+            "percentiles": false,
+            "customPercentiles": [],
+            "cutPoints": null,
+            "mean": true,
+            "median": false,
+            "mode": false,
+            "sum": false,
+            "sd": true,
+            "variance": false,
+            "range": false,
+            "min": true,
+            "max": true,
+            "semean": false,
+            "cv": false,
+            "skewness": false,
+            "kurtosis": false
+          },
+          "charts": {
+            "type": "none",
+            "showNormalCurve": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişken(ler): age",
+      "syntax": "FREQUENCIES VARIABLES=age\n  /STATISTICS=MEAN STDDEV MINIMUM MAXIMUM."
+    }
+  },
+  {
+    "id": "crosstabs-grp3-disease",
+    "channel": "menu:analyze:crosstabs",
+    "spss32": false,
+    "syntax": "CROSSTABS /TABLES=grp3 BY disease\n  /STATISTICS=CHISQ PHI\n  /CELLS=COUNT EXPECTED.",
+    "okRequest": {
+      "analysisId": "crosstabs",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "crosstabs.R",
+      "params": {
+        "rows": [
+          "col_6"
+        ],
+        "rowNames": {
+          "col_6": "grp3"
+        },
+        "cols": [
+          "col_17"
+        ],
+        "colNames": {
+          "col_17": "disease"
+        },
+        "options": {
+          "cells": {
+            "observed": true,
+            "expected": true,
+            "rowPct": false,
+            "colPct": false,
+            "totalPct": false,
+            "unstdResid": false,
+            "stdResid": false,
+            "adjResid": false
+          },
+          "stats": {
+            "chisquare": true,
+            "phiCramer": true,
+            "contingency": false,
+            "lambda": false,
+            "uncertainty": false,
+            "correlations": false,
+            "gamma": false,
+            "somersd": false,
+            "taub": false,
+            "tauc": false,
+            "eta": false,
+            "kappa": false,
+            "risk": false,
+            "mcnemar": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Satır(lar): grp3 | Sütun(lar): disease",
+      "syntax": "CROSSTABS /TABLES=grp3 BY disease\n  /STATISTICS=CHISQ PHI\n  /CELLS=COUNT EXPECTED."
+    }
+  },
+  {
+    "id": "ttest-ind-score-income",
+    "channel": "menu:analyze:independent-ttest",
+    "spss32": false,
+    "syntax": "T-TEST GROUPS=grp2(1 2) /VARIABLES=score income.",
+    "okRequest": {
+      "analysisId": "ttestInd",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "ttest-independent.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "groupVar": "col_5",
+        "groupName": "grp2",
+        "groupValueLabels": {},
+        "group1": "1",
+        "group2": "2",
+        "options": {
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken(ler)i: score, income | Gruplama Değişkeni: grp2",
+      "syntax": "T-TEST GROUPS=grp2(1 2) /VARIABLES=score income."
+    }
+  },
+  {
+    "id": "ttest1-score-income",
+    "channel": "menu:analyze:onesample-ttest",
+    "spss32": false,
+    "syntax": "T-TEST /TESTVAL=50 /VARIABLES=score income.",
+    "okRequest": {
+      "analysisId": "ttest1",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "ttest-onesample.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "testValue": 50,
+        "options": {
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken(ler)i: score, income",
+      "syntax": "T-TEST /TESTVAL=50 /VARIABLES=score income."
+    }
+  },
+  {
+    "id": "ttest-paired",
+    "channel": "menu:analyze:paired-ttest",
+    "spss32": false,
+    "syntax": "T-TEST PAIRS=pre score WITH post income (PAIRED).",
+    "okRequest": {
+      "analysisId": "ttestPaired",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "ttest-paired.R",
+      "params": {
+        "var1": [
+          "col_8",
+          "col_2"
+        ],
+        "var2": [
+          "col_9",
+          "col_3"
+        ],
+        "varNames": {
+          "col_8": "pre",
+          "col_2": "score",
+          "col_9": "post",
+          "col_3": "income"
+        },
+        "options": {
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişken 1: pre, score | Değişken 2: post, income",
+      "syntax": "T-TEST PAIRS=pre score WITH post income (PAIRED)."
+    }
+  },
+  {
+    "id": "means-score-income-grp3",
+    "channel": "menu:analyze:means",
+    "spss32": false,
+    "syntax": "MEANS TABLES=score income BY grp3\n  /CELLS=COUNT MEAN MEDIAN MIN MAX STDDEV.",
+    "okRequest": {
+      "analysisId": "means",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "means.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "factor": "col_6",
+        "factorName": "grp3",
+        "factorValueLabels": {},
+        "options": {
+          "missing": "analysis",
+          "cells": {
+            "n": true,
+            "mean": true,
+            "median": true,
+            "groupedMedian": false,
+            "seMean": false,
+            "sum": false,
+            "min": true,
+            "max": true,
+            "range": false,
+            "first": false,
+            "last": false,
+            "sd": true,
+            "variance": false,
+            "kurtosis": false,
+            "seKurtosis": false,
+            "skewness": false,
+            "seSkewness": false,
+            "harmonic": false,
+            "geometric": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı Liste: score, income | Bağımsız Liste: grp3",
+      "syntax": "MEANS TABLES=score income BY grp3\n  /CELLS=COUNT MEAN MEDIAN MIN MAX STDDEV."
+    }
+  },
+  {
+    "id": "descriptives-score-income",
+    "channel": "menu:analyze:descriptives",
+    "spss32": false,
+    "syntax": "DESCRIPTIVES VARIABLES=score income\n  /STATISTICS=MEAN STDDEV VARIANCE RANGE MINIMUM MAXIMUM.",
+    "okRequest": {
+      "analysisId": "descriptives",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "descriptives.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "options": {
+          "mean": true,
+          "sum": false,
+          "sd": true,
+          "variance": true,
+          "range": true,
+          "min": true,
+          "max": true,
+          "seMean": false,
+          "kurtosis": false,
+          "skewness": false,
+          "displayOrder": "variable"
+        },
+        "saveZScores": false
+      },
+      "columnFilters": {},
+      "summary": "Değişken(ler): score, income",
+      "syntax": "DESCRIPTIVES VARIABLES=score income\n  /STATISTICS=MEAN STDDEV VARIANCE RANGE MINIMUM MAXIMUM."
+    }
+  },
+  {
+    "id": "correlate-spearman",
+    "channel": "menu:analyze:correlate-bivariate",
+    "spss32": false,
+    "syntax": "NONPAR CORR VARIABLES=score income age\n  /PRINT=SPEARMAN.",
+    "okRequest": {
+      "analysisId": "correlate",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "correlation.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income",
+          "col_4": "age"
+        },
+        "methods": {
+          "pearson": false,
+          "spearman": true,
+          "kendall": false
+        },
+        "options": {
+          "missing": "pairwise",
+          "oneTailed": false,
+          "flagSignificant": true,
+          "meansAndSD": false,
+          "crossProduct": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: score, income, age",
+      "syntax": "NONPAR CORR VARIABLES=score income age\n  /PRINT=SPEARMAN."
+    }
+  },
+  {
+    "id": "oneway-score-income-grp3",
+    "channel": "menu:analyze:oneway-anova",
+    "spss32": false,
+    "syntax": "ONEWAY score income BY grp3\n  /STATISTICS=HOMOGENEITY WELCH\n  /POSTHOC=TUKEY ALPHA(0.05).",
+    "okRequest": {
+      "analysisId": "anova",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "anova-oneway.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "factor": "col_6",
+        "factorName": "grp3",
+        "options": {
+          "homogeneity": true,
+          "welch": true,
+          "brownForsythe": false,
+          "meansPlot": false,
+          "effectSize": false,
+          "tukey": true,
+          "bonferroni": false,
+          "lsd": false,
+          "sidak": false,
+          "scheffe": false,
+          "gamesHowell": false,
+          "tamhaneT2": false,
+          "dunnettT3": false,
+          "dunnettC": false,
+          "hochbergGT2": false,
+          "dunnett": false,
+          "dunnettControl": "last",
+          "snk": false,
+          "duncan": false,
+          "regwQ": false,
+          "wallerDuncan": false,
+          "sigLevel": "0.05",
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı Liste: score, income | Faktör: grp3",
+      "syntax": "ONEWAY score income BY grp3\n  /STATISTICS=HOMOGENEITY WELCH\n  /POSTHOC=TUKEY ALPHA(0.05)."
+    }
+  },
+  {
+    "id": "regression-linear",
+    "channel": "menu:analyze:regression-linear",
+    "spss32": false,
+    "syntax": "REGRESSION\n  /STATISTICS COEFF OUTS R ANOVA COLLIN TOL\n  /DEPENDENT=income\n  /METHOD=ENTER score age\n  /RESIDUALS DURBIN.",
+    "okRequest": {
+      "analysisId": "regression",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "regression-linear.R",
+      "params": {
+        "dependent": "col_3",
+        "dependentName": "income",
+        "independents": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_3": "income",
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "options": {
+          "method": "enter",
+          "criteria": {
+            "type": "prob",
+            "entryProb": 0.05,
+            "removalProb": 0.1,
+            "entryF": 3.84,
+            "removalF": 2.71
+          },
+          "collinearity": true,
+          "durbinWatson": true,
+          "confidenceIntervals": false,
+          "ciLevel": 95,
+          "covarianceMatrix": false,
+          "rSquaredChange": false,
+          "descriptives": false,
+          "partialCorrelations": false,
+          "casewiseDiagnostics": false,
+          "casewiseOutliersOnly": true,
+          "casewiseSD": 3,
+          "includeConstant": true,
+          "missingMethod": "listwise",
+          "plots": {
+            "scatterY": "",
+            "scatterX": "",
+            "histogram": false,
+            "normalPP": false,
+            "partialPlots": false
+          }
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: income | Bağımsız Değişken(ler): score, age",
+      "syntax": "REGRESSION\n  /STATISTICS COEFF OUTS R ANOVA COLLIN TOL\n  /DEPENDENT=income\n  /METHOD=ENTER score age\n  /RESIDUALS DURBIN."
+    }
+  },
+  {
+    "id": "npar-chisquare-grp3",
+    "channel": "menu:analyze:npar-chisquare",
+    "spss32": false,
+    "syntax": "NPAR TESTS /CHISQUARE=grp3.",
+    "okRequest": {
+      "analysisId": "nparChiSq",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-chisquare.R",
+      "params": {
+        "variables": [
+          "col_6"
+        ],
+        "varNames": {
+          "col_6": "grp3"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken Listesi: grp3",
+      "syntax": "NPAR TESTS /CHISQUARE=grp3."
+    }
+  },
+  {
+    "id": "npar-binomial-disease",
+    "channel": "menu:analyze:npar-binomial",
+    "spss32": false,
+    "syntax": "NPAR TESTS /BINOMIAL(0.5)=disease.",
+    "okRequest": {
+      "analysisId": "nparBinomial",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-binomial.R",
+      "params": {
+        "variables": [
+          "col_17"
+        ],
+        "varNames": {
+          "col_17": "disease"
+        },
+        "testProp": 0.5,
+        "options": {
+          "descriptives": false,
+          "quartiles": false,
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken Listesi: disease",
+      "syntax": "NPAR TESTS /BINOMIAL(0.5)=disease."
+    }
+  },
+  {
+    "id": "npar-ks-score",
+    "channel": "menu:analyze:npar-ks",
+    "spss32": false,
+    "syntax": "NPAR TESTS /K-S(NORMAL)=score.",
+    "okRequest": {
+      "analysisId": "nparKS",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-ks.R",
+      "params": {
+        "variables": [
+          "col_2"
+        ],
+        "varNames": {
+          "col_2": "score"
+        },
+        "dist": "normal",
+        "options": {
+          "descriptives": false,
+          "quartiles": false,
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken Listesi: score",
+      "syntax": "NPAR TESTS /K-S(NORMAL)=score."
+    }
+  },
+  {
+    "id": "npar-runs-score",
+    "channel": "menu:analyze:npar-runs",
+    "spss32": false,
+    "syntax": "NPAR TESTS /RUNS(MEDIAN)=score.",
+    "okRequest": {
+      "analysisId": "nparRuns",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-runs.R",
+      "params": {
+        "variables": [
+          "col_2"
+        ],
+        "varNames": {
+          "col_2": "score"
+        },
+        "cutPoint": "median",
+        "options": {
+          "descriptives": false,
+          "quartiles": false,
+          "missing": "analysis"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken Listesi: score",
+      "syntax": "NPAR TESTS /RUNS(MEDIAN)=score."
+    }
+  },
+  {
+    "id": "npar-mw-score-income",
+    "channel": "menu:analyze:npar-2indep",
+    "spss32": false,
+    "syntax": "NPAR TESTS /M-W=score income BY grp2(1 2) /STATISTICS=DESCRIPTIVES QUARTILES.",
+    "okRequest": {
+      "analysisId": "nparMW",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-mann-whitney.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "groupVar": "col_5",
+        "groupName": "grp2",
+        "groupValueLabels": {},
+        "group1": "1",
+        "group2": "2",
+        "options": {
+          "missing": "analysis",
+          "descriptives": true,
+          "quartiles": true,
+          "effectSize": true,
+          "boxplot": true,
+          "continuityCorrection": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken Listesi: score, income | Gruplama Değişkeni: grp2",
+      "syntax": "NPAR TESTS /M-W=score income BY grp2(1 2) /STATISTICS=DESCRIPTIVES QUARTILES."
+    }
+  },
+  {
+    "id": "npar-wilcoxon-pairs",
+    "channel": "menu:analyze:npar-2related",
+    "spss32": false,
+    "syntax": "NPAR TESTS /WILCOXON=pre score WITH post income (PAIRED).",
+    "okRequest": {
+      "analysisId": "nparWilcoxon",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-wilcoxon.R",
+      "params": {
+        "var1": [
+          "col_8",
+          "col_2"
+        ],
+        "var2": [
+          "col_9",
+          "col_3"
+        ],
+        "varNames": {
+          "col_8": "pre",
+          "col_2": "score",
+          "col_9": "post",
+          "col_3": "income"
+        },
+        "options": {
+          "missing": "analysis",
+          "continuityCorrection": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişken 1: pre, score | Değişken 2: post, income",
+      "syntax": "NPAR TESTS /WILCOXON=pre score WITH post income (PAIRED)."
+    }
+  },
+  {
+    "id": "npar-kw-score-income",
+    "channel": "menu:analyze:npar-kindep",
+    "spss32": false,
+    "syntax": "NPAR TESTS /K-W=score income BY grp3(1 99)\n  /STATISTICS=DESCRIPTIVES QUARTILES.",
+    "okRequest": {
+      "analysisId": "nparKW",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-kruskal-wallis.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "factor": "col_6",
+        "factorName": "grp3",
+        "factorValueLabels": {},
+        "options": {
+          "testType": {
+            "kruskalWallis": true,
+            "median": false,
+            "jonckheereTerpstra": false
+          },
+          "pairwise": false,
+          "missing": "analysis",
+          "descriptives": true,
+          "quartiles": true
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişken Listesi: score, income | Gruplama Değişkeni: grp3",
+      "syntax": "NPAR TESTS /K-W=score income BY grp3(1 99)\n  /STATISTICS=DESCRIPTIVES QUARTILES."
+    }
+  },
+  {
+    "id": "npar-friedman-q1-q5",
+    "channel": "menu:analyze:npar-krelated",
+    "spss32": false,
+    "syntax": "NPAR TESTS /FRIEDMAN=q1 q2 q3 q4 q5.",
+    "okRequest": {
+      "analysisId": "nparFriedman",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "npar-friedman.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12",
+          "col_13",
+          "col_14"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3",
+          "col_13": "q4",
+          "col_14": "q5"
+        },
+        "options": {
+          "pairwise": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişkenleri: q1, q2, q3, q4, q5",
+      "syntax": "NPAR TESTS /FRIEDMAN=q1 q2 q3 q4 q5."
+    }
+  },
+  {
+    "id": "reliability-q1-q5",
+    "channel": "menu:analyze:reliability",
+    "spss32": false,
+    "syntax": "RELIABILITY /VARIABLES=q1 q2 q3 q4 q5\n  /MODEL=ALPHA\n  /STATISTICS=DESCRIPTIVE SCALE.",
+    "okRequest": {
+      "analysisId": "reliability",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "reliability.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12",
+          "col_13",
+          "col_14"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3",
+          "col_13": "q4",
+          "col_14": "q5"
+        },
+        "options": {
+          "interItemCorr": false,
+          "model": "alpha"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Maddeler: q1, q2, q3, q4, q5",
+      "syntax": "RELIABILITY /VARIABLES=q1 q2 q3 q4 q5\n  /MODEL=ALPHA\n  /STATISTICS=DESCRIPTIVE SCALE."
+    }
+  },
+  {
+    "id": "partial-corr-score-income-age",
+    "channel": "menu:analyze:correlate-partial",
+    "spss32": false,
+    "syntax": "PARTIAL CORR /VARIABLES=score income BY age.",
+    "okRequest": {
+      "analysisId": "partialCorr",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "correlation-partial.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "controls": [
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income",
+          "col_4": "age"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: score, income | Kontrol edilen: age",
+      "syntax": "PARTIAL CORR /VARIABLES=score income BY age."
+    }
+  },
+  {
+    "id": "case-summaries-score-income-grp3",
+    "channel": "menu:analyze:case-summaries",
+    "spss32": false,
+    "syntax": "SUMMARIZE /TABLES=score income BY grp3\n  /FORMAT=LIST TOTAL LIMIT=100\n  /CELLS=COUNT MEAN STDDEV.",
+    "okRequest": {
+      "analysisId": "caseSummaries",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "case-summaries.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "groupVar": "col_6",
+        "groupVarName": "grp3",
+        "groupValueLabels": {},
+        "displayCases": true,
+        "subtotals": true,
+        "limitCases": 100,
+        "options": {
+          "missing": "analysis",
+          "stats": {
+            "n": true,
+            "mean": true,
+            "median": false,
+            "groupedMedian": false,
+            "seMean": false,
+            "sum": false,
+            "min": false,
+            "max": false,
+            "range": false,
+            "first": false,
+            "last": false,
+            "sd": true,
+            "variance": false,
+            "kurtosis": false,
+            "seKurtosis": false,
+            "skewness": false,
+            "seSkewness": false,
+            "harmonic": false,
+            "geometric": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: score, income | Gruplama Değişkeni (opsiyonel): grp3",
+      "syntax": "SUMMARIZE /TABLES=score income BY grp3\n  /FORMAT=LIST TOTAL LIMIT=100\n  /CELLS=COUNT MEAN STDDEV."
+    }
+  },
+  {
+    "id": "olap-cubes-score-income-grp3",
+    "channel": "menu:analyze:olap-cubes",
+    "spss32": false,
+    "syntax": "OLAP CUBES /VARIABLES=score income BY grp3\n  /CELLS=COUNT MEAN SUM STDDEV NPCT SPCT.",
+    "okRequest": {
+      "analysisId": "olapCubes",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "olap-cubes.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "groupVars": [
+          "col_6"
+        ],
+        "groupVarNames": {
+          "col_6": "grp3"
+        },
+        "groupValueLabels": {},
+        "options": {
+          "missing": "analysis",
+          "stats": {
+            "n": true,
+            "mean": true,
+            "median": false,
+            "groupedMedian": false,
+            "seMean": false,
+            "sum": true,
+            "min": false,
+            "max": false,
+            "range": false,
+            "first": false,
+            "last": false,
+            "sd": true,
+            "variance": false,
+            "kurtosis": false,
+            "seKurtosis": false,
+            "skewness": false,
+            "seSkewness": false,
+            "harmonic": false,
+            "geometric": false,
+            "pctTotalN": true,
+            "pctTotalSum": true,
+            "pctNIn": false,
+            "pctSumIn": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Özet Değişken(ler): score, income | Gruplama Değişken(ler)i: grp3",
+      "syntax": "OLAP CUBES /VARIABLES=score income BY grp3\n  /CELLS=COUNT MEAN SUM STDDEV NPCT SPCT."
+    }
+  },
+  {
+    "id": "ratio-income-score-grp3",
+    "channel": "menu:analyze:ratio",
+    "spss32": false,
+    "syntax": "RATIO STATISTICS income WITH score BY grp3\n  /PRINT=MEDIAN MEAN WGTMEAN MIN MAX RANGE COD PRD MDCOV MNCOV.",
+    "okRequest": {
+      "analysisId": "ratio",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "ratio.R",
+      "params": {
+        "numerator": "col_3",
+        "denominator": "col_2",
+        "group": "col_6"
+      },
+      "columnFilters": {},
+      "summary": "Pay: income | Payda: score | Grup Değişkeni (isteğe bağlı): grp3",
+      "syntax": "RATIO STATISTICS income WITH score BY grp3\n  /PRINT=MEDIAN MEAN WGTMEAN MIN MAX RANGE COD PRD MDCOV MNCOV."
+    }
+  },
+  {
+    "id": "roc-score-disease",
+    "channel": "menu:analyze:roc",
+    "spss32": false,
+    "syntax": "ROC score BY disease(1)\n  /PLOT=CURVE(REFERENCE)\n  /PRINT=SE\n  /CRITERIA=CUTOFF(INCLUDE) TESTPOS(LARGE) DISTRIBUTION(FREE) CI(95)\n  /MISSING=EXCLUDE.",
+    "okRequest": {
+      "analysisId": "roc",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "roc.R",
+      "params": {
+        "variables": [
+          "col_2"
+        ],
+        "varNames": {
+          "col_2": "score"
+        },
+        "stateVar": "col_17",
+        "stateName": "disease",
+        "stateLabel": "disease",
+        "stateValueLabels": {},
+        "stateValue": "1",
+        "options": {
+          "plotCurve": true,
+          "diagonal": true,
+          "seCi": true,
+          "coordinates": false,
+          "cutoff": "include",
+          "direction": "larger",
+          "distribution": "free",
+          "ciLevel": 0.95,
+          "userMissingValid": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişkeni: score | Durum Değişkeni: disease",
+      "syntax": "ROC score BY disease(1)\n  /PLOT=CURVE(REFERENCE)\n  /PRINT=SE\n  /CRITERIA=CUTOFF(INCLUDE) TESTPOS(LARGE) DISTRIBUTION(FREE) CI(95)\n  /MISSING=EXCLUDE."
+    }
+  },
+  {
+    "id": "curve-income-score",
+    "channel": "menu:analyze:regression-curve",
+    "spss32": false,
+    "syntax": "CURVEFIT /VARIABLES=income WITH score\n  /CONSTANT\n  /MODEL=LINEAR\n  /PLOT FIT.",
+    "okRequest": {
+      "analysisId": "curve",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "regression-curve.R",
+      "params": {
+        "dependents": [
+          "col_3"
+        ],
+        "dependentNames": {
+          "col_3": "income"
+        },
+        "independentMode": "variable",
+        "independent": "col_2",
+        "independentName": "score",
+        "caseLabels": null,
+        "includeConstant": true,
+        "plotModels": true,
+        "displayAnova": false,
+        "models": {
+          "linear": true,
+          "logarithmic": false,
+          "inverse": false,
+          "quadratic": false,
+          "cubic": false,
+          "power": false,
+          "s": false,
+          "growth": false,
+          "exponential": false,
+          "compound": false,
+          "logistic": false
+        },
+        "logisticUpperBound": null,
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: income | Bağımsız: score",
+      "syntax": "CURVEFIT /VARIABLES=income WITH score\n  /CONSTANT\n  /MODEL=LINEAR\n  /PLOT FIT."
+    }
+  },
+  {
+    "id": "logistic-disease-score-age",
+    "channel": "menu:analyze:regression-logistic",
+    "spss32": false,
+    "syntax": "LOGISTIC REGRESSION VARIABLES=disease\n  /METHOD=ENTER score age\n  /CRITERIA=CUT(.5) ITERATE(20).",
+    "okRequest": {
+      "analysisId": "logistic",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "regression-logistic.R",
+      "params": {
+        "dependent": "col_17",
+        "dependentName": "disease",
+        "covariates": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_17": "disease",
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "options": {
+          "classificationPlots": false,
+          "hosmerLemeshow": false,
+          "casewiseListing": false,
+          "casewiseOutliersOnly": true,
+          "casewiseThreshold": 2,
+          "correlation": false,
+          "iterationHistory": false,
+          "ciExpB": false,
+          "ciLevel": 95,
+          "classificationCutoff": 0.5,
+          "maxIterations": 20,
+          "includeConstant": true
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: disease | Ortak Değişkenler: score, age",
+      "syntax": "LOGISTIC REGRESSION VARIABLES=disease\n  /METHOD=ENTER score age\n  /CRITERIA=CUT(.5) ITERATE(20)."
+    }
+  },
+  {
+    "id": "glm-uni-score-grp3",
+    "channel": "menu:analyze:glm-univariate",
+    "spss32": false,
+    "syntax": "UNIANOVA score BY grp3\n  /METHOD=SSTYPE(3)\n  /INTERCEPT=INCLUDE\n  /DESIGN=grp3.",
+    "okRequest": {
+      "analysisId": "glmUni",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "glm-univariate.R",
+      "params": {
+        "dependent": "col_2",
+        "dependentName": "score",
+        "factors": [
+          "col_6"
+        ],
+        "factorNames": {
+          "col_6": "grp3"
+        },
+        "covariates": [],
+        "covariateNames": {},
+        "options": {
+          "ssType": "III",
+          "includeIntercept": true,
+          "sigLevel": "0.05",
+          "descriptives": false,
+          "effectSize": false,
+          "power": false,
+          "paramEstimates": false,
+          "homogeneity": false
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı Değişken: score | Sabit Faktör(ler): grp3",
+      "syntax": "UNIANOVA score BY grp3\n  /METHOD=SSTYPE(3)\n  /INTERCEPT=INCLUDE\n  /DESIGN=grp3."
+    }
+  },
+  {
+    "id": "factor-q1-q5",
+    "channel": "menu:analyze:factor",
+    "spss32": false,
+    "syntax": "FACTOR /VARIABLES=q1 q2 q3 q4 q5\n  /MISSING LISTWISE\n  /ANALYSIS q1 q2 q3 q4 q5\n  /PRINT INITIAL EXTRACTION ROTATION\n  /CRITERIA MINEIGEN(1) ITERATE(25)\n  /EXTRACTION PC\n  /ROTATION NOROTATE\n  /METHOD=CORRELATION.",
+    "okRequest": {
+      "analysisId": "factor",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "factor.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12",
+          "col_13",
+          "col_14"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3",
+          "col_13": "q4",
+          "col_14": "q5"
+        },
+        "options": {
+          "rotation": "none",
+          "kmoBartlett": false
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: q1, q2, q3, q4, q5",
+      "syntax": "FACTOR /VARIABLES=q1 q2 q3 q4 q5\n  /MISSING LISTWISE\n  /ANALYSIS q1 q2 q3 q4 q5\n  /PRINT INITIAL EXTRACTION ROTATION\n  /CRITERIA MINEIGEN(1) ITERATE(25)\n  /EXTRACTION PC\n  /ROTATION NOROTATE\n  /METHOD=CORRELATION."
+    }
+  },
+  {
+    "id": "discriminant-grp2-score-age",
+    "channel": "menu:analyze:discriminant",
+    "spss32": false,
+    "syntax": "DISCRIMINANT /GROUPS=grp2(1 99)\n  /VARIABLES=score age\n  /ANALYSIS ALL\n  /PRIORS EQUAL\n  /STATISTICS=TABLE\n  /CLASSIFY=NONMISSING POOLED.",
+    "okRequest": {
+      "analysisId": "discriminant",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "discriminant.R",
+      "params": {
+        "groupVar": "col_5",
+        "groupName": "grp2",
+        "independents": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Gruplama Değişkeni: grp2 | Bağımsız Değişkenler: score, age",
+      "syntax": "DISCRIMINANT /GROUPS=grp2(1 99)\n  /VARIABLES=score age\n  /ANALYSIS ALL\n  /PRIORS EQUAL\n  /STATISTICS=TABLE\n  /CLASSIFY=NONMISSING POOLED."
+    }
+  },
+  {
+    "id": "kmeans-score-age",
+    "channel": "menu:analyze:kmeans",
+    "spss32": false,
+    "syntax": "QUICK CLUSTER score age\n  /MISSING=LISTWISE\n  /CRITERIA=CLUSTER(2) MXITER(10) CONVERGE(0)\n  /METHOD=KMEANS(NOUPDATE)\n  /PRINT INITIAL ANOVA.",
+    "okRequest": {
+      "analysisId": "kmeans",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "kmeans.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "clusters": 2,
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: score, age",
+      "syntax": "QUICK CLUSTER score age\n  /MISSING=LISTWISE\n  /CRITERIA=CLUSTER(2) MXITER(10) CONVERGE(0)\n  /METHOD=KMEANS(NOUPDATE)\n  /PRINT INITIAL ANOVA."
+    }
+  },
+  {
+    "id": "hierarchical-q1-q3",
+    "channel": "menu:analyze:hierarchical",
+    "spss32": false,
+    "syntax": "CLUSTER q1 q2 q3\n  /METHOD WARD\n  /MEASURE=SEUCLID\n  /PRINT SCHEDULE.",
+    "okRequest": {
+      "analysisId": "hier",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "hierarchical.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3"
+        },
+        "createVars": {},
+        "method": "ward.D2",
+        "clusters": 0
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: q1, q2, q3",
+      "syntax": "CLUSTER q1 q2 q3\n  /METHOD WARD\n  /MEASURE=SEUCLID\n  /PRINT SCHEDULE."
+    }
+  },
+  {
+    "id": "distances-q1-q3",
+    "channel": "menu:analyze:distances",
+    "spss32": false,
+    "syntax": "PROXIMITIES q1 q2 q3\n  /VIEW=VARIABLE\n  /MEASURE=EUCLID\n  /PRINT PROXIMITIES\n  /STANDARDIZE=NONE.",
+    "okRequest": {
+      "analysisId": "distances",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "distances.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3"
+        },
+        "measure": "euclidean"
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: q1, q2, q3",
+      "syntax": "PROXIMITIES q1 q2 q3\n  /VIEW=VARIABLE\n  /MEASURE=EUCLID\n  /PRINT PROXIMITIES\n  /STANDARDIZE=NONE."
+    }
+  },
+  {
+    "id": "km-surv-evt-grp2",
+    "channel": "menu:analyze:survival-km",
+    "spss32": false,
+    "syntax": "KM surv BY grp2\n  /STATUS=evt(1)\n  /PRINT MEAN\n  /PLOT SURVIVAL\n  /COMPARE OVERALL POOLED LOGRANK.",
+    "okRequest": {
+      "analysisId": "survivalKM",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "survival-km.R",
+      "params": {
+        "timeVar": "col_15",
+        "timeName": "surv",
+        "statusVar": "col_16",
+        "statusName": "evt",
+        "eventValue": "1",
+        "factor": "col_5",
+        "factorName": "grp2",
+        "factorValueLabels": {},
+        "strata": null,
+        "strataName": null,
+        "strataValueLabels": null,
+        "options": {
+          "compare": {
+            "logRank": true,
+            "breslow": false,
+            "taroneWare": false,
+            "mode": "pooled"
+          },
+          "stats": {
+            "survivalTable": false,
+            "meanMedian": true,
+            "quartiles": false
+          },
+          "plots": {
+            "survival": true,
+            "oneMinusSurvival": false,
+            "hazard": false,
+            "logSurvival": false
+          }
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Süre: surv | Durum: evt | Faktör: grp2",
+      "syntax": "KM surv BY grp2\n  /STATUS=evt(1)\n  /PRINT MEAN\n  /PLOT SURVIVAL\n  /COMPARE OVERALL POOLED LOGRANK."
+    }
+  },
+  {
+    "id": "cox-surv-evt-score-age",
+    "channel": "menu:analyze:survival-cox",
+    "spss32": false,
+    "syntax": "COXREG surv\n  /STATUS=evt(1)\n  /METHOD=ENTER score age\n  /PRINT=CI(95)\n  /CRITERIA=PIN(.05) POUT(.1) ITERATE(20).",
+    "okRequest": {
+      "analysisId": "survivalCox",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "survival-cox.R",
+      "params": {
+        "timeVar": "col_15",
+        "timeName": "surv",
+        "statusVar": "col_16",
+        "eventValue": "1",
+        "covariates": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "categorical": {},
+        "categoricalValueLabels": {},
+        "strata": null,
+        "strataName": null,
+        "method": "enter",
+        "options": {
+          "ciExpB": true,
+          "ciLevel": 95,
+          "correlation": false,
+          "baseline": false,
+          "phTest": false,
+          "display": "last",
+          "entry": 0.05,
+          "removal": 0.1,
+          "maxIterations": 20
+        },
+        "plots": {
+          "survival": false,
+          "hazard": false,
+          "logMinusLog": false,
+          "oneMinusSurvival": false,
+          "separateBy": null,
+          "values": {}
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Süre: surv | Durum: evt | Ortak Değişkenler: score, age",
+      "syntax": "COXREG surv\n  /STATUS=evt(1)\n  /METHOD=ENTER score age\n  /PRINT=CI(95)\n  /CRITERIA=PIN(.05) POUT(.1) ITERATE(20)."
+    }
+  },
+  {
+    "id": "glm-multi-score-income-grp3",
+    "channel": "menu:analyze:glm-multivariate",
+    "spss32": false,
+    "syntax": "GLM score income BY grp3\n  /METHOD=SSTYPE(3)\n  /INTERCEPT=INCLUDE\n  /CRITERIA=ALPHA(.05)\n  /DESIGN=grp3.",
+    "okRequest": {
+      "analysisId": "glmMulti",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "glm-multivariate.R",
+      "params": {
+        "dependents": [
+          "col_2",
+          "col_3"
+        ],
+        "dependentNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "factors": [
+          "col_6"
+        ],
+        "factorNames": {
+          "col_6": "grp3"
+        },
+        "covariates": [],
+        "covariateNames": {},
+        "options": {
+          "ssType": "III",
+          "includeIntercept": true,
+          "sigLevel": "0.05",
+          "descriptives": false,
+          "effectSize": false,
+          "power": false,
+          "paramEstimates": false,
+          "homogeneity": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı Değişkenler: score, income | Sabit Faktör(ler): grp3",
+      "syntax": "GLM score income BY grp3\n  /METHOD=SSTYPE(3)\n  /INTERCEPT=INCLUDE\n  /CRITERIA=ALPHA(.05)\n  /DESIGN=grp3."
+    }
+  },
+  {
+    "id": "glm-repeated-q1-q3",
+    "channel": "menu:analyze:glm-repeated",
+    "spss32": false,
+    "syntax": "GLM q1 q2 q3\n  /WSFACTOR=factor1 3 Polynomial\n  /METHOD=SSTYPE(3)\n  /CRITERIA=ALPHA(.05)\n  /WSDESIGN=factor1.",
+    "okRequest": {
+      "analysisId": "glmRep",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "glm-repeated.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3"
+        },
+        "factorName": "factor1",
+        "betweenFactors": [],
+        "betweenNames": {},
+        "covariates": [],
+        "covariateNames": {},
+        "options": {
+          "descriptives": false,
+          "effectSize": false,
+          "power": false,
+          "homogeneity": false,
+          "sigLevel": "0.05"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Denek-İçi Değişkenler: q1, q2, q3",
+      "syntax": "GLM q1 q2 q3\n  /WSFACTOR=factor1 3 Polynomial\n  /METHOD=SSTYPE(3)\n  /CRITERIA=ALPHA(.05)\n  /WSDESIGN=factor1."
+    }
+  },
+  {
+    "id": "mult-response-d1-d3",
+    "channel": "menu:analyze:multiple-response",
+    "spss32": false,
+    "syntax": "MULT RESPONSE /GROUPS=saiset(d1 d2 d3 (1))\n  /FREQUENCIES=saiset.",
+    "okRequest": {
+      "analysisId": "mr",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "multiple-response.R",
+      "params": {
+        "variables": [
+          "col_19",
+          "col_20",
+          "col_21"
+        ],
+        "varNames": {
+          "col_19": "d1",
+          "col_20": "d2",
+          "col_21": "d3"
+        },
+        "countedValue": 1
+      },
+      "columnFilters": {},
+      "summary": "Setteki Değişkenler: d1, d2, d3",
+      "syntax": "MULT RESPONSE /GROUPS=saiset(d1 d2 d3 (1))\n  /FREQUENCIES=saiset."
+    }
+  },
+  {
+    "id": "multinomial-grp3-score-age",
+    "channel": "menu:analyze:regression-multinomial",
+    "spss32": false,
+    "syntax": "NOMREG grp3 (BASE=FIRST ORDER=ASCENDING) BY score age\n  /INTERCEPT=INCLUDE\n  /MODEL\n  /CRITERIA=CIN(95) MXITER(100) MXSTEP(5) LCONVERGE(0) PCONVERGE(0.000001) SINGULAR(1e-8) DELTA(0) CHKSEP(20)\n  /STEPWISE=PIN(0.05) POUT(0.1) ENTRYMETHOD(LR) REMOVALMETHOD(LR) MINEFFECT(0) RULE(SINGLE)\n  /SCALE=1\n  /PRINT=CPS SUMMARY STEP MFI PARAMETER LRT.",
+    "okRequest": {
+      "analysisId": "multinom",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "regression-multinomial.R",
+      "params": {
+        "model": {
+          "mode": "main",
+          "intercept": true,
+          "forced": [],
+          "stepped": [],
+          "method": "forward"
+        },
+        "options": {
+          "scale": "none",
+          "scaleValue": 1,
+          "entryProbability": 0.05,
+          "removalProbability": 0.1,
+          "entryTest": "lr",
+          "removalTest": "lr",
+          "minEffects": 0,
+          "maxEffects": null,
+          "hierarchy": "all"
+        },
+        "criteria": {
+          "maxIterations": 100,
+          "maxStepHalving": 5,
+          "logLikelihood": 0,
+          "parameter": 0.000001,
+          "printHistory": false,
+          "historyEvery": 1,
+          "checkSeparation": true,
+          "separationStart": 20,
+          "delta": 0,
+          "singularity": 1e-8
+        },
+        "statistics": {
+          "caseSummary": true,
+          "pseudoR2": true,
+          "stepSummary": true,
+          "modelFit": true,
+          "informationCriteria": false,
+          "cellProbabilities": false,
+          "classification": false,
+          "goodnessOfFit": false,
+          "monotonicity": false,
+          "estimates": true,
+          "likelihoodRatio": true,
+          "correlations": false,
+          "covariances": false,
+          "ciLevel": 95,
+          "subpopulationMode": "predictors",
+          "subpopulations": []
+        },
+        "exportModel": {
+          "path": "",
+          "covariance": true
+        },
+        "dependent": "col_6",
+        "factors": [
+          "col_2",
+          "col_4"
+        ],
+        "sourceNames": {
+          "col_6": "grp3",
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "dependentName": "grp3",
+        "dependentValueLabels": {},
+        "covariates": [],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: grp3 | Faktörler: score, age",
+      "syntax": "NOMREG grp3 (BASE=FIRST ORDER=ASCENDING) BY score age\n  /INTERCEPT=INCLUDE\n  /MODEL\n  /CRITERIA=CIN(95) MXITER(100) MXSTEP(5) LCONVERGE(0) PCONVERGE(0.000001) SINGULAR(1e-8) DELTA(0) CHKSEP(20)\n  /STEPWISE=PIN(0.05) POUT(0.1) ENTRYMETHOD(LR) REMOVALMETHOD(LR) MINEFFECT(0) RULE(SINGLE)\n  /SCALE=1\n  /PRINT=CPS SUMMARY STEP MFI PARAMETER LRT."
+    }
+  },
+  {
+    "id": "ordinal-grp3-score-age",
+    "channel": "menu:analyze:regression-ordinal",
+    "spss32": false,
+    "syntax": "PLUM grp3 WITH score age\n  /LINK=LOGIT\n  /CRITERIA=CIN(95) DELTA(0) MXITER(100) MXSTEP(5) LCONVERGE(0) PCONVERGE(0.000001) SINGULAR(1e-8)\n  /PRINT=FIT PARAMETER SUMMARY.",
+    "okRequest": {
+      "analysisId": "ordinal",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "regression-ordinal.R",
+      "params": {
+        "dependent": "col_6",
+        "dependentName": "grp3",
+        "dependentValueLabels": {},
+        "covariates": [
+          "col_2",
+          "col_4"
+        ],
+        "factors": [],
+        "settings": {
+          "location": {
+            "mode": "main",
+            "terms": []
+          },
+          "scale": {
+            "terms": []
+          },
+          "options": {
+            "maxIterations": 100,
+            "maxStepHalving": 5,
+            "logLikelihood": 0,
+            "parameter": 0.000001,
+            "ciLevel": 95,
+            "delta": 0,
+            "singularity": 1e-8,
+            "link": "logit"
+          },
+          "output": {
+            "history": false,
+            "historyEvery": 1,
+            "goodnessOfFit": true,
+            "summary": true,
+            "estimates": true,
+            "correlations": false,
+            "covariances": false,
+            "cellInfo": false,
+            "parallelLines": false,
+            "includeConstant": true
+          }
+        },
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: grp3 | Ortak Değişkenler: score, age",
+      "syntax": "PLUM grp3 WITH score age\n  /LINK=LOGIT\n  /CRITERIA=CIN(95) DELTA(0) MXITER(100) MXSTEP(5) LCONVERGE(0) PCONVERGE(0.000001) SINGULAR(1e-8)\n  /PRINT=FIT PARAMETER SUMMARY."
+    }
+  },
+  {
+    "id": "probit-disease-score",
+    "channel": "menu:analyze:regression-probit",
+    "spss32": false,
+    "syntax": "PROBIT disease OF score WITH age\n  /MODEL=PROBIT\n  /TRANSFORM=NONE\n  /PRINT=FREQ CI\n  /NATRES=NONE\n  /CRITERIA=ITERATE(20) SIG(0.15).",
+    "okRequest": {
+      "analysisId": "probit",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "regression-probit.R",
+      "params": {
+        "responseFreq": "col_17",
+        "totalObserved": "col_2",
+        "factor": null,
+        "factorRange": null,
+        "covariates": [
+          "col_4"
+        ],
+        "varNames": {
+          "col_4": "age"
+        },
+        "transform": "none",
+        "modelType": "probit",
+        "options": {
+          "frequencies": true,
+          "parallelism": false,
+          "fiducialCI": true,
+          "heterogeneitySig": 0.15,
+          "naturalResponseMode": "none",
+          "naturalResponseValue": null,
+          "maxIterations": 20
+        },
+        "createVars": {}
+      },
+      "columnFilters": {},
+      "summary": "Yanıt Sıklığı: disease | Toplam Gözlem: score | Ortak Değişken(ler): age",
+      "syntax": "PROBIT disease OF score WITH age\n  /MODEL=PROBIT\n  /TRANSFORM=NONE\n  /PRINT=FREQ CI\n  /NATRES=NONE\n  /CRITERIA=ITERATE(20) SIG(0.15)."
+    }
+  },
+  {
+    "id": "lifetables-surv-evt",
+    "channel": "menu:analyze:life-tables",
+    "spss32": false,
+    "syntax": "SURVIVAL TABLE=surv\n  /INTERVAL=THRU 100 BY 5\n  /STATUS=evt(1)\n  /PRINT=TABLE.",
+    "okRequest": {
+      "analysisId": "lifetab",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "life-tables.R",
+      "params": {
+        "time": "col_15",
+        "status": "col_16",
+        "interval": 5,
+        "varNames": {
+          "col_15": "surv",
+          "col_16": "evt"
+        },
+        "options": {
+          "table": true,
+          "plots": []
+        }
+      },
+      "columnFilters": {},
+      "summary": "Zaman: surv | Durum (1=olay): evt",
+      "syntax": "SURVIVAL TABLE=surv\n  /INTERVAL=THRU 100 BY 5\n  /STATUS=evt(1)\n  /PRINT=TABLE."
+    }
+  },
+  {
+    "id": "mixed-score-age-grp3",
+    "channel": "menu:analyze:mixed-models",
+    "spss32": false,
+    "syntax": "MIXED score WITH age\n  /CRITERIA=CIN(95)\n  /FIXED=age | SSTYPE(3)\n  /METHOD=REML\n  /PRINT=SOLUTION\n  /RANDOM=INTERCEPT | SUBJECT(grp3) COVTYPE(VC).",
+    "okRequest": {
+      "analysisId": "mixed",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "mixed-models.R",
+      "params": {
+        "dependent": "col_2",
+        "dependentName": "score",
+        "factors": [],
+        "covariates": [
+          "col_4"
+        ],
+        "subject": "col_6",
+        "varNames": {
+          "col_4": "age"
+        },
+        "options": {
+          "fixed": {
+            "model": "main",
+            "intercept": true,
+            "ssType": "III"
+          },
+          "random": {
+            "intercept": true,
+            "slopes": [],
+            "covType": "vc"
+          },
+          "estimation": {
+            "method": "REML"
+          },
+          "statistics": {
+            "descriptives": false,
+            "paramEstimates": true,
+            "covCI": false,
+            "ciLevel": 0.95
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: score | Kovaryat(lar): age | Denekler (Rastgele Sabit Terim): grp3",
+      "syntax": "MIXED score WITH age\n  /CRITERIA=CIN(95)\n  /FIXED=age | SSTYPE(3)\n  /METHOD=REML\n  /PRINT=SOLUTION\n  /RANDOM=INTERCEPT | SUBJECT(grp3) COVTYPE(VC)."
+    }
+  },
+  {
+    "id": "genlin-evt-score-age",
+    "channel": "menu:analyze:genlin",
+    "spss32": false,
+    "syntax": "GENLIN evt WITH score age\n  /MODEL score age INTERCEPT=YES DISTRIBUTION=POISSON LINK=LOG\n  /CRITERIA METHOD=FISHER(1) CILEVEL=95\n  /PRINT SOLUTION.",
+    "okRequest": {
+      "analysisId": "genlin",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "genlin.R",
+      "params": {
+        "dependent": "col_16",
+        "dependentName": "evt",
+        "predictors": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "distribution": "poisson"
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: evt | Yordayıcılar: score, age",
+      "syntax": "GENLIN evt WITH score age\n  /MODEL score age INTERCEPT=YES DISTRIBUTION=POISSON LINK=LOG\n  /CRITERIA METHOD=FISHER(1) CILEVEL=95\n  /PRINT SOLUTION."
+    }
+  },
+  {
+    "id": "mva-score-income-post",
+    "channel": "menu:analyze:missing-values",
+    "spss32": false,
+    "syntax": "MVA VARIABLES=score income post\n  /MPATTERN.",
+    "okRequest": {
+      "analysisId": "missing",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "missing-values.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3",
+          "col_9"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income",
+          "col_9": "post"
+        },
+        "options": {
+          "estimation": [],
+          "patterns": false,
+          "tTests": false,
+          "mismatch": false,
+          "minPercent": 5
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: score, income, post",
+      "syntax": "MVA VARIABLES=score income post\n  /MPATTERN."
+    }
+  },
+  {
+    "id": "proportions-one-disease",
+    "channel": "menu:analyze:proportions-one",
+    "spss32": true,
+    "syntax": "PROPORTIONS\n  /ONESAMPLE disease TESTVAL=0.5\n  /SUCCESS VALUE=LEVEL(1)\n  /CRITERIA CILEVEL=95.",
+    "okRequest": {
+      "analysisId": "proportionsOne",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "proportions.R",
+      "params": {
+        "design": "one",
+        "successValue": "1",
+        "ciLevel": 95,
+        "variable": "col_17",
+        "varName": "disease",
+        "testValue": 0.5
+      },
+      "columnFilters": {},
+      "summary": "Değişken: disease",
+      "syntax": "PROPORTIONS\n  /ONESAMPLE disease TESTVAL=0.5\n  /SUCCESS VALUE=LEVEL(1)\n  /CRITERIA CILEVEL=95."
+    }
+  },
+  {
+    "id": "glmm-disease-score-grp3",
+    "channel": "menu:analyze:glmm",
+    "spss32": true,
+    "syntax": "GENLINMIXED\n  /FIELDS TARGET=disease\n  /TARGET_OPTIONS DISTRIBUTION=BINOMIAL LINK=LOGIT\n  /FIXED EFFECTS=score USE_INTERCEPT=TRUE\n  /RANDOM USE_INTERCEPT=TRUE SUBJECTS=grp3 COVARIANCE_TYPE=VARIANCE_COMPONENTS\n  /BUILD_OPTIONS TARGET_CATEGORY_ORDER=DESCENDING.",
+    "okRequest": {
+      "analysisId": "glmm",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "glmm.R",
+      "params": {
+        "dependent": "col_17",
+        "dependentName": "disease",
+        "predictors": [
+          "col_2"
+        ],
+        "subject": "col_6",
+        "family": "binomial",
+        "varNames": {
+          "col_2": "score"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: disease | Ortak Değişkenler (Sabit): score | Denekler (Rastgele Sabit Terim): grp3",
+      "syntax": "GENLINMIXED\n  /FIELDS TARGET=disease\n  /TARGET_OPTIONS DISTRIBUTION=BINOMIAL LINK=LOGIT\n  /FIXED EFFECTS=score USE_INTERCEPT=TRUE\n  /RANDOM USE_INTERCEPT=TRUE SUBJECTS=grp3 COVARIANCE_TYPE=VARIANCE_COMPONENTS\n  /BUILD_OPTIONS TARGET_CATEGORY_ORDER=DESCENDING."
+    }
+  },
+  {
+    "id": "knn-disease-score-age",
+    "channel": "menu:analyze:knn",
+    "spss32": false,
+    "syntax": "KNN disease WITH score age\n  /MODEL NEIGHBORS=FIXED(K=5).",
+    "okRequest": {
+      "analysisId": "knn",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "knn.R",
+      "params": {
+        "groupVar": "col_17",
+        "groupName": "disease",
+        "groupValueLabels": {},
+        "independents": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "options": {
+          "k": 5
+        }
+      },
+      "columnFilters": {},
+      "summary": "Hedef Değişken: disease | Öznitelikler: score, age",
+      "syntax": "KNN disease WITH score age\n  /MODEL NEIGHBORS=FIXED(K=5)."
+    }
+  },
+  {
+    "id": "tree-disease-score-age",
+    "channel": "menu:analyze:tree",
+    "spss32": false,
+    "syntax": "TREE disease [n] BY score [s] age [s]\n  /GROWTHLIMIT MAXDEPTH=3 MINPARENTSIZE=20 MINCHILDSIZE=10\n  /METHOD TYPE=CRT.",
+    "okRequest": {
+      "analysisId": "tree",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "tree.R",
+      "params": {
+        "groupVar": "col_17",
+        "groupName": "disease",
+        "groupValueLabels": {},
+        "independents": [
+          "col_2",
+          "col_4"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_4": "age"
+        },
+        "createVars": {},
+        "options": {
+          "minCases": 20,
+          "maxDepth": 3
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı Değişken: disease | Bağımsız Değişkenler: score, age",
+      "syntax": "TREE disease [n] BY score [s] age [s]\n  /GROWTHLIMIT MAXDEPTH=3 MINPARENTSIZE=20 MINCHILDSIZE=10\n  /METHOD TYPE=CRT."
+    }
+  },
+  {
+    "id": "gee-score-age-grp3",
+    "channel": "menu:analyze:gee",
+    "spss32": false,
+    "syntax": "GENLIN score WITH age\n  /MODEL age INTERCEPT=YES DISTRIBUTION=NORMAL LINK=IDENTITY\n  /REPEATED SUBJECT=grp3 CORRTYPE=EXCHANGEABLE\n  /PRINT SOLUTION.",
+    "okRequest": {
+      "analysisId": "gee",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "gee.R",
+      "params": {
+        "dependent": "col_2",
+        "dependentName": "score",
+        "predictors": [
+          "col_4"
+        ],
+        "subject": "col_6",
+        "family": "gaussian",
+        "corstr": "exchangeable",
+        "varNames": {
+          "col_4": "age"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı: score | Yordayıcılar: age | Denek (Küme): grp3",
+      "syntax": "GENLIN score WITH age\n  /MODEL age INTERCEPT=YES DISTRIBUTION=NORMAL LINK=IDENTITY\n  /REPEATED SUBJECT=grp3 CORRTYPE=EXCHANGEABLE\n  /PRINT SOLUTION."
+    }
+  },
+  {
+    "id": "mds-q1-q3",
+    "channel": "menu:analyze:mds",
+    "spss32": false,
+    "syntax": "ALSCAL VARIABLES=q1 q2 q3\n  /SHAPE=SYMMETRIC\n  /LEVEL=INTERVAL\n  /CRITERIA=DIMENS(2).",
+    "okRequest": {
+      "analysisId": "mds",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "mds.R",
+      "params": {
+        "variables": [
+          "col_10",
+          "col_11",
+          "col_12"
+        ],
+        "varNames": {
+          "col_10": "q1",
+          "col_11": "q2",
+          "col_12": "q3"
+        },
+        "dimensions": 2
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: q1, q2, q3",
+      "syntax": "ALSCAL VARIABLES=q1 q2 q3\n  /SHAPE=SYMMETRIC\n  /LEVEL=INTERVAL\n  /CRITERIA=DIMENS(2)."
+    }
+  },
+  {
+    "id": "mi-score-income",
+    "channel": "menu:analyze:mi",
+    "spss32": false,
+    "syntax": "DATASET DECLARE saiimp.\nMULTIPLE IMPUTATION score income\n  /IMPUTE METHOD=AUTO NIMPUTATIONS=5\n  /OUTFILE IMPUTATIONS=saiimp.",
+    "okRequest": {
+      "analysisId": "mi",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "mi.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "m": 5
+      },
+      "columnFilters": {},
+      "summary": "Değişkenler: score, income",
+      "syntax": "DATASET DECLARE saiimp.\nMULTIPLE IMPUTATION score income\n  /IMPUTE METHOD=AUTO NIMPUTATIONS=5\n  /OUTFILE IMPUTATIONS=saiimp."
+    }
+  },
+  {
+    "id": "report-rows-score-grp3",
+    "channel": "menu:analyze:report-summaries",
+    "spss32": false,
+    "syntax": "REPORT /FORMAT=LIST AUTOMATIC\n  /VARIABLES=score\n  /BREAK=grp3\n  /SUMMARY=MEAN.",
+    "okRequest": {
+      "analysisId": "reportSummaries",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "report-summaries.R",
+      "params": {
+        "variables": [
+          "col_2"
+        ],
+        "varNames": {
+          "col_2": "score"
+        },
+        "breakVars": [
+          "col_6"
+        ],
+        "breakVarNames": {
+          "col_6": "grp3"
+        },
+        "breakValueLabels": {},
+        "displayCases": false,
+        "grandTotal": true,
+        "limitCases": null,
+        "options": {
+          "missing": "analysis",
+          "stats": {
+            "n": true,
+            "mean": true,
+            "median": false,
+            "groupedMedian": false,
+            "seMean": false,
+            "sum": false,
+            "min": false,
+            "max": false,
+            "range": false,
+            "first": false,
+            "last": false,
+            "sd": true,
+            "variance": false,
+            "kurtosis": false,
+            "seKurtosis": false,
+            "skewness": false,
+            "seSkewness": false,
+            "harmonic": false,
+            "geometric": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Veri Sütunları: score | Kırılım Sütunları (opsiyonel): grp3",
+      "syntax": "REPORT /FORMAT=LIST AUTOMATIC\n  /VARIABLES=score\n  /BREAK=grp3\n  /SUMMARY=MEAN."
+    }
+  },
+  {
+    "id": "report-columns-score-grp3",
+    "channel": "menu:analyze:report-columns",
+    "spss32": false,
+    "syntax": "REPORT /FORMAT=AUTOMATIC\n  /VARIABLES=score\n  /BREAK=grp3\n  /SUMMARY=MEAN.",
+    "okRequest": {
+      "analysisId": "reportColumns",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "report-summaries-columns.R",
+      "params": {
+        "variables": [
+          "col_2"
+        ],
+        "varNames": {
+          "col_2": "score"
+        },
+        "breakVars": [
+          "col_6"
+        ],
+        "breakVarNames": {
+          "col_6": "grp3"
+        },
+        "breakValueLabels": {},
+        "grandTotal": true,
+        "options": {
+          "missing": "analysis",
+          "stats": {
+            "n": true,
+            "mean": true,
+            "median": false,
+            "groupedMedian": false,
+            "seMean": false,
+            "sum": false,
+            "min": false,
+            "max": false,
+            "range": false,
+            "first": false,
+            "last": false,
+            "sd": true,
+            "variance": false,
+            "kurtosis": false,
+            "seKurtosis": false,
+            "skewness": false,
+            "seSkewness": false,
+            "harmonic": false,
+            "geometric": false
+          }
+        }
+      },
+      "columnFilters": {},
+      "summary": "Veri Sütunları: score | Kırılım Sütunları (opsiyonel): grp3",
+      "syntax": "REPORT /FORMAT=AUTOMATIC\n  /VARIABLES=score\n  /BREAK=grp3\n  /SUMMARY=MEAN."
+    }
+  },
+  {
+    "id": "chart-histogram-score",
+    "channel": "menu:graphs:histogram",
+    "spss32": false,
+    "syntax": "GRAPH /HISTOGRAM=score.",
+    "okRequest": {
+      "analysisId": "chart-histogram",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "chart.R",
+      "params": {
+        "chartType": "histogram",
+        "xVar": "col_2",
+        "xVarName": "score",
+        "options": {
+          "normalCurve": false,
+          "binsMode": "auto",
+          "customBins": 10
+        }
+      },
+      "columnFilters": {},
+      "summary": "Değişken: score",
+      "syntax": "GRAPH /HISTOGRAM=score."
+    }
+  },
+  {
+    "id": "roc-analysis-score-disease",
+    "channel": "menu:analyze:roc-analysis",
+    "spss32": true,
+    "syntax": "ROC ANALYSIS score BY disease(1)\n  /CRITERIA CUTOFF=INCLUDE TESTPOS=LARGE DISTRIBUTION=FREE CI=95.",
+    "okRequest": {
+      "analysisId": "rocAnalysis",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "roc-analysis.R",
+      "params": {
+        "variables": [
+          "col_2"
+        ],
+        "varNames": {
+          "col_2": "score"
+        },
+        "stateVar": "col_17",
+        "stateName": "disease",
+        "stateLabel": "disease",
+        "stateValueLabels": {},
+        "stateValue": "1",
+        "options": {
+          "plotCurve": true,
+          "diagonal": true,
+          "prCurve": true,
+          "prInterp": "tp",
+          "modelQuality": false,
+          "seCi": true,
+          "coordinates": false,
+          "prCoordinates": false,
+          "metrics": true,
+          "compareAuc": false,
+          "cutoff": "include",
+          "direction": "larger",
+          "distribution": "free",
+          "ciLevel": 0.95,
+          "userMissingValid": false
+        }
+      },
+      "columnFilters": {},
+      "summary": "Test Değişkenleri: score | Durum Değişkeni: disease",
+      "syntax": "ROC ANALYSIS score BY disease(1)\n  /CRITERIA CUTOFF=INCLUDE TESTPOS=LARGE DISTRIBUTION=FREE CI=95."
+    }
+  },
+  {
+    "id": "power-onesample",
+    "channel": "menu:analyze:power",
+    "spss32": true,
+    "syntax": "POWER MEANS INDEPENDENT\n  /PARAMETERS TEST=NONDIRECTIONAL SIGNIFICANCE=0.05 N=30 30 ES=0.5.",
+    "okRequest": {
+      "analysisId": "power",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "power.R",
+      "params": {
+        "test": "tTwo",
+        "effectSize": 0.5,
+        "alpha": 0.05,
+        "power": 0.8,
+        "n": 30,
+        "groups": 3,
+        "df": 1,
+        "predictors": 1
+      }
+    }
+  },
+  {
+    "id": "explore-score-income-grp3",
+    "channel": "menu:analyze:explore",
+    "spss32": false,
+    "syntax": "EXAMINE VARIABLES=score income BY grp3\n  /STATISTICS DESCRIPTIVES EXTREME\n  /PERCENTILES\n  /PLOT BOXPLOT HISTOGRAM\n  /MISSING=LISTWISE.",
+    "okRequest": {
+      "analysisId": "explore",
+      "datasetId": "ds_1791749485140",
+      "scriptFile": "explore.R",
+      "params": {
+        "variables": [
+          "col_2",
+          "col_3"
+        ],
+        "varNames": {
+          "col_2": "score",
+          "col_3": "income"
+        },
+        "factors": [
+          "col_6"
+        ],
+        "factorNames": {
+          "col_6": "grp3"
+        },
+        "options": {
+          "display": "both",
+          "stats": {
+            "descriptives": true,
+            "percentiles": true,
+            "mEstimators": false,
+            "outliers": true
+          },
+          "plots": {
+            "boxplot": true,
+            "histogram": true,
+            "normality": false
+          },
+          "missing": "listwise"
+        }
+      },
+      "columnFilters": {},
+      "summary": "Bağımlı Liste: score, income | Faktör Listesi: grp3",
+      "syntax": "EXAMINE VARIABLES=score income BY grp3\n  /STATISTICS DESCRIPTIVES EXTREME\n  /PERCENTILES\n  /PLOT BOXPLOT HISTOGRAM\n  /MISSING=LISTWISE."
+    }
+  }
+]

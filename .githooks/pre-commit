@@ -1,0 +1,78 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 SAI Bilişim
+# SPDX-License-Identifier: AGPL-3.0-only
+# pre-commit — last line of defence before something private reaches a public
+# commit. Enabled by `pnpm install` (app/package.json "prepare" sets
+# core.hooksPath to .githooks); enable by hand with:
+#   git config core.hooksPath .githooks
+#
+# Checks only what is staged:
+#   1. data / statistics-package files (real datasets must never be committed)
+#   2. files over 5 MB
+#   3. absolute paths into the committer's own home directory (tests may use
+#      made-up paths like C:\Users\Test — only the real one is a leak)
+#   4. secrets, via gitleaks when it is installed
+#
+# A deliberate exception can be committed with `git commit --no-verify`;
+# say why in the commit message.
+
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+# Synthetic fixtures that are allowed despite their extension.
+allowed() {
+  case "$1" in
+    app/tests/fixtures/import-excel.xlsx | app/tests/fixtures/import-excel-mixed.xlsx) return 0 ;;
+  esac
+  return 1
+}
+
+for f in $staged; do
+  [ -f "$f" ] || continue
+
+  case "$f" in
+    *.sav | *.zsav | *.por | *.sas7bdat | *.xpt | *.dta | *.rds | *.RData | *.parquet | *.sdf | *.spv | *.xlsx | *.xls | *.pdf)
+      if ! allowed "$f"; then
+        echo "pre-commit: data file staged: $f"
+        fail=1
+      fi
+      ;;
+  esac
+
+  size=$(wc -c < "$f" | tr -d ' ')
+  if [ "$size" -gt 5242880 ]; then
+    echo "pre-commit: file over 5 MB staged: $f ($size bytes)"
+    fail=1
+  fi
+done
+
+# The committer's own home directory in the staged diff (added lines only),
+# in the spellings it takes in code, JSON and SPSS/R files.
+me=$(basename "${HOME:-${USERPROFILE:-}}")
+if [ -n "$me" ]; then
+  added=$(git diff --cached -U0 --diff-filter=ACMR -- . | grep -E '^\+' | grep -v '^+++')
+  hits=$(printf '%s\n' "$added" | grep -iF \
+    -e "Users\\$me" -e "Users\\\\$me" -e "Users/$me" -e "/home/$me" \
+    -e "Users-$(printf '%s' "$me" | tr ' ' '-')")
+  if [ -n "$hits" ]; then
+    echo "pre-commit: a path into your home directory ($me) was added:"
+    printf '%s\n' "$hits" | head -5
+    fail=1
+  fi
+fi
+
+if command -v gitleaks > /dev/null 2>&1; then
+  if ! gitleaks protect --staged --no-banner --redact > /dev/null 2>&1; then
+    echo "pre-commit: gitleaks found a possible secret — run: gitleaks protect --staged -v"
+    fail=1
+  fi
+else
+  echo "pre-commit: gitleaks not installed, secret scan skipped (https://github.com/gitleaks/gitleaks)"
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "pre-commit: commit blocked. Unstage the file(s) above, or use --no-verify for a deliberate exception."
+  exit 1
+fi
+exit 0

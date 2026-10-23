@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — İstatistik Rehberi</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      code {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .path {
+        color: #0052a3;
+        font-weight: 600;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.55rem 0.7rem;
+        text-align: left;
+        font-size: 0.93em;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .step {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — İstatistik Rehberi</h1>
+    <p>
+      "Hangi testi kullanmalıyım?" sorusu için hızlı bir karar zinciri. İstatistiksel danışmanlık
+      yerine geçmez — sık sorulan soruları uygun menü yoluna eşler. Karmaşık tasarımlar (çok
+      faktörlü, karma modeller, kovaryatlı tekrarlı ölçümler vb.) için bir istatistikçiye danışın.
+    </p>
+
+    <div class="step">
+      <strong>0. Adım — Önce normalliği kontrol edin.</strong> Bağımlı değişkeniniz sürekli (ölçek)
+      ise, parametrik ve parametrik olmayan testler arasında seçim yapmadan önce
+      <strong>Normallik Görünümü</strong>'nü (<kbd>Ctrl+4</kbd>) açın. Değişkeni Shapiro-Wilk,
+      Lilliefors (düzeltilmiş K-S) ve Q-Q grafiğiyle otomatik değerlendirir. Küçük örneklemde (n
+      &lt; 50) Shapiro-Wilk'e, büyük örneklemde grafiklere (Q-Q, histogram) daha çok güvenin.
+    </div>
+
+    <h2>Karar Tablosu</h2>
+    <table>
+      <tr>
+        <th>Soru</th>
+        <th>Bağımlı değişken</th>
+        <th>Parametrik (normallik varsayımı sağlanıyor)</th>
+        <th>Parametrik olmayan (normallik şüpheli / küçük n)</th>
+      </tr>
+      <tr>
+        <td>Tek bir grubu bilinen bir değerle karşılaştır</td>
+        <td>Sürekli</td>
+        <td class="path">Analiz Et ▸ Ortalamaları Karşılaştır ▸ Tek Örneklem T Testi...</td>
+        <td>
+          Ayrı bir menü öğesi yok: <span class="path">Dönüştür ▸ Değişken Hesapla</span> ile
+          referans değeri tutan bir sütun oluşturun, sonra ikisini
+          <span class="path">Analiz Et ▸ Parametrik Olmayan Testler ▸ 2 İlişkili Örneklem...</span>
+          (Wilcoxon işaretli sıralar) ile karşılaştırın.
+        </td>
+      </tr>
+      <tr>
+        <td>2 <strong>bağımsız</strong> grubu karşılaştır</td>
+        <td>Sürekli</td>
+        <td class="path">Analiz Et ▸ Ortalamaları Karşılaştır ▸ Bağımsız Örneklem T Testi...</td>
+        <td class="path">
+          Analiz Et ▸ Parametrik Olmayan Testler ▸ 2 Bağımsız Örneklem...<br />(Mann-Whitney U)
+        </td>
+      </tr>
+      <tr>
+        <td>2 <strong>eşleştirilmiş/ilişkili</strong> ölçümü karşılaştır (öncesi–sonrası)</td>
+        <td>Sürekli</td>
+        <td class="path">
+          Analiz Et ▸ Ortalamaları Karşılaştır ▸ Eşleştirilmiş Örneklem T Testi...
+        </td>
+        <td class="path">
+          Analiz Et ▸ Parametrik Olmayan Testler ▸ 2 İlişkili Örneklem...<br />(Wilcoxon)
+        </td>
+      </tr>
+      <tr>
+        <td>3+ <strong>bağımsız</strong> grubu karşılaştır</td>
+        <td>Sürekli</td>
+        <td class="path">Analiz Et ▸ Ortalamaları Karşılaştır ▸ Tek Yönlü ANOVA...</td>
+        <td class="path">
+          Analiz Et ▸ Parametrik Olmayan Testler ▸ K Bağımsız Örneklem...<br />(Kruskal-Wallis)
+        </td>
+      </tr>
+      <tr>
+        <td>3+ <strong>ilişkili/tekrarlı</strong> ölçümü karşılaştır</td>
+        <td>Sürekli</td>
+        <td class="path">Analiz Et ▸ Genel Doğrusal Model ▸ Tekrarlı Ölçümler...</td>
+        <td class="path">
+          Analiz Et ▸ Parametrik Olmayan Testler ▸ K İlişkili Örneklem...<br />(Friedman)
+        </td>
+      </tr>
+      <tr>
+        <td>2 kategorik değişken arasındaki ilişki</td>
+        <td>Kategorik</td>
+        <td colspan="2" class="path">
+          Analiz Et ▸ Tanımlayıcı İstatistikler ▸ Çapraz Tablolar...<br />(ki-kare testi
+          İstatistikler altında varsayılan olarak açıktır)
+        </td>
+      </tr>
+      <tr>
+        <td>Kategorik bir değişken beklenen oranlara uyuyor mu?</td>
+        <td>Kategorik</td>
+        <td colspan="2" class="path">
+          Analiz Et ▸ Parametrik Olmayan Testler ▸ Ki-Kare...<br />(uyum iyiliği)
+        </td>
+      </tr>
+      <tr>
+        <td>2 sürekli değişken arasındaki ilişki</td>
+        <td>Sürekli</td>
+        <td class="path">Analiz Et ▸ Korelasyon ▸ İkili Korelasyon...<br />(Pearson r)</td>
+        <td class="path">İkili Korelasyon...'da Spearman'ı işaretleyin</td>
+      </tr>
+      <tr>
+        <td>Sürekli bir sonucu bir veya daha fazla değişkenden tahmin et</td>
+        <td>Sürekli</td>
+        <td colspan="2" class="path">Analiz Et ▸ Regresyon ▸ Doğrusal...</td>
+      </tr>
+      <tr>
+        <td>İkili (0/1) bir sonucu tahmin et</td>
+        <td>İkili kategorik</td>
+        <td colspan="2" class="path">Analiz Et ▸ Regresyon ▸ İkili Lojistik...</td>
+      </tr>
+      <tr>
+        <td>Bir ölçeğin veya anketin iç tutarlılığı (Cronbach α)</td>
+        <td>Sürekli (birden çok madde)</td>
+        <td colspan="2" class="path">Analiz Et ▸ Ölçek ▸ Güvenilirlik Analizi...</td>
+      </tr>
+      <tr>
+        <td>Sağkalım / olaya kadar geçen süre verisi</td>
+        <td>Süre + sansürleme</td>
+        <td colspan="2" class="path">Analiz Et ▸ Sağkalım ▸ Kaplan-Meier... / Cox Regresyonu...</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <strong>1-Örneklem K-S...</strong> (Parametrik Olmayan Testler) verinin belirli bir dağılıma
+      uyup uymadığını sınar — medyanın bir değere eşit olup olmadığını sınamaz. Normallik kontrolü
+      için Normallik Görünümü'nü (Lilliefors ve Shapiro-Wilk) tercih edin.
+    </div>
+
+    <div class="note">
+      <strong>Emin değil misiniz?</strong> Her diyalogdaki
+      <strong>R Kodunu Yapıştır</strong> düğmesi, ayarlarınızla hangi R fonksiyonunun çağrılacağını
+      tam olarak gösterir — testin gerçekte ne yaptığını doğrulamanın hızlı bir yolu.
+    </div>
+
+    <h2>Küçük Örneklem veya Eşit (Bağlı) Değerler</h2>
+    <p>
+      Parametrik olmayan testlerde SAI, mümkün olan her durumda
+      <strong>tam (exact)</strong> p-değeri verir (R'ın kendi varsayılanı veya
+      <code>coin</code> paketiyle) — SPSS Base'in yalnızca asimptotik değer sunduğu durumlarda bile.
+      Sonuç tablosunda hem Asymp. Sig. (SPSS ile karşılaştırma için) hem Exact Sig. (daha doğru
+      değer) yer alır. Küçük veya seyrek örneklemde Exact Sig.'e güvenin.
+    </p>
+
+    <footer>SAI Statistics · Bu kılavuz uygulamayla birlikte kurulur.</footer>
+  </body>
+</html>

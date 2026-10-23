@@ -1,0 +1,110 @@
+# Builds the real Windows installer and verifies it — the thing a user actually
+# downloads, which ci.yml never touches.
+#
+# ci.yml runs on ubuntu against a SYSTEM R it installs fresh. That is the
+# "developer installs their own R" path, not the shipped one, and the gap is
+# how a vendored runtime missing R's recommended package set shipped with
+# Survival, Bootstrap, Discriminant, KNN and Trees quietly broken while every
+# check was green.
+#
+# Deliberately NOT on every push: a Windows runner burns minutes at 2x the
+# Linux rate and the R runtime is a ~500MB download. Releases and on-demand
+# only, so day-to-day development is unaffected but no release ever goes out
+# on an unverified installer.
+name: Package (Windows)
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_installer:
+        description: 'Upload the unsigned .exe as a run artifact (public in a public repo)'
+        type: boolean
+        default: false
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: package-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-installer:
+    name: Build + verify the Windows installer
+    runs-on: windows-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Node version
+        id: node
+        shell: bash
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node.outputs.version }}
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The conda package cache is what makes a repeat run cheap: the first run
+      # downloads ~500MB, later ones extract from cache in seconds. Keyed on the
+      # manifest so a package-list change correctly busts it.
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: ~/mamba-root/pkgs
+          key: micromamba-pkgs-${{ runner.os }}-${{ hashFiles('app/shared/r-packages.json', 'app/scripts/vendor-r-runtime-win.ps1') }}
+          restore-keys: micromamba-pkgs-${{ runner.os }}-
+
+      # Pinned to 1.5.8 on purpose — micromamba 2.x has been seen to abort on
+      # startup (STATUS_STACK_BUFFER_OVERRUN) on Windows.
+      - name: Install micromamba
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "$HOME\mamba-root" | Out-Null
+          Invoke-WebRequest `
+            -Uri "https://github.com/mamba-org/micromamba-releases/releases/download/1.5.8-0/micromamba-win-64" `
+            -OutFile "$HOME\micromamba.exe"
+          & "$HOME\micromamba.exe" --version
+
+      - name: Vendor the R runtime
+        shell: pwsh
+        run: |
+          $env:CONDA_BIN = "$HOME\micromamba.exe"
+          $env:MAMBA_ROOT_PREFIX = "$HOME\mamba-root"
+          pnpm vendor:r-runtime:win
+
+      - name: Build renderer + main
+        run: pnpm build
+
+      - name: Package with electron-builder
+        run: pnpm exec electron-builder --win --publish never
+
+      # The point of this whole workflow. Boots the packaged binary too, so a
+      # runtime that copied in but cannot actually start still fails here.
+      - name: Verify the packaged build
+        run: node scripts/verify-packaged-build.cjs --with-app
+
+      - name: Report installer size
+        shell: bash
+        run: ls -lh dist/*.exe
+
+      - name: Upload installer
+        if: inputs.upload_installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: sai-statistics-windows-installer
+          path: app/dist/*.exe
+          # Opt-in only: in a public repository artifacts are downloadable by
+          # anyone, and an unsigned installer must not look like an official
+          # build (official builds are signed and published elsewhere). Kept short because each installer is a few hundred MB against the
+          # account's storage quota.
+          retention-days: 14
+          if-no-files-found: error

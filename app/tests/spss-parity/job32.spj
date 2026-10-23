@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://www.ibm.com/software/analytics/spss/xml/production"
+     syntaxFormat="interactive">
+  <output outputPath="C:\path\to\sai-statistics\app\tests\spss-parity\spss32-out.htm"
+          outputFormat="html"/>
+  <syntax syntaxPath="C:\path\to\sai-statistics\app\tests\spss-parity\job32.sps"/>
+</job>

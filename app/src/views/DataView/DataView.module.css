@@ -1,0 +1,571 @@
+/* ── Root container ────────────────────────────────────────── */
+.fileDropZone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.fileDropOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--color-accent);
+  background: color-mix(in srgb, var(--color-bg-base) 90%, transparent);
+  color: var(--color-accent);
+  font-size: var(--font-size-xl);
+  pointer-events: none;
+}
+
+.fileDropError {
+  position: absolute;
+  bottom: var(--space-md);
+  left: var(--space-md);
+  right: var(--space-md);
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-base);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Name Box bar (B1 — Excel's top-left address box) ─────── */
+.nameBoxBar {
+  display: flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-bg-statusbar);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.nameBox {
+  width: 120px;
+  height: 22px;
+  padding: 0 var(--space-sm);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.nameBox:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.formulaMarker {
+  flex-shrink: 0;
+  margin: 0 var(--space-xs);
+  font-family: var(--font-family-mono, monospace);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.formulaBar {
+  flex: 1;
+  min-width: 0;
+  height: 22px;
+  padding: 0 var(--space-sm);
+  font-family: var(--font-family-mono, monospace);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.formulaBar:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.formulaBar:disabled {
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+}
+
+/* ── Grid area (AG Grid fills entirely) ──────────────────── */
+.gridArea {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 0;
+}
+
+.agGridHost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  /* Theme tokens → AG Grid's CSS-variable theming API (aggrid-gecis-roadmap.md
+     G3) — no per-render JS style sync needed, unlike the previous grid's
+     getColumnHeaderStyle() that had to re-read computed styles on every
+     column-header rebuild. */
+  --ag-background-color: var(--color-bg-base);
+  --ag-foreground-color: var(--color-text-primary);
+  --ag-header-background-color: var(--color-bg-header);
+  --ag-header-foreground-color: var(--color-accent);
+  --ag-border-color: var(--color-border);
+  --ag-row-hover-color: var(--color-bg-hover);
+  --ag-selected-row-background-color: var(--color-bg-selected);
+  --ag-font-family: var(--font-family-ui);
+  --ag-font-size: var(--font-size-body);
+  --ag-row-height: 24px;
+  --ag-header-height: 32px;
+}
+
+/* ── Empty-state placeholder ─────────────────────────────── */
+.placeholderContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-ui);
+  gap: var(--space-md);
+}
+
+.placeholderTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.placeholderText {
+  font-size: var(--font-size-body);
+}
+
+/* ── Status bar ──────────────────────────────────────────── */
+.statusBar {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-lg);
+  background: var(--color-bg-statusbar);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-statusbar);
+  user-select: none;
+  height: 24px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* ── Loading overlay ─────────────────────────────────────── */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg-overlay);
+  opacity: 0.85;
+  backdrop-filter: blur(3px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  gap: var(--space-sm);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+}
+
+.cellWarning {
+  position: absolute;
+  top: var(--space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  max-width: 80%;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-bg-overlay);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+  border-left: 3px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  pointer-events: none;
+}
+
+.loadingSpinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Row-number pinned column ────────────────────────────── */
+.rowNumCell {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-header);
+  text-align: center;
+  user-select: none;
+  cursor: grab;
+}
+
+/* ── Missing-value highlight ─────────────────────────────── */
+.missingCell {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+/* ── Range selection (use-cell-selection.ts, G4/T5) ──────── */
+.selectedCell {
+  /* Semi-transparent inset overlay so custom cell background colors (format.bg)
+   * remain visible underneath multi-cell selection. */
+  box-shadow: inset 0 0 0 9999px color-mix(in srgb, var(--color-accent) 20%, transparent) !important;
+  background-color: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+/* Fill handle: small square at the bottom-right corner of the active range
+ * (Excel convention). Drawn as a ::after pseudo-element so it needs
+ * no separate DOM-position tracking — it's a child of the real cell node,
+ * so virtualized scrolling positions/hides it for free. Size must match
+ * FILL_HANDLE_HITZONE_PX in fill-handle.ts. */
+.fillHandleAnchor {
+  position: relative;
+}
+.fillHandleAnchor::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 7px;
+  height: 7px;
+  background: var(--color-accent);
+  border: 1px solid var(--color-bg-base);
+  cursor: crosshair;
+}
+
+/* ── Copy/cut "marching ants" frame (B4) ───────────────────────
+   A dashed accent rectangle drawn on the perimeter cells of the last
+   copied/cut range (each edge cell styles only its outer side, so the four
+   classes together outline the whole block). A gentle opacity pulse gives it
+   life without the per-cell background-position trickery true marching ants
+   would need. Cut source is additionally dimmed. */
+.copiedTop {
+  border-top: 2px dashed var(--color-accent) !important;
+  animation: copiedPulse 1s ease-in-out infinite;
+}
+.copiedBottom {
+  border-bottom: 2px dashed var(--color-accent) !important;
+  animation: copiedPulse 1s ease-in-out infinite;
+}
+.copiedLeft {
+  border-left: 2px dashed var(--color-accent) !important;
+  animation: copiedPulse 1s ease-in-out infinite;
+}
+.copiedRight {
+  border-right: 2px dashed var(--color-accent) !important;
+  animation: copiedPulse 1s ease-in-out infinite;
+}
+.cutCell {
+  opacity: 0.55;
+}
+@keyframes copiedPulse {
+  0%,
+  100% {
+    border-color: var(--color-accent);
+  }
+  50% {
+    border-color: var(--color-bg-base);
+  }
+}
+
+/* ── Focus Cell crosshair (B5, View ▸ Focus Cell) ─────────────
+   Tints the focused cell's entire row and column. Deliberately a soft tint
+   (not a border) so it layers under the range-selection highlight instead of
+   fighting it — the focused cell itself sits where both bands cross. */
+.focusCross {
+  background-color: var(--color-bg-focus-cross);
+}
+
+/* ── Gridlines toggle (B5, View ▸ Gridlines) ───────────────── */
+.noGridLines :global(.ag-cell),
+.noGridLines :global(.ag-header-cell) {
+  border-right-color: transparent !important;
+}
+.noGridLines :global(.ag-row) {
+  border-bottom-color: transparent !important;
+}
+
+/* ── Zebra striping ───────────────────────────────────────── */
+.oddRow {
+  background: var(--color-bg-alt);
+}
+
+/* ── Row drag-to-reorder feedback ────────────────────────────
+   The declarative AG Grid `rowDrag`/`rowDragManaged` feature can't be used
+   here (conflicts with row-number click-to-select — see DataView.tsx's
+   row-reorder comment), so this hand-rolled drag live-reflows `rowData`
+   itself on every hover (handleRowDragMouseOver): the moved block jumps to
+   its live-previewed position and the other rows fill the gap it left — the
+   "diğerleri aynı anda boş yerleri doldursun" behaviour the user asked for.
+
+   SMOOTH SLIDE (the "feel"): AG Grid positions every row via an inline
+   `transform: translateY(rowIndex*height)` (verified — not `top`). On each
+   reflow AG Grid reuses each row element (matched by getRowId) and just
+   rewrites that transform, so adding a CSS `transition: transform` makes
+   those rewrites ANIMATE — the GPU-accelerated FLIP technique (First/Last/
+   Invert/Play) that react-beautiful-dnd & dnd-kit use, giving the same
+   buttery slide as AG Grid's native `rowDragManaged` (the benchmark). This
+   is deliberately NOT done via AG Grid `animateRows`: that double-renders
+   rows (old faded out + new faded in) on every swap, and under the rapid
+   per-mouseover reflow those ghosts pile up into overlapping rows (verified
+   with a frame capture: 40 row elements for 20 rows). Letting AG Grid reuse
+   the element and only CSS-transitioning its transform keeps exactly one
+   element per row.
+
+   The transition is scoped to `.rowDragActive` (toggled on the grid host
+   only during a drag) so normal scroll/filter/sort repaints stay instant;
+   and suppressed again by `.rowDragScrolling` during auto-scroll ticks,
+   where row elements get recycled to new data and must snap, not slide. */
+.rowDragActive :global(.ag-row) {
+  transition: transform 165ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.rowDragActive.rowDragScrolling :global(.ag-row) {
+  transition: none;
+}
+.rowDragSource {
+  opacity: 0.9;
+  background: var(--color-bg-selected) !important;
+  box-shadow:
+    inset 3px 0 0 0 var(--color-accent),
+    inset -3px 0 0 0 var(--color-accent);
+}
+/* Crisp accent rule at the top and bottom of the moving block so its extent
+   reads clearly even against alternating zebra rows. AG Grid draws each row
+   as an absolutely-positioned element, so a top/bottom border on the row
+   itself is reliable here. */
+.rowDragSource::before,
+.rowDragSource::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-accent);
+  z-index: 3;
+  pointer-events: none;
+}
+.rowDragSource::before {
+  top: 0;
+}
+.rowDragSource::after {
+  bottom: 0;
+}
+
+/* Floating chip that follows the cursor while a row-drag is in progress
+   (parity with VariableView's native rowDrag ghost, which the hand-rolled
+   drag here has no built-in equivalent for — see the row-reorder comment in
+   DataView.tsx). Positioned imperatively (style.left/top set directly in
+   the mousemove handler, not via React state) to stay smooth at drag speed
+   without triggering a re-render on every pointer move. Styled as a modern
+   solid-accent chip (grip icon + count) rather than a bordered white
+   badge. */
+.rowDragGhost {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px 5px 8px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  /* Pop-in: starts slightly small/faded, settles on .rowDragGhostVisible
+     (toggled in DataView.tsx at drag start). Position is set imperatively
+     so only transform/opacity animate here, never left/top. */
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+.rowDragGhostVisible {
+  opacity: 1;
+  transform: scale(1);
+}
+.rowDragGhostGrip {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.85;
+}
+
+/* ── Custom column header (name/letter + inline filter icon) ─ */
+/* AG Grid's own header cell is a real focusable/keyboard-navigable element
+ * (its FocusService manages header focus for a11y independently of our own
+ * cell-range selection), so it draws its default `:focus-visible` ring
+ * (ag-grid.css `.ag-header-cell:focus-visible::after`) around the WHOLE
+ * header — including plain-text headers with no visible selection state of
+ * their own. Chromium flips an already-mouse-focused element into
+ * `:focus-visible` the moment ANY key is pressed while it still holds
+ * focus, so clicking a header (selects the column — Excel convention, P1.5)
+ * then pressing e.g. Delete/Ctrl+C suddenly draws this ring, even though our
+ * OWN column-selection highlight (the blue cell tint) already shows what's
+ * selected. Suppressed here — this app's headers aren't a real keyboard-tab
+ * target, selection always goes through a click.
+ */
+:global(.ag-header-cell:focus-visible)::after {
+  display: none;
+}
+.columnHeaderInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  gap: var(--space-xs);
+  overflow: hidden;
+}
+
+.columnHeaderText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.filterButtonInline {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background-color 0.15s,
+    transform 0.1s;
+}
+
+.filterButtonInline:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.filterButtonInline:active {
+  transform: scale(0.9);
+}
+
+/* ── Row Drag Handle & Selection Styling for Row Number Column ─────── */
+:global(.ag-cell[col-id='__row_num__']) {
+  padding: 0 !important;
+}
+
+:global(.ag-cell[col-id='__row_num__']) :global(.ag-cell-wrapper) {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:global(.ag-cell[col-id='__row_num__']) :global(.ag-drag-handle) {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: grab !important;
+  z-index: 1 !important;
+  opacity: 0 !important;
+}
+
+:global(.ag-cell[col-id='__row_num__']) :global(.ag-drag-handle:active) {
+  cursor: grabbing !important;
+}
+
+:global(.ag-cell[col-id='__row_num__']) :global(.ag-cell-value) {
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  font-weight: bold;
+  color: var(--color-text-secondary);
+}
+
+/* ── Frozen Columns Separator Line ─────────────────────────────────── */
+:global(.ag-pinned-left-header),
+:global(.ag-pinned-left-cols-container),
+:global(.ag-pinned-left-cols-viewport) {
+  border-right: 2px solid var(--color-accent) !important;
+  box-shadow: 2px 0 6px -1px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+/* Sort indicator in the custom column header (C1) — AG Grid's native one
+   never lights up because header clicks select the column instead of sorting. */
+.sortIndicator {
+  flex-shrink: 0;
+  margin-left: 2px;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--color-accent);
+}

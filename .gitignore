@@ -1,0 +1,76 @@
+# .gitignore — whitelist at the repository root.
+#
+# Everything at the top level is ignored unless listed below, so a stray file
+# dropped next to the repo (a dataset, an export, a log, editor/agent config)
+# can never be committed by `git add -A`. To add a new top-level file or
+# folder, whitelist it here on purpose.
+/*
+!/.gitignore
+!/.gitattributes
+!/.github/
+!/.githooks/
+!/app/
+!/docs/
+!/README.md
+!/LICENSE
+!/CLAUDE.md
+!/CONTRIBUTING.md
+!/CLA.md
+!/CODE_OF_CONDUCT.md
+!/SECURITY.md
+!/TRADEMARK.md
+!/CITATION.cff
+!/build-installer.sh
+!/build-installer.ps1
+!/build-installer-win.ps1
+!/start.sh
+!/start.ps1
+
+# ── Data files: never committed, wherever they appear ─────────────────────────
+# Real datasets and statistics-package exports. Fixtures that are known to be
+# synthetic are re-included in app/.gitignore; anything else needs
+# `git add -f` — a deliberate act, and the pre-commit hook still checks it.
+*.sav
+*.zsav
+*.por
+*.sas7bdat
+*.xpt
+*.dta
+*.rds
+*.RData
+*.parquet
+*.sdf
+*.spv
+*.xlsx
+*.xls
+*.pdf
+
+# E2E test screenshots (tests/e2e/e2e-*.cjs regenerate them on every run)
+app/e2e-*.png
+
+# Dependencies and build outputs
+node_modules/
+app/out/
+app/dist/
+# Vendored R runtimes (platform-specific, built by scripts/vendor-r-runtime.*)
+app/resources/r-runtime/
+app/resources/r-runtime-win/*
+app/resources/r-runtime-mac/*
+!app/resources/r-runtime-win/README.txt
+!app/resources/r-runtime-mac/README.txt
+app/*.log
+app/tmp/
+app/temp/
+
+# OS/System files
+.DS_Store
+*.log
+__pycache__/
+
+# Temporary file electron-vite writes while loading its config (left by a crash)
+app/electron.vite.config.*.mjs
+
+# Generated / machine-specific
+app/*.tsbuildinfo
+app/flatpak-repo/
+app/Desktop

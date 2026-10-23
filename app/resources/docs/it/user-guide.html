@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — Guida utente</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.4rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+      }
+      code,
+      kbd {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .toc {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+      }
+      .toc ul {
+        margin: 0.3rem 0;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      .warn {
+        background: #fdecea;
+        border-left: 4px solid #cf222e;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.5rem 0.7rem;
+        text-align: left;
+        font-size: 0.95em;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — Guida utente</h1>
+    <p>
+      SAI Statistics è un'applicazione di statistica per desktop, multipiattaforma, costruita sul
+      motore R. Questa guida descrive i flussi di lavoro principali e i punti utili da conoscere se
+      si proviene da SPSS.
+    </p>
+
+    <div class="toc">
+      <strong>Indice</strong>
+      <ul>
+        <li><a href="#import">1. Importare e salvare i dati</a></li>
+        <li>
+          <a href="#variable-view">2. Vista variabili — cosa influisce davvero sulle analisi?</a>
+        </li>
+        <li>
+          <a href="#weight-split-select">3. Pondera casi / Suddividi file / Seleziona casi</a>
+        </li>
+        <li><a href="#running">4. Eseguire un'analisi</a></li>
+        <li><a href="#output">5. Output — formati ed esportazione</a></li>
+        <li><a href="#terminal">6. Scheda Sintassi / Terminale</a></li>
+        <li><a href="#accessibility">7. Accessibilità</a></li>
+      </ul>
+    </div>
+
+    <h2 id="import">1. Importare e salvare i dati</h2>
+    <p>
+      Usa <strong>File ▸ Importa dati</strong> per aprire file CSV/testo, Excel (.xlsx), SPSS (.sav,
+      .zsav, .por), Stata (.dta) o SAS (.sas7bdat, .xpt). I dati vengono scritti direttamente nel
+      database integrato dell'applicazione: non c'è una fase di caricamento separata da attendere,
+      nemmeno con file di grandi dimensioni.
+    </p>
+    <div class="note">
+      <strong>Oltre 200.000 righe:</strong> la Vista dati mostra l'intero set di dati senza
+      paginazione. Dopo aver importato un set di dati più grande compare una finestra informativa: è
+      solo un avviso e non blocca nulla. Lo scorrimento può rallentare, ma
+      <strong>le analisi non ne sono influenzate</strong>: ogni analisi legge direttamente dal
+      database, non da ciò che mostra la Vista dati.
+    </div>
+    <p>
+      <strong>File ▸ Salva</strong> memorizza il tuo lavoro nel formato proprio dell'applicazione,
+      <code>.sdf</code>: dati, definizioni delle variabili e formattazione delle celle in un unico
+      file, così riaprirlo non richiede alcuna importazione.
+      <strong>File ▸ Esporta dati</strong> scrive file CSV, Excel o SPSS (.sav).
+    </p>
+
+    <h2 id="variable-view">2. Vista variabili — cosa influisce davvero sulle analisi?</h2>
+    <p>
+      Una nota importante per chi proviene da SPSS: alcuni campi della Vista variabili sono
+      puramente
+      <em>estetici</em>, mentre altri <strong>modificano davvero i risultati delle analisi</strong>.
+      La tabella seguente mostra quali sono quali.
+    </p>
+    <table>
+      <tr>
+        <th>Campo</th>
+        <th>Effetto</th>
+        <th>Dettagli</th>
+      </tr>
+      <tr>
+        <td><strong>Mancante</strong> (valori mancanti definiti dall'utente)</td>
+        <td>✅ Reale</td>
+        <td>
+          I codici di valore mancante che definisci (ad es. <code>-99</code>) vengono esclusi dalle
+          statistiche di quella variabile nelle analisi.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Decimali</strong></td>
+        <td>✅ Reale (visualizzazione)</td>
+        <td>
+          Controlla il numero di decimali mostrati per i valori, ad esempio nella tabella delle
+          Frequenze.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Misura</strong> (Nominale / Ordinale / Scala)</td>
+        <td>🟡 Parziale</td>
+        <td>
+          Sposta in cima agli elenchi di variabili delle finestre di dialogo le variabili del
+          livello di misura corrispondente. Non è un filtro: puoi comunque scegliere qualsiasi
+          variabile.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Ruolo</strong></td>
+        <td>🟡 Parziale</td>
+        <td>
+          Precompila una sola volta le caselle di destinazione e di input, alla prima apertura di
+          alcune finestre di dialogo.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Larghezza</strong></td>
+        <td>❌ Estetico</td>
+        <td>
+          Cambia solo il modo in cui la Vista dati mostra le celle; non influisce mai sui risultati.
+        </td>
+      </tr>
+    </table>
+    <p>
+      In sintesi: <strong>prendi sul serio le definizioni dei valori mancanti</strong>: sono i campi
+      che cambiano i risultati statistici. Gli altri servono soprattutto a mantenere il layout
+      familiare di SPSS.
+    </p>
+
+    <h2 id="weight-split-select">3. Pondera casi / Suddividi file / Seleziona casi</h2>
+    <p>
+      Una volta attivate nel menu <strong>Dati</strong>, queste tre impostazioni
+      <strong>si applicano automaticamente a tutte le analisi successive</strong>: non serve
+      reimpostarle in ogni finestra di dialogo:
+    </p>
+    <ul>
+      <li>
+        <strong>Pondera casi:</strong> le analisi principali come Frequenze, Tavole di contingenza,
+        Descrittive, Medie, i test t e l'ANOVA usano vere formule ponderate (non la duplicazione
+        delle righe). Un'analisi che non supporta la ponderazione lo segnala con un avviso
+        nell'output, invece di ignorare silenziosamente il peso.
+      </li>
+      <li>
+        <strong>Suddividi file:</strong> produce risultati separati per ciascun gruppo quando
+        l'analisi lo consente; altrimenti l'output mostra un avviso.
+      </li>
+      <li><strong>Seleziona casi:</strong> limita le righe lette da ogni analisi.</li>
+    </ul>
+    <div class="warn">
+      Se un risultato appare diverso da quello atteso, controlla prima la barra di stato: mostra
+      sempre lo stato di ponderazione, suddivisione e filtro (ad esempio
+      <code>Filtro: ATTIVO</code>).
+    </div>
+
+    <h2 id="running">4. Eseguire un'analisi</h2>
+    <p>
+      Scegli una procedura dal menu <strong>Analizza</strong>, sposta le variabili nelle caselle di
+      destinazione trascinandole o con un doppio clic, apri se necessario le finestre secondarie
+      come <em>Statistiche</em> od <em>Opzioni</em> e fai clic su <strong>OK</strong>. Il risultato
+      compare nella Vista output. Ogni finestra di dialogo offre inoltre:
+    </p>
+    <ul>
+      <li>
+        <strong>Incolla R</strong>: mostra il codice R che verrà eseguito (piena trasparenza).
+      </li>
+      <li>
+        <strong>Incolla sintassi</strong>: scrive il comando di sintassi SPSS equivalente nella
+        scheda Sintassi / Terminale, così puoi salvarlo ed eseguirlo di nuovo in seguito.
+      </li>
+      <li>
+        <strong>Tastiera:</strong> <kbd>Tab</kbd>/<kbd>Maiusc+Tab</kbd> passa da un campo all'altro,
+        <kbd>Invio</kbd> conferma, <kbd>Esc</kbd> annulla.
+      </li>
+    </ul>
+
+    <h2 id="output">5. Output — formati ed esportazione</h2>
+    <p>
+      Ogni blocco della Vista output può essere compresso o rimosso. Lo stile delle tabelle
+      (Accademico / Compatto / APA) si imposta in <strong>Modifica ▸ Preferenze</strong>.
+      <strong>File ▸ Salva output come HTML...</strong> crea un unico file HTML autonomo che puoi
+      condividere via e-mail; <strong>File ▸ Esporta output</strong> salva i risultati come HTML,
+      PDF, Word, Excel, CSV o Markdown.
+    </p>
+
+    <h2 id="terminal">6. Scheda Sintassi / Terminale</h2>
+    <p>La scheda Sintassi / Terminale (<kbd>Ctrl+5</kbd>) ha due modalità:</p>
+    <ul>
+      <li>
+        <strong>Modalità sintassi SPSS:</strong> scrivi comandi SPSS classici come
+        <code>FREQUENCIES VARIABLES=eta</code>. Vengono eseguiti tramite le stesse analisi e gli
+        stessi controlli sui dati in ingresso dei menu: non viene eseguito alcun codice arbitrario.
+      </li>
+      <li>
+        <strong>Modalità console R:</strong> una sessione R interattiva, simile a RStudio. Il codice
+        viene eseguito solo sul tuo computer e solo quando fai clic su <strong>Esegui</strong>:
+        nulla viene eseguito automaticamente, anche se un file aperto contiene codice. Puoi
+        disattivare la console in <strong>Modifica ▸ Preferenze ▸ Abilita la console R</strong>.
+      </li>
+    </ul>
+
+    <h2 id="accessibility">7. Accessibilità</h2>
+    <p>
+      La navigazione da tastiera (Tab/Invio/Esc, con il focus mantenuto all'interno delle finestre
+      di dialogo), un tema a Contrasto elevato e il supporto per i lettori di schermo (regioni
+      dinamiche, ruoli ARIA) sono disponibili in tutte le finestre di dialogo e nella Vista output.
+      La Vista dati e la Vista variabili sono griglie HTML con ruoli ARIA, così i lettori di schermo
+      possono leggerne le celle, e le tabelle di output sono vere tabelle HTML.
+    </p>
+    <div class="note">
+      <strong>Suggerimento per i set di dati di grandi dimensioni:</strong> per restare veloce, la
+      Vista dati disegna solo le righe attualmente visibili a schermo. Per esaminare un set di dati
+      grande con un lettore di schermo, riassumilo con Frequenze o Descrittive e leggi le tabelle
+      nella Vista output invece di spostarti cella per cella.
+    </div>
+
+    <footer>SAI Statistics · Questa guida viene installata insieme all'applicazione.</footer>
+  </body>
+</html>

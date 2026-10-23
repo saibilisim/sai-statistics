@@ -1,0 +1,578 @@
+/* ─────────────────────────────────────────────────────────────
+   Ribbon — single design source for action buttons across the app
+   (top ribbon + Variable View toolbar). Flat, compact, subtle hover,
+   accent for active/toggled state. Tokens only.
+   ───────────────────────────────────────────────────────────── */
+
+.ribbon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  padding: 4px var(--space-sm);
+  background: var(--color-bg-toolbar);
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.ribbonRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 32px;
+  overflow: visible;
+}
+
+/* İki-satır modu: tam genişlikte 2 kat ribbon çubuğu. */
+.ribbonTwoRows {
+  gap: 4px;
+  padding: 6px var(--space-sm);
+}
+
+.ribbonTwoRows .ribbonRow {
+  min-height: 28px;
+}
+
+.ribbonTwoRows .btn {
+  height: 26px;
+  min-width: 26px;
+  padding: 0 6px;
+}
+
+.ribbonTwoRows .select {
+  height: 26px;
+  font-size: 11px;
+}
+
+/* Düzenleme modunda hafif dış işaret. */
+.ribbonEditMode {
+  outline: 1px dashed var(--color-border-strong);
+  outline-offset: -2px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Shared button — used by Ribbon and Variable View toolbar */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 30px;
+  min-width: 30px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0.5px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+
+.btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.btnWithLabel {
+  padding: 0 10px;
+}
+
+.btnIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Icons (from @univerjs/icons) render at 1em — drive their size from here. */
+  font-size: 16px;
+  min-width: 16px;
+}
+
+/* Text-as-icon (e.g. "Aa" / "A·B" header toggle) */
+.textIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.btnLabel {
+  white-space: nowrap;
+}
+
+/* Toggled / pressed state — accent tint */
+.btnActive {
+  background: var(--color-bg-selected);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btnActive:hover:not(:disabled) {
+  background: var(--color-bg-selected);
+  border-color: var(--color-accent);
+}
+
+/* Primary action (e.g. Add Variable) */
+.btnPrimary {
+  background: var(--color-accent);
+  border-color: transparent;
+  color: var(--color-text-inverse);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: transparent;
+}
+
+/* Destructive action (e.g. Delete Variable) */
+.btnDanger:not(:disabled) {
+  color: var(--color-error);
+}
+
+.btnDanger:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-error);
+}
+
+.divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+  margin: 0 4px;
+}
+
+.select {
+  height: 30px;
+  max-width: 130px;
+  padding: 0 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) ease;
+}
+
+.selectNarrow {
+  width: 56px;
+}
+
+.select:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+}
+
+.select:focus-visible {
+  border-color: var(--color-accent);
+}
+
+.select:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+/* Color picker — icon glyph above a thin color swatch, Office-style */
+.colorPicker {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  height: 30px;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) ease,
+    border-color var(--duration-fast) ease;
+}
+
+.colorPicker:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border);
+}
+
+.colorGlyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.colorInput {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  width: 20px;
+  height: 5px;
+  border-radius: 1px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput::-webkit-color-swatch {
+  border: none;
+  border-radius: 1px;
+}
+
+.colorInput:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.colorBtnIconWrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  line-height: 1;
+}
+
+.colorIndicatorBar {
+  display: block;
+  width: 14px;
+  height: 3px;
+  margin-top: 1px;
+  border-radius: 1px;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+  transition: background-color var(--duration-slow) ease;
+}
+
+/* Dropdown container */
+.dropdownContainer {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Popover card */
+.popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  z-index: var(--z-popover);
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+}
+
+/* Excel-style vertical list (Number Format's General/Number/Currency/
+   Percent/Scientific) instead of the default row of icon buttons. */
+.popoverColumn {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 140px;
+}
+.popoverColumn :global(button) {
+  justify-content: flex-start;
+}
+
+/* Number Format ▸ Currency's nested flyout — currency SYMBOLS only, no
+ * text labels, opened to the side of the "Currency" row so it doesn't
+ * collapse the parent list back to a single row. */
+.currencyRow {
+  position: relative;
+}
+.currencySubmenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 4px;
+  z-index: var(--z-popover);
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+}
+
+/* Arrow inside dropdown button */
+.dropdownArrow {
+  font-size: 8px;
+  margin-left: 4px;
+  opacity: 0.6;
+  transition: transform var(--duration-fast) ease;
+  pointer-events: none;
+}
+
+.dropdownActive .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.colorPalettePopover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-popover);
+  margin-top: 4px;
+  background-color: var(--color-bg-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+  padding: 8px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resetColorButton {
+  background: none;
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  color: var(--color-text-primary);
+  transition: background-color 0.2s;
+}
+
+.resetColorButton:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.colorGridLabel {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+}
+
+.colorCell {
+  width: 16px;
+  height: 16px;
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--duration-fast) ease;
+}
+
+.colorCell:hover {
+  transform: scale(1.15);
+  z-index: 1;
+  border-color: var(--color-text-primary);
+}
+
+.customColorContainer {
+  margin-top: 6px;
+  border-top: var(--border-width-thin) solid var(--color-border);
+  padding-top: 6px;
+}
+
+.customColorLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.customColorInput {
+  border: none;
+  background: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ── Ribbon özelleştirme ── */
+
+/* Wrapper: her butonu kaldır-X ile sarmalar. Poziție relative. */
+.ribbonItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ribbonItemEditable {
+  border-radius: var(--radius-md);
+  cursor: grab;
+  margin: 2px 5px 2px 2px;
+  padding: 1px;
+}
+
+.ribbonItemEditable:active {
+  cursor: grabbing;
+}
+
+/* Kaldırma × : ikonun sağ-üst köşesinde, belirgin kırmızı daire rozet. */
+.removeItemBtn {
+  position: absolute;
+  top: -4px;
+  right: -5px;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: var(--border-width-thick) solid var(--color-bg-toolbar);
+  background: var(--color-error);
+  color: var(--color-accent-text);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: var(--shadow-sm);
+  line-height: 0;
+  transition:
+    transform var(--duration-slow) ease,
+    background var(--duration-slow) ease;
+}
+
+.removeItemBtn:hover {
+  background: var(--color-error);
+  filter: brightness(0.9);
+  transform: scale(1.18);
+}
+
+/* En sağdaki + düğmesi (gizli ikonları ekle). Edit modunda vurgulu. */
+.btnAdd {
+  position: relative;
+}
+
+.btnAddVisible {
+  background: var(--color-bg-selected);
+  border-color: var(--color-accent);
+}
+
+/* Çark + iki-satır konteynırı: en sağa it. */
+.gearContainer {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Ekle popover: küçük kart, ikonlar ızgara. */
+.addPopover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  z-index: var(--z-popover);
+  min-width: 240px;
+  padding: 8px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.addPopoverTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding-bottom: 4px;
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.addPopoverGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.addPopoverEmpty {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.addPopoverItem {
+  position: relative;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  transition: background 0.12s ease;
+}
+
+.addPopoverItem:hover {
+  background: var(--color-bg-hover);
+}
+
+/* Gizli ikonun köşesindeki yeşil + rozet. */
+.addItemBtn {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: var(--border-width-thick) solid var(--color-bg-surface);
+  background: var(--color-success);
+  color: var(--color-accent-text);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  line-height: 0;
+  transition:
+    transform var(--duration-slow) ease,
+    background var(--duration-slow) ease;
+}
+
+.addItemBtn:hover {
+  background: var(--color-success);
+  filter: brightness(0.9);
+  transform: scale(1.18);
+}

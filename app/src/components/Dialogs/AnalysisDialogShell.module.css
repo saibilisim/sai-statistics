@@ -1,0 +1,605 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   AnalysisDialogShell — Modern, premium SPSS-style analysis dialog
+   All analysis dialogs (Frequencies, Descriptives, …) share this shell.
+   Çerçeve: DialogFrame.module.css · liste/kutu/giriş: DialogFields.module.css ·
+   düğmeler: DialogButtons.module.css — burada yalnız kabuğa özgü yerleşim.
+───────────────────────────────────────────────────────────────────────── */
+
+/* ── Çerçeve ── */
+.overlay {
+  composes: overlay from './DialogFrame.module.css';
+}
+
+.dialog {
+  composes: dialog from './DialogFrame.module.css';
+  position: relative;
+  min-width: var(--dialog-width-analysis-min);
+  max-width: var(--dialog-width-analysis-max);
+  width: var(--dialog-width-analysis);
+}
+
+.header {
+  composes: header from './DialogFrame.module.css';
+}
+
+.title {
+  composes: title from './DialogFrame.module.css';
+}
+
+.body {
+  composes: body from './DialogFrame.module.css';
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Main panels row: [source list] [transfer btns] [target fields] [side btns] */
+.panelsRow {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr auto;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+/* ── Source / Target panels ── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0; /* prevent layout overflow from long variable names */
+}
+
+.panelLabel {
+  composes: label from './DialogFields.module.css';
+}
+
+/* ── Source list search + measure filter ── */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: calc(var(--space-xs) - 1px) var(--space-xs) calc(var(--space-xs) - 1px) var(--space-sm);
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-base);
+  color: var(--color-text-secondary);
+  transition:
+    border-color var(--duration-base),
+    box-shadow var(--duration-base);
+}
+
+.searchBox:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-halo);
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.searchInput:focus,
+.searchInput:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.searchClear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body);
+  line-height: 1;
+  padding: 0 calc(var(--space-xs) / 2);
+  border-radius: var(--radius-sm);
+}
+
+.searchClear:hover {
+  color: var(--color-text-primary);
+}
+
+.searchDivider {
+  width: var(--border-width-thin);
+  height: var(--space-lg);
+  background: var(--color-border);
+  margin: 0 calc(var(--space-xs) / 2);
+  flex-shrink: 0;
+}
+
+/* ── Measure Filter Dropdown ── */
+.filterDropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.filterTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: calc(var(--control-height-sm) - 2px);
+  padding: 0 var(--space-xs);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition:
+    background var(--duration-fast),
+    border-color var(--duration-fast);
+}
+
+.filterTrigger:hover,
+.filterTriggerOpen {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border);
+}
+
+.filterTrigger:focus,
+.filterTrigger:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.filterTriggerContent {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
+
+.filterTriggerChevron {
+  width: var(--font-size-xs);
+  height: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  transition: transform var(--duration-fast) ease;
+  flex-shrink: 0;
+}
+
+.filterTriggerChevronOpen {
+  transform: rotate(180deg);
+}
+
+.filterMenu {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  right: 0;
+  min-width: calc(var(--space-xl) * 5.5);
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-xs);
+  z-index: var(--z-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-xs) / 2);
+  animation: filterDropdownFadeIn var(--duration-fast) var(--easing-standard);
+}
+
+.filterMenuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.filterMenuItem:hover {
+  background: var(--color-bg-hover);
+}
+
+.filterMenuItemActive {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.filterMenuItemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-lg);
+  height: var(--space-lg);
+  flex-shrink: 0;
+}
+
+/* Ölçek simgeleri (satır içi SVG) daralmasın */
+.measureIcon {
+  flex-shrink: 0;
+}
+
+/* Filtre menüsünde "Tümü" simgesi (∞) */
+.measureAllIcon {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+@keyframes filterDropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-xs) * -1));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Kaynak değişken listesi (görünüm: DialogFields) ── */
+.varList {
+  composes: varList from './DialogFields.module.css';
+  height: var(--picker-list-max);
+  flex-shrink: 0;
+}
+
+.varItem {
+  composes: varItem from './DialogFields.module.css';
+  width: fit-content;
+  min-width: 100%;
+}
+
+.selected {
+  composes: selected from './DialogFields.module.css';
+}
+
+.varName {
+  composes: varName from './DialogFields.module.css';
+}
+
+.varLabel {
+  composes: varLabel from './DialogFields.module.css';
+}
+
+/* Target panel */
+.targetPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0; /* prevent layout overflow from long variable names */
+}
+
+/* Target field row with inline transfer column */
+.fieldRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.fieldLabel {
+  composes: label from './DialogFields.module.css';
+}
+
+/* ── Hedef kutusu (görünüm: DialogFields) ── */
+.fieldZone {
+  composes: fieldZone from './DialogFields.module.css';
+  min-height: calc(var(--control-height-lg) + var(--space-xl));
+}
+
+.active {
+  composes: active from './DialogFields.module.css';
+}
+
+.fieldZone.single {
+  min-height: var(--control-height-md);
+  max-height: var(--control-height-md);
+}
+
+.fieldZone.multi {
+  min-height: calc(var(--control-height-md) * 2);
+  max-height: var(--picker-list-max);
+}
+
+.emptyZone {
+  padding: var(--list-item-pad);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+  font-style: italic;
+}
+
+/* Dedicated field transfer controls */
+.fieldTransferCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  /* Offset target field label height and gap to align buttons with the box */
+  margin-top: calc(var(--font-size-xs) * 1.5 + var(--space-xs));
+}
+
+.transferBtn {
+  composes: transferBtn from './DialogFields.module.css';
+}
+
+/* ── Side buttons column ── */
+.sideCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: calc(var(--font-size-xs) * 1.5 + var(--space-lg));
+  min-width: calc(var(--space-xl) * 4);
+}
+
+.sideBtn {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-ui);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all var(--duration-fast) var(--easing-standard);
+  box-shadow: var(--shadow-sm);
+}
+
+.sideBtn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateX(calc(var(--space-xs) / -2));
+  box-shadow: calc(var(--space-xs) / 2) 0 var(--space-sm)
+    color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+/* A sub-dialog whose options are meaningless until a field is filled (SPSS
+   greys these out the same way — see SideButtonDef.disabled). */
+.sideBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ── Extra content below panels ── */
+.extraContent {
+  padding-top: var(--space-sm);
+  border-top: var(--border-width-thin) solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* ── Footer ── */
+.footer {
+  composes: footer from './DialogFrame.module.css';
+}
+
+.footerLeft {
+  composes: footerLeft from './DialogFrame.module.css';
+}
+
+.footerRight {
+  composes: footerRight from './DialogFrame.module.css';
+}
+
+/* ── Sub-dialog overlay ── full-viewport, like the top-level .overlay, so the
+   sub-dialog (Options/Post Hoc/…) isn't clipped by the parent dialog's own
+   `overflow: hidden` box and doesn't leave slivers of it peeking above/below. */
+.subOverlay {
+  composes: overlay from './DialogFrame.module.css';
+  z-index: calc(var(--z-modal-scrim) + 1);
+}
+
+.subDialog {
+  composes: dialog from './DialogFrame.module.css';
+  border-radius: var(--radius-subdialog);
+  box-shadow: var(--shadow-subdialog);
+  min-width: var(--subdialog-width-min);
+  max-width: var(--subdialog-width-max);
+}
+
+/* Genişliği diyaloğa özgü (SubDialogDef.width) alt pencere */
+.subDialogSized {
+  max-width: 95vw;
+}
+
+/* R kodunu göster penceresi — daha geniş */
+.subDialogWide {
+  composes: subDialog;
+  max-width: var(--dialog-width-analysis-min);
+  width: 90%;
+}
+
+.subHeader {
+  composes: header from './DialogFrame.module.css';
+  padding: var(--space-md) var(--space-lg);
+}
+
+.subTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.subBody {
+  padding: var(--space-lg);
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.subFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  border-top: var(--border-width-thin) solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+
+/* ── Paste R modal ── */
+.pasteRCode {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  background: var(--color-bg-base);
+  border: var(--border-width-thick) solid var(--color-border);
+  border-radius: var(--radius-field);
+  padding: var(--space-md);
+  overflow: auto;
+  max-height: calc(var(--picker-list-max) * 1.5);
+  white-space: pre;
+  color: var(--color-text-primary);
+}
+
+/* ── Checkbox / radio helpers ── */
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  padding: calc(var(--space-xs) / 2) 0;
+  transition: color var(--duration-fast);
+}
+
+.checkRow:hover {
+  color: var(--color-accent);
+}
+
+/* A dependent option nested under the one that enables it (SPSS's "With
+   diagonal reference line" under "ROC Curve"). */
+.checkRowIndent {
+  padding-left: var(--space-xl);
+}
+
+.checkRow:has(input:disabled) {
+  cursor: default;
+  color: var(--color-text-disabled);
+}
+
+.checkRow input[type='checkbox'],
+.checkRow input[type='radio'] {
+  cursor: pointer;
+  accent-color: var(--color-accent);
+  width: var(--font-size-lg);
+  height: var(--font-size-lg);
+}
+
+.optionSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.optionSection + .optionSection {
+  margin-top: var(--space-md);
+}
+
+.optionSectionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+  margin-bottom: calc(var(--space-xs) / 2);
+  padding-bottom: var(--space-xs);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xs) var(--space-lg);
+}
+
+.separator {
+  border: none;
+  border-top: var(--border-width-thin) solid var(--color-border);
+  margin: var(--space-sm) 0;
+}
+
+/* ── New-variables panel (roadmap ★11) ──
+   One row per offerable column: the checkbox, then the name field the user
+   edits, then any inline validation message. */
+.optionHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+  margin-bottom: var(--space-sm);
+}
+
+.newVarRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: calc(var(--space-xs) / 2) 0;
+}
+
+.newVarRow .checkRow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.newVarError {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  flex: 0 0 auto;
+}
+
+/* Diyalog içi durum metinleri (eski inline style'ların yerine) */
+.errorText {
+  composes: errorText from './DialogFields.module.css';
+  margin-top: var(--space-xs);
+}
+
+.hintText {
+  composes: hintText from './DialogFields.module.css';
+  margin-top: var(--space-xs);
+}
+
+/* Giriş kutusu — analiz diyaloglarındaki metin/sayı/açılır alanlar */
+.input {
+  composes: input from './DialogFields.module.css';
+}
+
+/* Diyalog düğmeleri: tek kaynak DialogButtons.module.css */
+.closeBtn {
+  composes: closeBtn from './DialogButtons.module.css';
+}
+
+.btn {
+  composes: btn from './DialogButtons.module.css';
+}
+
+.primary {
+  composes: primary from './DialogButtons.module.css';
+}

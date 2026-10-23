@@ -1,0 +1,618 @@
+/* ── Reset & base ─────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Tells Chromium which native widget skin to paint form controls/scrollbars
+   with (light vs dark). Without this, the browser guesses from the OS
+   preference, not from `data-theme` — so a light-OS user on the app's dark
+   theme gets light-chrome native inputs/selects that ignore the CSS
+   background-color entirely (a known browser behavior for `appearance:auto`
+   controls, not something author CSS alone can override). */
+:root {
+  color-scheme: light;
+}
+:root[data-theme='dark'],
+:root[data-theme='high-contrast'] {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  background: var(--color-bg-base);
+  -webkit-font-smoothing: antialiased;
+  user-select: none; /* desktop app: no text selection by default */
+}
+
+/* Allow text selection in data cells and output */
+.selectable {
+  user-select: text;
+}
+
+/* ── Scrollbar (Webkit & Standard) ───────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 9999px;
+  border: none;
+  transition: background 0.15s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* ── Focus ring ──────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+
+/* ── App layout ──────────────────────────────────────── */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-toolbar {
+  flex-shrink: 0;
+  min-height: var(--toolbar-height);
+  height: auto;
+  background: var(--color-bg-toolbar);
+  border-bottom: 1px solid var(--color-border);
+  overflow: visible;
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* AI panel dock (Faz F1, spec §5.1): ana içerik + sağ kolon yan yana;
+   panel tüm sekmelerin üstünde yaşayan ayrı bir layout kolonudur. */
+.app-main-row {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* The Data View pane is always mounted and absolutely positioned so it keeps
+   its dimensions (and the grid stays sized) even while hidden. */
+.view-pane--data {
+  position: absolute;
+  inset: 0;
+}
+
+/* visibility:hidden keeps the layout box — so the offscreen grid
+   retains its size and re-shows instantly without a re-layout. */
+.view-pane--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.app-tabbar {
+  flex-shrink: 0;
+  height: var(--tabbar-height);
+  background: var(--color-bg-tabbar);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: stretch;
+}
+
+.app-statusbar {
+  flex-shrink: 0;
+  height: var(--statusbar-height);
+  background: var(--color-bg-statusbar);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Reusable Premium Dialog & Button Styles (DRY System) ──────────────── */
+
+.sa-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-scrim);
+  backdrop-filter: blur(var(--blur-modal));
+  -webkit-backdrop-filter: blur(var(--blur-modal));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-scrim);
+  animation: sa-fadeIn var(--duration-base) ease;
+}
+
+.sa-dialog {
+  background: var(--color-bg-overlay);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-dialog);
+  box-shadow: var(--shadow-dialog);
+  width: var(--dialog-width-confirm);
+  max-width: 95%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: sa-scaleIn var(--duration-slow) var(--easing-standard);
+  overflow: hidden;
+}
+
+.sa-dialog-header {
+  padding: var(--dialog-header-pad-y) var(--dialog-pad-x);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg-surface);
+}
+
+.sa-dialog-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.sa-dialog-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-close);
+  cursor: pointer;
+  padding: var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+  width: 28px;
+  height: 28px;
+}
+
+.sa-dialog-close:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.sa-dialog-body {
+  padding: var(--dialog-body-pad-y) var(--dialog-pad-x);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.sa-dialog-footer {
+  padding: var(--dialog-footer-pad-y) var(--dialog-pad-x);
+  border-top: var(--border-width-thin) solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  background: var(--color-bg-surface);
+}
+
+/* Premium Form Elements */
+.sa-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  min-width: 0;
+}
+
+.sa-form-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.sa-form-input {
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-body);
+  border-radius: var(--radius-control);
+  border: var(--border-width-thick) solid var(--color-border);
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.sa-form-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-halo);
+}
+
+/* Premium Buttons */
+.sa-btn {
+  /* Görünüm DialogButtons.module.css .btn ile aynı token'lar */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--btn-pad-y) var(--space-lg);
+  min-width: var(--btn-min-width);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-control);
+  border: var(--border-width-thick) solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-sm);
+}
+.sa-btn:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+}
+
+.sa-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.sa-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sa-btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.sa-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: transparent;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.sa-btn-danger {
+  background: var(--color-error);
+  color: var(--color-accent-text);
+  border-color: transparent;
+}
+
+.sa-btn-danger:hover:not(:disabled) {
+  background: var(--color-error);
+  filter: brightness(0.9);
+}
+
+/* Radio Group & Cards */
+.sa-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sa-radio-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  background: var(--color-bg-surface);
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+  cursor: pointer;
+}
+
+.sa-radio-card:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-hover);
+}
+
+.sa-radio-card.active {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+}
+
+.sa-radio-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 500;
+  user-select: none;
+}
+
+.sa-radio-header input[type='radio'] {
+  accent-color: var(--color-accent);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.sa-radio-content {
+  padding-left: 24px;
+  margin-top: var(--space-sm);
+}
+
+.sa-radio-content--row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.sa-radio-content--row-md {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.sa-radio-content--stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.sa-form-group--flush {
+  margin-bottom: 0;
+}
+
+.sa-form-input--xs {
+  width: var(--field-width-xs);
+}
+
+.sa-form-input--sm {
+  width: var(--field-width-sm);
+}
+
+.sa-value-list-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-sm) 0;
+}
+.sa-value-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  background: var(--color-bg-base);
+}
+
+.sa-value-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--color-bg-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.sa-value-item-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.sa-value-item-remove {
+  background: transparent;
+  border: none;
+  color: var(--color-error);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.sa-value-item-remove:hover {
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+
+/* Animation Keyframes */
+@keyframes sa-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sa-scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── Layout utilities ─────────────────────────────────────────
+   Small, composable classes for the layout tweaks dialogs otherwise
+   repeat as inline style={{...}} (flex/gap/margin one-offs). Not a
+   full utility-CSS system — just the handful of patterns that show up
+   across dozens of analysis dialogs. Prefer a CSS module rule for
+   anything component-specific; reach for these only when the same
+   one-liner would otherwise be copy-pasted again. */
+.flex-1 {
+  flex: 1;
+}
+
+.row-md {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.stack-xs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+
+.mt-md {
+  margin-top: var(--space-md);
+}
+
+.pt-sm {
+  padding-top: var(--space-sm);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Inline numeric input following a checkbox/radio label, e.g.
+   "Confidence level [___]" — the single most-repeated inline style
+   across analysis dialogs. */
+.numField,
+.numField--sm {
+  /* Without this, Chromium's native "auto" widget theme (GTK on Linux) can
+     paint its own white text-field/dropdown chrome over the CSS background
+     for type="text" inputs and <select>s, regardless of the computed
+     background-color below — appearance:none forces fully CSS-styled
+     rendering instead. */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin-left: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-control);
+  border: var(--border-width-thick) solid var(--color-border);
+  background: var(--color-bg-base);
+  /* Belt-and-suspenders for appearance:none: on some Linux/GTK Chromium
+     builds a native theme can still paint its own widget background under
+     the author background for type="text"/<select>; an inset box-shadow
+     paints on top of that native layer instead of relying on background. */
+  box-shadow: inset 0 0 0 99px var(--color-bg-base);
+  color: var(--color-text-primary);
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.numField:focus,
+.numField--sm:focus {
+  border-color: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 99px var(--color-bg-base),
+    var(--focus-halo);
+}
+
+.numField {
+  width: var(--field-width-md);
+}
+
+.numField--sm {
+  width: var(--field-width-sm);
+}
+
+/* Daha geniş sayı/açılır alan (ör. "p-değeri sınırı", seviye sayısı) */
+.numField--lg {
+  width: var(--field-width-lg);
+}
+
+/* Yöntem / grafik ekseni gibi metinli açılır listeler */
+.numField--select {
+  width: auto;
+  min-width: var(--field-width-select);
+}
+
+/* Etiketin hemen altında/yanında hizalı — soldaki boşluk olmadan */
+.numField--flush {
+  margin-left: 0;
+}
+
+/* Satırı dolduran açılır liste */
+.numField--full {
+  width: 100%;
+  margin-left: 0;
+}
+
+/* "Etiket ............ [alan]" form satırı (Güç Analizi gibi) */
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.formRow__label {
+  width: var(--form-label-width-lg);
+  flex-shrink: 0;
+}
+
+.formPanel {
+  min-width: var(--dialog-width-xs);
+  padding: var(--space-xs);
+}
+
+.ml-sm {
+  margin-left: var(--space-sm);
+}
+
+/* Seçenek metninin yanında gri ek bilgi, ör. "(r = 0.707)" */
+.text-muted-inline {
+  margin-left: var(--space-xs);
+  color: var(--color-text-secondary);
+}
+
+.text-error-xs {
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+}

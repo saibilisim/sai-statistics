@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SAI Statistics — Guide statistique</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+        color: #1a1a1a;
+        background: #ffffff;
+        line-height: 1.6;
+      }
+      h1 {
+        font-size: 1.9rem;
+        border-bottom: 3px solid #0066cc;
+        padding-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 2.5rem;
+        color: #0052a3;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.3rem;
+      }
+      code {
+        background: #f0f0f0;
+        border: 1px solid #d0d0d0;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+        font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        font-size: 0.9em;
+      }
+      .path {
+        color: #0052a3;
+        font-weight: 600;
+      }
+      .note {
+        background: #fff8e6;
+        border-left: 4px solid #d9a300;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0;
+        border-radius: 0 4px 4px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+      }
+      th,
+      td {
+        border: 1px solid #d0d0d0;
+        padding: 0.55rem 0.7rem;
+        text-align: left;
+        font-size: 0.93em;
+        vertical-align: top;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .step {
+        background: #f5f8fc;
+        border: 1px solid #d5e3f5;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+      }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+        color: #777;
+        font-size: 0.85em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SAI Statistics — Guide statistique</h1>
+    <p>
+      Une chaîne de décision rapide pour répondre à « quel test dois-je utiliser ? ». Il ne s'agit
+      pas d'un conseil statistique : ce guide associe les questions courantes au chemin de menu
+      correspondant. Pour les plans complexes (plusieurs facteurs, modèles mixtes, mesures répétées
+      avec covariables, etc.), consultez un statisticien.
+    </p>
+
+    <div class="step">
+      <strong>Étape 0 — Vérifiez d'abord la normalité.</strong> Si votre variable dépendante est
+      continue (échelle), ouvrez la <strong>Vue de la normalité</strong> (<kbd>Ctrl+4</kbd>) avant
+      de choisir entre tests paramétriques et non paramétriques. Elle évalue automatiquement la
+      variable avec Shapiro-Wilk, Lilliefors (K-S corrigé) et un diagramme Q-Q. Avec de petits
+      échantillons (n &lt; 50), fiez-vous davantage à Shapiro-Wilk ; avec de grands échantillons,
+      davantage aux graphiques (Q-Q, histogramme).
+    </div>
+
+    <h2>Tableau de décision</h2>
+    <table>
+      <tr>
+        <th>Question</th>
+        <th>Variable dépendante</th>
+        <th>Paramétrique (hypothèse de normalité vérifiée)</th>
+        <th>Non paramétrique (normalité douteuse / petit n)</th>
+      </tr>
+      <tr>
+        <td>Comparer un groupe à une valeur connue</td>
+        <td>Continue</td>
+        <td class="path">Analyse ▸ Comparer les moyennes ▸ Test T pour échantillon unique...</td>
+        <td>
+          Pas d'élément de menu dédié : créez une colonne contenant la valeur de référence avec
+          <span class="path">Transformer ▸ Calculer une variable</span>, puis comparez les deux avec
+          <span class="path">Analyse ▸ Tests non paramétriques ▸ 2 échantillons appariés...</span>
+          (rangs signés de Wilcoxon).
+        </td>
+      </tr>
+      <tr>
+        <td>Comparer 2 groupes <strong>indépendants</strong></td>
+        <td>Continue</td>
+        <td class="path">
+          Analyse ▸ Comparer les moyennes ▸ Test T pour échantillons indépendants...
+        </td>
+        <td class="path">
+          Analyse ▸ Tests non paramétriques ▸ 2 échantillons indépendants...<br />(U de
+          Mann-Whitney)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparer 2 mesures <strong>appariées/liées</strong> (avant–après)</td>
+        <td>Continue</td>
+        <td class="path">Analyse ▸ Comparer les moyennes ▸ Test T pour échantillons appariés...</td>
+        <td class="path">
+          Analyse ▸ Tests non paramétriques ▸ 2 échantillons appariés...<br />(Wilcoxon)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparer 3 groupes <strong>indépendants</strong> ou plus</td>
+        <td>Continue</td>
+        <td class="path">Analyse ▸ Comparer les moyennes ▸ ANOVA à un facteur...</td>
+        <td class="path">
+          Analyse ▸ Tests non paramétriques ▸ K échantillons indépendants...<br />(Kruskal-Wallis)
+        </td>
+      </tr>
+      <tr>
+        <td>Comparer 3 mesures <strong>liées/répétées</strong> ou plus</td>
+        <td>Continue</td>
+        <td class="path">Analyse ▸ Modèle linéaire général ▸ Mesures répétées...</td>
+        <td class="path">
+          Analyse ▸ Tests non paramétriques ▸ K échantillons appariés...<br />(Friedman)
+        </td>
+      </tr>
+      <tr>
+        <td>Association entre 2 variables catégorielles</td>
+        <td>Catégorielle</td>
+        <td colspan="2" class="path">
+          Analyse ▸ Statistiques descriptives ▸ Tableaux croisés...<br />(le test du khi-deux est
+          activé par défaut dans Statistiques)
+        </td>
+      </tr>
+      <tr>
+        <td>Une variable catégorielle suit-elle les proportions attendues ?</td>
+        <td>Catégorielle</td>
+        <td colspan="2" class="path">
+          Analyse ▸ Tests non paramétriques ▸ Khi-deux...<br />(adéquation à une distribution)
+        </td>
+      </tr>
+      <tr>
+        <td>Association entre 2 variables continues</td>
+        <td>Continue</td>
+        <td class="path">Analyse ▸ Corrélations ▸ Bivariée...<br />(r de Pearson)</td>
+        <td class="path">Cochez Spearman dans Bivariée...</td>
+      </tr>
+      <tr>
+        <td>Prédire un résultat continu à partir d'une ou plusieurs variables</td>
+        <td>Continue</td>
+        <td colspan="2" class="path">Analyse ▸ Régression ▸ Linéaire...</td>
+      </tr>
+      <tr>
+        <td>Prédire un résultat binaire (0/1)</td>
+        <td>Catégorielle binaire</td>
+        <td colspan="2" class="path">Analyse ▸ Régression ▸ Logistique binaire...</td>
+      </tr>
+      <tr>
+        <td>Cohérence interne d'une échelle ou d'un questionnaire (α de Cronbach)</td>
+        <td>Continue (plusieurs items)</td>
+        <td colspan="2" class="path">Analyse ▸ Échelle ▸ Analyse de fiabilité...</td>
+      </tr>
+      <tr>
+        <td>Données de survie / délai avant événement</td>
+        <td>Durée + censure</td>
+        <td colspan="2" class="path">Analyse ▸ Survie ▸ Kaplan-Meier... / Régression de Cox...</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <strong>K-S à 1 échantillon...</strong> (Tests non paramétriques) vérifie si les données
+      suivent une distribution donnée — il ne teste pas si la médiane est égale à une valeur. Pour
+      vérifier la normalité, privilégiez la Vue de la normalité (Lilliefors et Shapiro-Wilk).
+    </div>
+
+    <div class="note">
+      <strong>Un doute ?</strong> Le bouton <strong>Coller le code R</strong> de chaque boîte de
+      dialogue montre exactement quelle fonction R sera appelée avec vos réglages — un moyen rapide
+      de vérifier ce que fait réellement le test.
+    </div>
+
+    <h2>Petits échantillons ou valeurs ex æquo</h2>
+    <p>
+      Pour les tests non paramétriques, SAI fournit une p-valeur <strong>exacte</strong> chaque fois
+      que c'est possible (via le comportement par défaut de R ou le paquet <code>coin</code>), même
+      lorsque SPSS Base n'en propose qu'une asymptotique. Le tableau de résultats affiche à la fois
+      Asymp. Sig. (significativité asymptotique, pour comparer avec SPSS) et Exact Sig.
+      (significativité exacte, la valeur la plus précise). Avec des échantillons petits ou
+      clairsemés, fiez-vous à Exact Sig.
+    </p>
+
+    <footer>SAI Statistics · Ce guide est installé avec l'application.</footer>
+  </body>
+</html>
