@@ -69,9 +69,17 @@ export function registerOutputHandlers(): void {
         return null
       }
 
+      // A data: URL never passes through applyCsp (webRequest), and the HTML
+      // carries content from opened .sdf files — the document needs no script
+      // (plots are already <img>), so JavaScript is off outright.
       const pdfWindow = new BrowserWindow({
         show: false,
-        webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false }
+        webPreferences: {
+          sandbox: true,
+          contextIsolation: true,
+          nodeIntegration: false,
+          javascript: false
+        }
       })
       try {
         await pdfWindow.loadURL(`data:text/html;charset=UTF-8,${encodeURIComponent(html)}`)

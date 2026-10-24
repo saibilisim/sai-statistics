@@ -122,11 +122,16 @@ export async function rasterizePlot(plot: OutputPlot): Promise<PlotImage> {
 
 async function renderPlotHtml(plot: OutputPlot, t: TFunction): Promise<string> {
   const title = `<div class="plot-title">${escapeHtml(translateOutputKey(plot.titleKey, t))}</div>`
+  // plot.data can come from an opened .sdf (output.json, data: z.unknown()),
+  // so it never reaches the markup raw: png is reduced to base64 characters
+  // and svg goes in as an <img> data URI, where its scripts never run.
   if (plot.type === 'png') {
-    return `<div class="plot-wrapper">${title}<img src="data:image/png;base64,${String(plot.data)}" alt="" /></div>`
+    const b64 = String(plot.data).replace(/[^A-Za-z0-9+/=]/g, '')
+    return `<div class="plot-wrapper">${title}<img src="data:image/png;base64,${b64}" alt="" /></div>`
   }
   if (plot.type === 'svg') {
-    return `<div class="plot-wrapper">${title}${String(plot.data)}</div>`
+    const src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(String(plot.data))}`
+    return `<div class="plot-wrapper">${title}<img src="${src}" alt="" /></div>`
   }
   // plotly
   const png = await renderPlotlyPng(plot.data)
@@ -257,6 +262,7 @@ export async function buildOutputHtml(
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'" />
 <title>SAI Statistics — Output</title>
 <style>${CSS}</style>
 </head>
