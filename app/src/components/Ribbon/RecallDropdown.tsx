@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { HistoryIcon } from '@univerjs/icons'
 import { useAnalysisHistoryStore } from '../../store/analysis-history-store'
 import { useDatasetStore } from '../../store/dataset-store'
 import { dispatchMenu } from '../../lib/menu-dispatch'
 import styles from './Ribbon.module.css'
+import { HistoryIcon } from './ribbon-icons'
 
 /** Dialog Recall (SPSS-style): dropdown listing the last few analyses run
  *  this session, oldest last. Picking one reopens that exact dialog via
@@ -51,9 +51,7 @@ export function RecallDropdown() {
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <span className={styles.btnIcon}>
-          <HistoryIcon />
-        </span>
+        <span className={styles.btnIcon}>{HistoryIcon}</span>
         <span className={styles.dropdownArrow}>▼</span>
       </button>
       {isOpen && (

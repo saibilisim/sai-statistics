@@ -2,20 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { type ReactNode, useState, useRef, useEffect, type DragEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  UndoIcon,
-  RedoIcon,
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  LeftJustifyingIcon,
-  HorizontallyIcon,
-  RightJustifyingIcon,
-  FontColorDoubleIcon,
-  PaintBucketDoubleIcon,
-  FilterIcon,
-  SearchIcon
-} from '@univerjs/icons'
 import type { CellFormat } from '@shared/data-types'
 import { useUIStore } from '../../store/ui-store'
 import { useDatasetStore } from '../../store/dataset-store'
@@ -34,7 +20,19 @@ import {
   AddPlusIcon,
   RemoveXGlyph,
   AddSmallPlusGlyph,
-  TwoRowsIcon
+  TwoRowsIcon,
+  UndoIcon,
+  RedoIcon,
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  FontColorIcon,
+  FillColorIcon,
+  FilterIcon,
+  SearchIcon
 } from './ribbon-icons'
 import styles from './Ribbon.module.css'
 
@@ -242,13 +240,7 @@ export function Ribbon() {
 
   const hAlign = activeCellFormat?.hAlign ?? 'left'
   const hAlignIcon =
-    hAlign === 'center' ? (
-      <HorizontallyIcon />
-    ) : hAlign === 'right' ? (
-      <RightJustifyingIcon />
-    ) : (
-      <LeftJustifyingIcon />
-    )
+    hAlign === 'center' ? AlignCenterIcon : hAlign === 'right' ? AlignRightIcon : AlignLeftIcon
 
   // --- Buton tanımları (varsayılan sıra) ---
   const allItems: RibbonItem[] = [
@@ -269,7 +261,7 @@ export function Ribbon() {
       availableWhen: 'always',
       node: (
         <RibbonButton
-          icon={<UndoIcon />}
+          icon={UndoIcon}
           title={t('menu:edit.undo')}
           onClick={() => {
             undoRedo('undo')
@@ -283,7 +275,7 @@ export function Ribbon() {
       availableWhen: 'always',
       node: (
         <RibbonButton
-          icon={<RedoIcon />}
+          icon={RedoIcon}
           title={t('menu:edit.redo')}
           onClick={() => {
             undoRedo('redo')
@@ -436,7 +428,7 @@ export function Ribbon() {
       id: 'bold',
       availableWhen: 'dataView',
       node: fmtButton(
-        <BoldIcon />,
+        BoldIcon,
         t('menu:edit.bold'),
         { bold: !activeCellFormat?.bold },
         !!activeCellFormat?.bold
@@ -446,7 +438,7 @@ export function Ribbon() {
       id: 'italic',
       availableWhen: 'dataView',
       node: fmtButton(
-        <ItalicIcon />,
+        ItalicIcon,
         t('menu:edit.italic'),
         { italic: !activeCellFormat?.italic },
         !!activeCellFormat?.italic
@@ -456,7 +448,7 @@ export function Ribbon() {
       id: 'underline',
       availableWhen: 'dataView',
       node: fmtButton(
-        <UnderlineIcon />,
+        UnderlineIcon,
         t('menu:edit.underline'),
         { underline: !activeCellFormat?.underline },
         !!activeCellFormat?.underline
@@ -468,7 +460,7 @@ export function Ribbon() {
       availableWhen: 'dataView',
       node: (
         <ColorDropdown
-          icon={<FontColorDoubleIcon />}
+          icon={FontColorIcon}
           title={t('menu:edit.textColor')}
           color={activeCellFormat?.color || '#000000'}
           onSelectColor={color => {
@@ -487,7 +479,7 @@ export function Ribbon() {
       availableWhen: 'dataView',
       node: (
         <ColorDropdown
-          icon={<PaintBucketDoubleIcon />}
+          icon={FillColorIcon}
           title={t('menu:edit.fillColor')}
           color={activeCellFormat?.bg}
           onSelectColor={color => {
@@ -508,7 +500,7 @@ export function Ribbon() {
       node: (
         <RibbonDropdown icon={hAlignIcon} title={t('menu:edit.alignLeft')} disabled={!canEdit}>
           <RibbonButton
-            icon={<LeftJustifyingIcon />}
+            icon={AlignLeftIcon}
             title={t('menu:edit.alignLeft')}
             onClick={() => {
               format({ hAlign: 'left' })
@@ -517,7 +509,7 @@ export function Ribbon() {
             disabled={!canEdit}
           />
           <RibbonButton
-            icon={<HorizontallyIcon />}
+            icon={AlignCenterIcon}
             title={t('menu:edit.alignCenter')}
             onClick={() => {
               format({ hAlign: 'center' })
@@ -526,7 +518,7 @@ export function Ribbon() {
             disabled={!canEdit}
           />
           <RibbonButton
-            icon={<RightJustifyingIcon />}
+            icon={AlignRightIcon}
             title={t('menu:edit.alignRight')}
             onClick={() => {
               format({ hAlign: 'right' })
@@ -542,7 +534,7 @@ export function Ribbon() {
       availableWhen: 'dataView',
       node: (
         <RibbonButton
-          icon={<FilterIcon />}
+          icon={FilterIcon}
           title={t('menu:edit.filter')}
           onClick={handleToggleFilterIcons}
           active={showColumnFilterIcons}
@@ -555,7 +547,7 @@ export function Ribbon() {
       availableWhen: 'dataView',
       node: (
         <RibbonButton
-          icon={<SearchIcon />}
+          icon={SearchIcon}
           title={t('menu:edit.search')}
           onClick={() => {
             openFindBridge?.(false)

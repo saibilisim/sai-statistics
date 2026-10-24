@@ -106,7 +106,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Icons (from @univerjs/icons) render at 1em — drive their size from here. */
+  /* Icons (ribbon-icons.tsx) render at 1em — drive their size from here. */
   font-size: 16px;
   min-width: 16px;
 }
