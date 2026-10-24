@@ -1,8 +1,10 @@
 # Flathub submission — com.saibilisim.saistatistics
 
-Closed-source app → `extra-data` (the user's Flatpak downloads the vendor's .deb and
-unpacks it with `apply_extra`). The Flathub PR contains only the files in this folder
-(no binaries). Rules: https://docs.flathub.org/docs/for-app-authors/requirements
+Repackages the official .deb through `extra-data` (the user's Flatpak downloads the
+vendor's .deb and unpacks it with `apply_extra`). The Flathub PR contains only the files
+in this folder (no binaries). `extra-data` was chosen while the app was closed-source; it
+is AGPL-3.0-only now, so Flathub may ask for a regular `file` source or a build from
+source instead. Rules: https://docs.flathub.org/docs/for-app-authors/requirements
 
 ## Per release
 

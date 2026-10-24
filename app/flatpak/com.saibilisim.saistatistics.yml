@@ -2,7 +2,7 @@
 # (the whole application is inside the .flatpak file — no download at install time).
 #
 # The Flathub submission (flatpak/flathub/) is the same application and the same
-# permissions, but it uses `extra-data` (Flathub does not host closed-source binaries).
+# permissions, but it repackages the official .deb through `extra-data`.
 # Desktop file, MetaInfo and icon are shared with flatpak/flathub/ — edit them there.
 #
 # electron-builder has no Flatpak target, so this repackages the ALREADY-BUILT

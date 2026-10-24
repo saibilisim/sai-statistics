@@ -1,10 +1,12 @@
 # Flathub submission manifest — SAI Statistics (com.saibilisim.saistatistics).
 #
-# SAI Statistics is closed-source, so the application is NOT built from source on
-# Flathub: it uses the `extra-data` source type, the Flathub-sanctioned route for
-# non-redistributable binaries (the user's Flatpak downloads the official .deb
-# from the vendor and unpacks it with `apply_extra`). The PR therefore contains
-# only this manifest, the .desktop file, the MetaInfo, the icon and the launcher.
+# The application is NOT built from source on Flathub: it repackages the
+# official .deb (with its bundled R runtime) through the `extra-data` source
+# type — the user's Flatpak downloads the .deb from the vendor and unpacks it
+# with `apply_extra`. The PR therefore contains only this manifest, the .desktop
+# file, the MetaInfo, the icon and the launcher. This route was chosen while the
+# app was closed-source; now that it is AGPL-licensed (redistributable), Flathub
+# may ask for a regular `file` source or a build from source instead.
 #
 # Fill url / sha256 / size from the .deb actually published (they change every
 # release):  node flatpak/flathub/update-manifest.cjs <deb> <public-url>

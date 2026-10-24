@@ -7,7 +7,7 @@
     <name>SAI Bilisim</name>
   </developer>
   <metadata_license>CC0-1.0</metadata_license>
-  <project_license>LicenseRef-proprietary</project_license>
+  <project_license>AGPL-3.0-only</project_license>
   <description>
     <p>
       SAI Statistics is a cross-platform desktop application that makes statistical
