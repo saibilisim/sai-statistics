@@ -25,6 +25,7 @@
 !/build-installer-win.ps1
 !/start.sh
 !/start.ps1
+!/Invoke-GitBash.ps1
 
 # ── Data files: never committed, wherever they appear ─────────────────────────
 # Real datasets and statistics-package exports. Fixtures that are known to be
