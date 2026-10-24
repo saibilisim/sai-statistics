@@ -91,7 +91,7 @@
     "version": "Versão",
     "rVersion": "Versão do R",
     "description": "Aplicativo de estatística para desktop multiplataforma baseado no motor R.",
-    "copyright": "© 2026 SAI Bilişim. Todos os direitos reservados."
+    "copyright": "© 2026 SAI Bilişim. Software de código aberto licenciado sob a GNU AGPL-3.0."
   },
   "reportIssue": {
     "title": "Reportar Problema",

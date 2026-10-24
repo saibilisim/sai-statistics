@@ -91,7 +91,7 @@
     "version": "Sürüm",
     "rVersion": "R Sürümü",
     "description": "R motoru üzerine kurulu, platformlar arası masaüstü istatistik uygulaması.",
-    "copyright": "© 2026 SAI Bilişim. Tüm hakları saklıdır."
+    "copyright": "© 2026 SAI Bilişim. GNU AGPL-3.0 lisanslı açık kaynak yazılım."
   },
   "reportIssue": {
     "title": "Sorun Bildir",

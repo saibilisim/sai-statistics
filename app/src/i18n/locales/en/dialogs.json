@@ -91,7 +91,7 @@
     "version": "Version",
     "rVersion": "R Version",
     "description": "A cross-platform desktop application designed to make statistical analysis simple, powerful, and accessible.",
-    "copyright": "© 2026 SAI Bilişim. All rights reserved."
+    "copyright": "© 2026 SAI Bilişim. Open-source software licensed under the GNU AGPL-3.0."
   },
   "reportIssue": {
     "title": "Report Issue",
