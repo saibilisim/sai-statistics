@@ -30,6 +30,9 @@ licence to reproduce, prepare derivative works of, publicly display, publicly
 perform, sublicense and distribute Your Contributions and such derivative
 works, **under any licence terms**, including the GNU Affero General Public
 License, other open source licences, and proprietary or commercial licences.
+This includes distributing builds through application stores and other
+channels (such as the Mac App Store or the Microsoft Store) under the terms
+those channels require, even where those terms are incompatible with the AGPL.
 
 ## 3. Patent licence
 
@@ -48,11 +51,15 @@ litigation is filed.
 
 ## 4. Open source commitment
 
-SAI Bilişim will keep every Contribution it accepts available to the public
-under the GNU Affero General Public License v3.0 only, or under another licence
-approved by the Open Source Initiative, as part of the source code of SAI
-Statistics. Section 2 allows SAI Bilişim to offer the work under other terms
-**in addition to** that licence, not instead of it.
+SAI Bilişim will publish the complete source code of every version of SAI
+Statistics it distributes, including every Contribution it has accepted, under
+the GNU Affero General Public License v3.0 only, no later than the release of
+that version. This applies equally to versions distributed only through an
+application store. Section 2 allows SAI Bilişim to offer the work under other
+terms — for example a commercial licence for users who cannot meet the
+conditions of the AGPL, or the terms of an application store — **in addition
+to** that licence, never instead of it. This commitment binds SAI Bilişim's
+successors and assigns.
 
 ## 5. Your copyright
 

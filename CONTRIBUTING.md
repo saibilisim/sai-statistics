@@ -88,8 +88,8 @@ Before your first pull request is merged, you will be asked to sign the
 request, and you sign by replying with the sentence it gives. One signature
 covers all your later contributions. The CLA lets SAI Bilişim keep
 distributing the project, including under other licence terms alongside the
-AGPL; you keep the copyright to your contribution, and everything accepted
-stays available under the AGPL (CLA §4).
+AGPL (for example through application stores); you keep the copyright to your contribution, and every version SAI
+Bilişim distributes is published as source under the AGPL (CLA §4).
 
 ## Use of AI assistants
 
