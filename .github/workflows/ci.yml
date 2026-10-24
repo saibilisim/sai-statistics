@@ -1,17 +1,18 @@
 name: CI
 
-# While the repository is private, Actions minutes are capped (2,000/month)
-# and one full run of the R validation + E2E jobs used ~2 hours of them. So:
-#   - every push to main: the fast checks only (typecheck, lint, unit, build);
-#   - pull requests and manual runs (Actions → CI → Run workflow): everything.
-# Once the repository is public (minutes are free), the `if:` guards on the
-# two heavy jobs can be removed to run them on every push again.
+# Every push to main and every pull request runs everything, R validation and
+# E2E included (the repository is public, so Actions minutes are free).
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
+
+# A full run takes a while; a newer push to the same branch/PR supersedes it.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 defaults:
   run:
@@ -84,7 +85,6 @@ jobs:
 
   r-validation:
     name: R script validation
-    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -118,7 +118,6 @@ jobs:
 
   e2e:
     name: E2E (Playwright-driven Electron)
-    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     # Non-blocking until the suite is green on CI: as of 2026-10-21 a set of
     # scripts still fails there (see the run log) and is being worked through.
