@@ -118,9 +118,20 @@ done
 echo "[vendor-r-runtime] R_HOME in the installer: ${FW_RES#"$WORK/pkg/R-fw.pkg/Payload/"}"
 STAGE="$WORK/r-runtime"
 cp -R "$FW_RES" "$STAGE"
-# A symlink pointing outside the runtime would dangle once it is moved.
-OUTSIDE="$(find "$STAGE" -type l -lname '/*' -print)"
+# A symlink pointing outside the runtime would dangle once it is moved. CRAN's
+# fontconfig/fonts/conf.d links point at conf.avail by absolute framework path;
+# any link into R_HOME is rewritten as a relative one, anything else is fatal.
+find "$STAGE" -type l -lname '/*' -print | while IFS= read -r link; do
+  target="$(readlink "$link")"
+  rel="$(printf '%s\n' "$target" | sed -E 's#^/Library/Frameworks/R\.framework/(Versions/[^/]+/)?Resources/##')"
+  if [ "$rel" != "$target" ] && [ -e "$STAGE/$rel" ]; then
+    ln -sfn "$(node -e 'const p=require("path"); console.log(p.relative(p.dirname(process.argv[1]), process.argv[2]))' "$link" "$STAGE/$rel")" "$link"
+  fi
+done
+OUTSIDE="$(find "$STAGE" -type l -lname '/*' -exec sh -c 'printf "%s -> %s\n" "$1" "$(readlink "$1")"' _ {} \;)"
 [ -z "$OUTSIDE" ] || { echo "error: absolute symlinks in the runtime:" >&2; echo "$OUTSIDE" >&2; exit 1; }
+DANGLING="$(find "$STAGE" -type l ! -exec test -e {} \; -print)"
+[ -z "$DANGLING" ] || { echo "error: dangling symlinks in the runtime:" >&2; echo "$DANGLING" >&2; exit 1; }
 
 # The prefix every CRAN binary uses for its own libraries, read from libR.dylib.
 OLD_PREFIX="$(otool -D "$STAGE/lib/libR.dylib" | tail -n 1)"
