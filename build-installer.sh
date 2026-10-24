@@ -82,6 +82,19 @@ ensure_node() {
   [ -n "$fname" ] || fail "nodejs.org'dan sürüm listesi alınamadı — internet bağlantısını kontrol edin."
 
   curl -fsSL -o "$TOOLS_DIR/node.$ext" "https://nodejs.org/dist/latest-v24.x/$fname"
+  # Node'un yayımladığı SHASUMS256.txt ile doğrula; uyuşmazsa açmadan dur.
+  local expected actual
+  expected="$(curl -fsSL https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt | awk -v f="$fname" '$2 == f { print $1 }')"
+  [ -n "$expected" ] || fail "Node SHASUMS256.txt alınamadı veya $fname için kayıt yok."
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual="$(sha256sum "$TOOLS_DIR/node.$ext" | awk '{ print $1 }')"
+  else
+    actual="$(shasum -a 256 "$TOOLS_DIR/node.$ext" | awk '{ print $1 }')"
+  fi
+  if [ "$actual" != "$expected" ]; then
+    rm -f "$TOOLS_DIR/node.$ext"
+    fail "Node arşivi SHA-256 uyuşmuyor (beklenen $expected, gelen $actual)."
+  fi
   rm -rf "$TOOLS_DIR/node" "$TOOLS_DIR/node-extract"
   mkdir -p "$TOOLS_DIR/node-extract"
   if [ "$ext" = zip ]; then

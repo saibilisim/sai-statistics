@@ -29,7 +29,16 @@ if (-not (Test-Path $NodeExe)) {
     $NodeUrl = "https://nodejs.org/dist/v24.16.0/node-v24.16.0-win-x64.zip"
     
     Invoke-WebRequest -Uri $NodeUrl -OutFile $NodeZip
-    
+
+    # nodejs.org/dist/v24.16.0/SHASUMS256.txt — sürümle birlikte güncellenir.
+    $NodeSha256 = "edaca9bd58ec8e92037dac4e877d52f6b8f430b81c18b57e264b4e2fb111cd56"
+    $actual = (Get-FileHash -Algorithm SHA256 $NodeZip).Hash.ToLower()
+    if ($actual -ne $NodeSha256) {
+        Remove-Item $NodeZip -Force
+        Write-Error "Node.js arşivi SHA-256 uyuşmuyor (beklenen $NodeSha256, gelen $actual)."
+        exit 1
+    }
+
     Write-Host "    Arşivden çıkarılıyor..."
     $ExtractDir = Join-Path $ToolsDir "node-extract"
     Expand-Archive -Path $NodeZip -DestinationPath $ExtractDir -Force

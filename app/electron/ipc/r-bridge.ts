@@ -523,6 +523,10 @@ async function commandExists(cmd: string): Promise<boolean> {
 }
 
 const CMAKE_VERSION = '3.28.3'
+const CMAKE_SHA256: Record<'x86_64' | 'aarch64', string> = {
+  x86_64: '804d231460ab3c8b556a42d2660af4ac7a0e21c98a7f8ee3318a74b4a9a187a6',
+  aarch64: 'bbf023139f944cefe731d944f2864d8ea3ea0c4f9310b46ac72b3cb4e314b023'
+}
 
 /**
  * Ensure a CMake binary is reachable when building from source on Linux.
@@ -559,20 +563,13 @@ async function ensureLinuxBuildTools(): Promise<{ extraPath: string | null; warn
     if (!res.ok) throw new Error(`CMake download HTTP ${String(res.status)}`)
     const tarBuf = Buffer.from(await res.arrayBuffer())
 
-    // Verify against Kitware's own published checksums file before extracting
-    // anything — this repo has no network access to independently pin a
-    // hash, so this defends against a truncated/corrupted transfer or a
-    // compromised mirror serving different bytes than the checksums file,
-    // even though it can't defend against a fully compromised github.com
-    // serving matching bad files for both. Fail closed: any fetch/parse/
-    // mismatch error aborts the bootstrap (caught below → cmake stays
-    // "unavailable" rather than silently trusting an unverified binary).
-    const sumsRes = await fetch(`${releaseBase}cmake-${CMAKE_VERSION}-SHA-256.txt`)
-    if (!sumsRes.ok) throw new Error(`CMake checksums download HTTP ${String(sumsRes.status)}`)
-    const sumsText = await sumsRes.text()
-    const sumsLine = sumsText.split('\n').find(l => l.trim().endsWith(fileName))
-    const expectedHash = sumsLine?.trim().split(/\s+/)[0]
-    if (!expectedHash) throw new Error(`No checksum entry found for ${fileName}`)
+    // Verify against the pinned hash before extracting anything (taken from
+    // Kitware's cmake-<ver>-SHA-256.txt; update it together with
+    // CMAKE_VERSION). Pinned rather than fetched, so a compromised release
+    // host can't serve matching bad files for both. Fail closed: a mismatch
+    // aborts the bootstrap (caught below → cmake stays "unavailable" rather
+    // than silently trusting an unverified binary).
+    const expectedHash = CMAKE_SHA256[arch]
     const actualHash = createHash('sha256').update(tarBuf).digest('hex')
     if (actualHash !== expectedHash) {
       throw new Error(
