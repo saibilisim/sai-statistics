@@ -35,8 +35,8 @@ async function main() {
     const lang = await win.evaluate(
       () => window.__SAI_TEST__.useSettingsStore.getState().settings?.appearance?.language ?? 'tr'
     )
-    const a = require(`../src/i18n/locales/${lang}/analysis.json`)
-    const c = require(`../src/i18n/locales/${lang}/common.json`).common
+    const a = require(`../../src/i18n/locales/${lang}/analysis.json`)
+    const c = require(`../../src/i18n/locales/${lang}/common.json`).common
     const t = a.ordinal.extra
     await win.evaluate(async filePath => {
       const r = await window.api.file.import({ filePath })

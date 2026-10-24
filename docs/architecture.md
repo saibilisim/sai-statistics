@@ -1,15 +1,14 @@
 # Uygulama Mimarisi — Tam Döküman
 
-> 📌 **Bu dokümanın rolü:** Teknik mimari referansı — katmanların *nasıl* konuştuğu (süreç mimarisi, veri akışı, IPC kanalları). Stack/build kararlarında **[CLAUDE.md](../CLAUDE.md) tek doğruluk kaynağıdır**. Gerçek kod **TypeScript (`.ts`/`.tsx`, ESM)** ile yazılır (CLAUDE.md §2, §4); güncel klasör yapısı CLAUDE.md §4'tedir. *(2026-07-16 güncellemesi: klasör ağacı, R paket tablosu, IPC listesi ve store yapısı kod gerçeğine çekildi.)*
+> 📌 **Bu dokümanın rolü:** Teknik mimari referansı — katmanların *nasıl* konuştuğu (süreç mimarisi, veri akışı, IPC kanalları). Stack/build kararlarında **[CLAUDE.md](../CLAUDE.md) tek doğruluk kaynağıdır**. Gerçek kod **TypeScript (`.ts`/`.tsx`, ESM)** ile yazılır (CLAUDE.md §2, §4); güncel klasör yapısı CLAUDE.md §4'tedir. *(2026-10-24 güncellemesi: klasör ağacı, R paket tablosu ve platform kaynakları, IPC seçkisi, R kurulum akışı ve build bölümü kod gerçeğine çekildi.)*
 
 ---
 
 ## 1. Genel Bakış
 
 ```
-Masaüstü istatistik uygulaması
-SPSS benzeri, modern, cross-platform
-Electron + React + R
+R motoru üzerine kurulu, platformlar arası masaüstü istatistik uygulaması
+Electron + React + DuckDB + R
 ```
 
 ---
@@ -31,13 +30,13 @@ app/
 │  ├─ preload.ts                ← contextBridge → window.api
 │  ├─ i18n.ts · menu/menu-builder.ts
 │  └─ ipc/
-│     ├─ file-handler.ts        ← .sdf/import/export/output-export
-│     ├─ db-handler.ts          ← DuckDB (+weight/split/missing/decimals map'leri)
+│     ├─ file-handler/          ← .sdf/import/export/output-export (dataset-io, import-export, output-io …)
+│     ├─ db-handler/            ← DuckDB (+weight/split/missing/decimals map'leri; transform-handlers.ts dahil)
 │     ├─ analysis-handler.ts    ← generic analysis:run (enrichedParams enjeksiyonu)
 │     ├─ r-bridge.ts · job-manager.ts ← R spawn + FIFO job kuyruğu
 │     ├─ r-session.ts           ← kalıcı R konsolu (Terminal, ayrı şerit)
 │     ├─ r-packages-handler.ts  ← ilk açılış R/paket kontrolü + kendi R'ını kullanan için kurulum
-│     ├─ transform-handler.ts · settings-handler.ts · undo-manager.ts
+│     ├─ settings-handler.ts · undo-manager.ts · updater-handler.ts · ai-bridge/
 │     └─ ...
 │
 ├─ src/                         ← Renderer (React 19, TypeScript)
@@ -120,25 +119,19 @@ yüklenir. Kapanış guard'ı veri ve Output değişikliğini tek "kaydet?" soru
 
 ### Ayarlar → `settings.json`
 
+Şemanın ve varsayılanların tek kaynağı `shared/settings-types.ts`'teki zod şemasıdır (her alanın
+`.default(...)`'u); electron-store bunları çalışma anında uygular. Bölümler: `appearance` · `editor` ·
+`dataImport` · `output` · `r` (`timeout`, `consoleEnabled`) · `recentFiles` · `startup` · `ai` ·
+`shortcuts` · `update` · `ribbon`. Okunabilir örnek: `resources/settings/default-settings.json`
+(uygulama okumaz, yalnız belge). Bir parçası:
+
 ```json
 {
-  "appearance": {
-    "theme": "light",
-    "fontSize": 13,
-    "language": "tr"
-  },
-  "editor": {
-    "decimalSeparator": ",",
-    "thousandSeparator": ".",
-    "missingValue": -99
-  },
-  "r": {
-    "runtimePath": "bundled",
-    "cranMirror": "https://cran.r-project.org"
-  },
-  "recentFiles": [
-    "/Users/user/Desktop/veri.sdf"
-  ]
+  "appearance": { "theme": "system", "fontSize": 13, "language": "tr" },
+  "editor": { "missingValue": -99, "decimalSeparator": "comma" },
+  "output": { "significanceLevel": 0.05, "tableStyle": "academic", "decimalSeparator": "dot" },
+  "r": { "timeout": 120, "consoleEnabled": true },
+  "recentFiles": []
 }
 ```
 
@@ -198,7 +191,7 @@ VS Code gibi düz JSON, kullanıcı elle de düzenleyebilir.
 | Bileşen | Teknoloji | Görevi |
 |---|---|---|
 | File Handler | Node.js fs | .sdf açma/kaydetme (Output dahil) |
-| DuckDB | duckdb-node | Veri depolama ve sorgulama |
+| DuckDB | `@duckdb/node-api` (Neo client) | Veri depolama ve sorgulama |
 | R Bridge | child_process | R başlatma ve iletişim |
 | Job Manager | Custom queue | Analiz sıralama ve iptal |
 | Settings | electron-store | settings.json yönetimi |
@@ -317,7 +310,12 @@ Analiz dialog state'leri store'da değil, her Dialog bileşeninin kendi local st
 
 ## 8. IPC Kanalları
 
-> **Güncel liste** (2026-07-16, `shared/ipc-contracts.ts`'ten). Tüm kanal *adları* oradan gelir — burada elle yazılmaz. `handleValidated(channel, zodSchema, fn)` her kanalı `shared/ipc-schemas.ts`'teki şemayla doğrular (CLAUDE.md §8).
+> **Tam ve güncel liste `shared/ipc-contracts.ts`'tedir** (2026-10-24'te ~140 kanal); aşağıdaki seçki
+> kanalların *gruplarını* ve önemli olanları anlatır, eksiksiz değildir — AI (`ai:*`, `ai:account:*`),
+> güncelleme (`updater:*`), tanılama (`diag:*`) ve birleştirme/yeniden yapılandırma (`data:merge-*`,
+> `data:restructure-*`) kanalları için kaynağa bakın. Kod kanal adını hiçbir zaman string olarak
+> yazmaz, sözleşmeden alır. `handleValidated(channel, zodSchema, fn)` her kanalı
+> `shared/ipc-schemas.ts`'teki şemayla doğrular (CLAUDE.md §8).
 
 ```javascript
 // Renderer → Main (invoke/handle)
@@ -328,18 +326,18 @@ Analiz dialog state'leri store'da değil, her Dialog bileşeninin kendi local st
 "file:import"          → CSV/Excel/SPSS/Stata/SAS içe aktar
 "file:export-csv"      → CSV export
 "file:export-xlsx"     → Excel export
-"file:export-sav"      → SPSS export — HENÜZ STUB: doğrudan .sav yazımı yok,
-                          kullanıcıya "Excel/CSV kullan" bilgi kutusu gösterir
+"file:export-sav"      → SPSS .sav export (satırlar geçici Parquet'e, r-scripts/export-sav.R
+                          haven::write_sav ile yazar)
 "file:save-output"     → Output sekmesini self-contained HTML olarak kaydet
-"file:export-output-pdf" → Output → PDF (Electron printToPDF)
-"file:get-properties"  → dosya özellikleri
+"file:export-output-pdf" / "file:export-output-text" / "file:export-output-binary"
+                       → Output → PDF (Electron printToPDF) / metin biçimleri (CSV, Markdown …) /
+                          renderer'ın bayt olarak ürettiği yerel .docx/.xlsx
 
 "data:get-all"         → tüm veriyi çek (sayfalama YOK, bkz. CLAUDE.md §12)
 "data:get-filtered"    → aktif Select Cases filtresiyle veri çek
 "data:get-split-groups"→ Split File değişkeninin grupları
 "data:set-weight" / "data:set-split" → Weight Cases / Split File durumu (main-process kayıt;
                           analysis-handler her analysis:run'a weightVariable/splitVariable enjekte eder)
-"data:select-cases"    → Select Cases filtresi (ortak tanım shared/data-filter.ts)
 "data:sort-multi"      → çok-anahtarlı Sort Cases
 "data:identify-duplicates" → Identify Duplicate Cases (ROW_NUMBER OVER PARTITION BY)
 "data:update-cell" / "data:update-cells" (batch) → hücre güncelle
@@ -387,7 +385,6 @@ Analiz dialog state'leri store'da değil, her Dialog bileşeninin kendi local st
 "terminal:r:pkg-install"  → paketi kullanıcı kütüphanesine kur (konsol istisnası, allow-list'siz)
 
 // Main → Renderer (send)
-"setup:progress"      → R kurulum ilerlemesi (first-run sihirbazı)
 "job:progress"        → analiz ilerlemesi
 "job:complete"        → analiz tamamlandı
 "job:error"           → analiz hatası
@@ -417,42 +414,41 @@ Analiz dialog state'leri store'da değil, her Dialog bileşeninin kendi local st
 ## 9. R Kurulum Akışı
 
 ```
-Uygulama ilk açılır
+Uygulama açılır (r-bridge.ts initRBridge)
          ↓
-Main: r-runtime/platform/ klasörüne bak
-Bundled R var mı?
+Gömülü R var mı? (paketli: resourcesPath/r-runtime;
+                  geliştirmede: resources/r-runtime-win | r-runtime-mac | r-runtime)
          ↓ Evet
-Versiyon kontrolü yap
+Rscript --version → r:status "ready"
+Zorunlu paketler eksik mi? (r:check-required-setup)
+  → Eksikse: kopya bozuk demektir — kullanıcıya sorulmadan
+    kullanıcı kütüphanesine sessizce yeniden kurulur (r-packages-handler.ts)
          ↓
-Gerekli paketler kurulu mu?
-  → Değilse: setup.R çalıştır
-  → Progress bar göster renderer'a
-         ↓
-Hazır, uygulama açılır
+Arka planda: önceki R sürümünde kullanıcının kurduğu paketler
+yeni sürüm klasörüne taşınır/yeniden kurulur (migrateUserRLibrary)
 
-         ↓ Hayır (bundled yok)
-Sistemde R var mı? (which R)
-  → Varsa kullan
-  → Yoksa: "R bulunamadı, indir?" dialog
+         ↓ Hayır (gömülü R yok — kaynaktan çalıştırma ya da vendor adımı atlanmış)
+Sistemde Rscript var mı? (PATH)
+  → Varsa kullan; eksik paket varsa SetupWelcomeDialog kurmayı önerir
+  → Yoksa: r:status "not-found" → R kurulum yönergeli karşılama penceresi
 ```
 
 ---
 
 ## 10. Build ve Dağıtım
 
-```json
-// electron-builder.json
-{
-  "appId": "com.yourapp.stats",
-  "productName": "AppName",
-  "extraResources": [
-    { "from": "r-runtime/windows", "to": "r-runtime", "filter": "**/*" }
-  ],
-  "win":   { "target": "nsis" },
-  "mac":   { "target": "dmg" },
-  "linux": { "target": "AppImage" }
-}
-```
+Yapılandırma: `app/electron-builder.json` (`appId` `com.sai.statistics`). Her platform kendi gömülü
+R'ını `extraResources` ile `r-runtime/` olarak paketler (`resources/r-runtime-win` · `r-runtime-mac` ·
+`r-runtime`; üretimi README → "Packaging installers").
+
+| Platform | Hedefler | Not |
+|---|---|---|
+| Windows | NSIS (x64) | Otomatik güncelleme (electron-updater, imza doğrulamalı) yalnız burada |
+| macOS | DMG + zip | Şimdilik imzasız (`identity: null`) |
+| Linux | AppImage · deb · rpm (+ Flatpak, `app/flatpak/`) | Güncelleme paket yöneticisinden / Flathub'dan |
+
+Electron fuse'ları (`electronFuses`): `runAsNode` kapalı, asar bütünlük doğrulaması açık, uygulama
+yalnız asar'dan yüklenir.
 
 ---
 
@@ -465,7 +461,7 @@ Sistemde R var mı? (which R)
 | Data View | AG Grid Community | 2026-07-20'de Univer'den geçildi: bundle ~15,2→~3,4 MB, 500K×20 yükleme ~190→~36,5 sn, yarış-durumu hata sınıfı kalktı, Variable View ile tek grid kütüphanesi; Excel özellikleri ve formül motoru (`formula.ts`) Community üzerine elle yazıldı (Enterprise kullanılmaz) |
 | Variable View | AG Grid Community | Typed columns, dropdown (Enterprise özelliği kullanılmaz) |
 | Output - Tablo | Saf HTML `<table>` | SPSS-stil biçim kontrolü kolay (bilinçli AG Grid'den vazgeçildi) |
-| Output - Grafik | Plotly | R ggplot2 çıktısıyla uyumlu |
+| Output - Grafik | Plotly | R script'leri Plotly JSON'unu doğrudan kurar (ggplot2 analizlerde kullanılmaz) |
 | State | Zustand (+zundo yalnız UI) | Hafif; veri undo'su DB-snapshot (main-process) |
 | Ana Veri Deposu | DuckDB (Node) | Parquet/Arrow native, analitik hızlı |
 | Veri Transferi | Arrow IPC | Tip kaybı yok, hızlı |

@@ -17,8 +17,10 @@ and read the results as formatted tables and interactive charts.
   labels, missing values, measurement level, column formats.
 - **50+ statistical procedures** — descriptives, t-tests/ANOVA,
   correlation/regression, non-parametric tests, GLM, factor/cluster analysis,
-  survival analysis and more. Each one runs real R code (`t.test`, `lm`, `aov`,
-  CRAN packages), not a reimplementation.
+  survival analysis and more. Everything is computed in R: R's own functions
+  and CRAN packages (`t.test`, `lm`, `survival`, `lme4`, …) where they fit, and
+  formulas written in R where a procedure needs a convention they don't offer
+  (SPSS frequency-weight semantics, Type III sums of squares, …).
 - **Validated results** — every R script is checked against known reference
   values (`app/tests/r-validation/`), and an SPSS parity harness compares the
   same analyses with IBM SPSS Statistics output (`app/tests/spss-parity/`).

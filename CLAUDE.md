@@ -61,7 +61,7 @@ and read results as tables and interactive charts.
 | **Variable View** | AG Grid Community | No Enterprise features. |
 | **Output tables** | Plain HTML `<table>` | Deliberate: simple rendering, full control of the formatted look. |
 | **Charts** | Plotly.js | R `ggplot` → `ggplotly()` → JSON. |
-| **State** | Zustand + zundo | Undo/redo built in. |
+| **State** | Zustand + zundo | zundo for UI state; data undo/redo is a DB snapshot in Main (`undo-manager.ts`), cell-value undo in `cell-value-undo.ts`. |
 | **Data store** | **`@duckdb/node-api`** (Neo client) | Not the old `duckdb` node bindings. In-memory, Parquet/Arrow native. |
 | **Data transfer** | Arrow IPC / Parquet | Main ↔ R without type loss. |
 | **Statistics engine** | R via `child_process.spawn` | Main process only. No `exec` / shell strings. |
