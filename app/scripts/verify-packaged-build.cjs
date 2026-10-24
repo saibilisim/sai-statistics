@@ -116,10 +116,13 @@ if (!withApp) {
   process.exit(0)
 }
 
+// macOS: the binary is <name>.app/Contents/MacOS/<name>, not a top-level file.
+const macApp = fs.readdirSync(unpacked).find(f => f.endsWith('.app'))
+const exeDir = macApp ? path.join(unpacked, macApp, 'Contents', 'MacOS') : unpacked
 const exeCandidates = fs
-  .readdirSync(unpacked)
+  .readdirSync(exeDir)
   .filter(f => f.endsWith('.exe') || f.endsWith('.AppImage') || !path.extname(f))
-  .map(f => path.join(unpacked, f))
+  .map(f => path.join(exeDir, f))
   .filter(f => fs.statSync(f).isFile())
 const exe = exeCandidates[0]
 if (!exe) fail(`no executable found in ${unpacked}`)

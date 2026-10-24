@@ -11,13 +11,13 @@
 # Linux rate and the R runtime is a ~500MB download. Releases and on-demand
 # only, so day-to-day development is unaffected but no release ever goes out
 # on an unverified installer.
-name: Package (Windows)
+name: Package
 
 on:
   workflow_dispatch:
     inputs:
       upload_installer:
-        description: 'Upload the unsigned .exe as a run artifact (public in a public repo)'
+        description: 'Upload the unsigned .exe / .dmg as run artifacts (public in a public repo)'
         type: boolean
         default: false
   push:
@@ -84,5 +84,79 @@ jobs:
           # anyone, and an unsigned installer must not look like an official
           # build (official builds are signed and published elsewhere). Kept short because each installer is a few hundred MB against the
           # account's storage quota.
+          retention-days: 14
+          if-no-files-found: error
+
+  # Same idea for macOS, once per CPU: the runtime is built the CRAN way and
+  # each .dmg carries the R for its own architecture, so there is no universal
+  # build. Unsigned (identity: null); official builds are signed and notarised
+  # by the release process, not here. macOS minutes are free on a public repo.
+  macos-dmg:
+    name: Build + verify the macOS package (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+            builder_arch: --arm64
+          # GitHub's Intel macOS label; update it if GitHub retires it.
+          - runner: macos-15-intel
+            arch: x86_64
+            builder_arch: --x64
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Node version
+        id: node
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node.outputs.version }}
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache the CRAN installer
+        uses: actions/cache@v4
+        with:
+          path: app/tmp/r-installers
+          key: r-installer-${{ matrix.arch }}-${{ hashFiles('app/shared/r-packages.json') }}
+
+      - name: Vendor the R runtime
+        env:
+          SAI_R_VERSION: "4.6.1"
+          SAI_R_ARCH: ${{ matrix.arch }}
+        run: pnpm vendor:r-runtime:mac
+
+      - name: Build renderer + main
+        run: pnpm build
+
+      - name: Package with electron-builder
+        run: |
+          node scripts/gen-third-party-notices.cjs
+          pnpm exec electron-builder --mac ${{ matrix.builder_arch }} --publish never
+
+      - name: Verify the packaged build
+        run: node scripts/verify-packaged-build.cjs --with-app
+
+      - name: Report package size
+        run: ls -lh dist/*.dmg dist/*.zip
+
+      - name: Upload package
+        if: inputs.upload_installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: sai-statistics-macos-${{ matrix.arch }}
+          path: app/dist/*.dmg
           retention-days: 14
           if-no-files-found: error
