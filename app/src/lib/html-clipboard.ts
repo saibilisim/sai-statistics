@@ -96,6 +96,60 @@ export async function readClipboardHtml(): Promise<string | null> {
   }
 }
 
+const TABLE_TAGS = new Set([
+  'table',
+  'caption',
+  'colgroup',
+  'col',
+  'thead',
+  'tbody',
+  'tfoot',
+  'tr',
+  'td',
+  'th'
+])
+const TABLE_ATTRS = new Set([
+  'class',
+  'style',
+  'colspan',
+  'rowspan',
+  'span',
+  'align',
+  'valign',
+  'bgcolor',
+  'width',
+  'height',
+  'nowrap'
+])
+
+/** First <table> of the payload, detached from an inert document and cut down
+ *  to TABLE_TAGS/TABLE_ATTRS, plus its <style> blocks as text-only copies. */
+function sanitizeClipboardTable(
+  html: string
+): { table: HTMLTableElement; styles: HTMLStyleElement[] } | null {
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  const source = doc.querySelector('table')
+  if (!source) return null
+  for (const el of Array.from(source.querySelectorAll('*'))) {
+    if (!TABLE_TAGS.has(el.localName)) {
+      el.remove()
+      continue
+    }
+    for (const attr of Array.from(el.attributes)) {
+      if (!TABLE_ATTRS.has(attr.name.toLowerCase())) el.removeAttribute(attr.name)
+    }
+  }
+  for (const attr of Array.from(source.attributes)) {
+    if (!TABLE_ATTRS.has(attr.name.toLowerCase())) source.removeAttribute(attr.name)
+  }
+  const styles = Array.from(doc.querySelectorAll('style')).map(s => {
+    const copy = document.createElement('style')
+    copy.textContent = s.textContent
+    return copy
+  })
+  return { table: document.importNode(source, true), styles }
+}
+
 /** Parses the first `<table>` found in an HTML clipboard payload into a
  *  format-only grid. Returns null when there is no table (e.g. the HTML
  *  flavor is just a wrapped plain-text run, or parsing fails).
@@ -114,14 +168,20 @@ export async function readClipboardHtml(): Promise<string | null> {
 export function parseHtmlClipboardGrid(html: string): HtmlClipboardGrid | null {
   if (!/<table[\s>]/i.test(html)) return null
 
+  // The payload comes from whatever app filled the clipboard, so it is first
+  // parsed inert (DOMParser runs no script, loads nothing) and only the first
+  // <table> plus <style> blocks, stripped to layout tags/attributes, are
+  // rendered — no img/iframe/svg or on* handlers ever reach the live tree.
+  const parsed = sanitizeClipboardTable(html)
+  if (!parsed) return null
+
   const host = document.createElement('div')
   host.style.cssText = 'position:fixed; left:-99999px; top:-99999px; visibility:hidden;'
   document.body.appendChild(host)
   try {
     const shadow = host.attachShadow({ mode: 'open' })
-    shadow.innerHTML = html
-    const table = shadow.querySelector('table')
-    if (!table) return null
+    shadow.append(...parsed.styles, parsed.table)
+    const table = parsed.table
 
     // Unstyled reference point, evaluated in the SAME shadow (so any
     // table-wide, non-per-cell rule in the payload's <style> block applies
