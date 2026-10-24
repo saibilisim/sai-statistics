@@ -27,12 +27,23 @@
 # release, port this to CRAN's macOS R + Posit's macOS binaries from the same
 # snapshot, the way the Windows script does.
 #
+# The CRAN route (R 4.6.1 + the Posit snapshot) is in vendor-r-runtime-mac-cran.sh
+# and runs with SAI_R_VERSION=4.6.1; it becomes the default here once
+# .github/workflows/macos-runtime.yml has passed on macOS.
+#
 # Usage: scripts/vendor-r-runtime-mac.sh   (or: pnpm vendor:r-runtime:mac)
-# Requires: conda (or micromamba/mamba — edit CONDA_BIN below) on PATH.
+#        SAI_R_VERSION=4.6.1 pnpm vendor:r-runtime:mac   (CRAN route)
+# Requires: conda (or micromamba/mamba — edit CONDA_BIN below) on PATH; the CRAN
+# route needs only the Xcode Command Line Tools and node.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+case "${SAI_R_VERSION:-4.3}" in
+  4.3*) ;;
+  4.6*) exec bash "$SCRIPT_DIR/vendor-r-runtime-mac-cran.sh" ;;
+  *) echo "error: SAI_R_VERSION=$SAI_R_VERSION unsupported (use 4.6.x or 4.3)" >&2; exit 1 ;;
+esac
 APP_DIR="$(dirname "$SCRIPT_DIR")"
 DEST="$APP_DIR/resources/r-runtime-mac"
 CONDA_BIN="${CONDA_BIN:-conda}"

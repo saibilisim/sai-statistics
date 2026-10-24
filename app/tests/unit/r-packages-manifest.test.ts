@@ -78,6 +78,7 @@ describe('console packages', () => {
     for (const script of [
       'scripts/vendor-r-runtime.sh',
       'scripts/vendor-r-runtime-mac.sh',
+      'scripts/vendor-r-runtime-mac-cran.sh',
       'scripts/vendor-r-runtime-win.ps1'
     ]) {
       expect(read(script), script).toMatch(/console\.packages/)
@@ -107,6 +108,7 @@ describe('the build scripts read the manifest instead of copying it', () => {
   const VENDOR_SCRIPTS = [
     'scripts/vendor-r-runtime.sh',
     'scripts/vendor-r-runtime-mac.sh',
+    'scripts/vendor-r-runtime-mac-cran.sh',
     'scripts/vendor-r-runtime-win.ps1'
   ]
 

@@ -1,0 +1,80 @@
+# Builds the macOS R runtime the CRAN way (scripts/vendor-r-runtime-mac-cran.sh:
+# CRAN's R 4.6.1 + the dated Posit snapshot, as Windows ships) on GitHub's
+# macOS runners, then runs the whole r-validation suite with THAT R.
+#
+# The script was written without a Mac (2026-10-24); this workflow is where it
+# is first run. Once it passes on both CPUs, vendor-r-runtime-mac.sh switches
+# its default from conda-forge's R 4.3 to this route.
+#
+# Manual only. macOS minutes count ten times on a private repository and are
+# free on a public one.
+name: macOS R runtime
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: macos-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vendor-and-validate:
+    name: Vendor + r-validation (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          # GitHub's Intel macOS label; update it if GitHub retires it.
+          - runner: macos-15-intel
+            arch: x86_64
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Node version
+        id: node
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node.outputs.version }}
+
+      - name: Cache the CRAN installer
+        uses: actions/cache@v4
+        with:
+          path: app/tmp/r-installers
+          key: r-installer-${{ matrix.arch }}-${{ hashFiles('app/shared/r-packages.json') }}
+
+      - name: Vendor the R runtime (CRAN route)
+        env:
+          SAI_R_VERSION: "4.6.1"
+          SAI_R_ARCH: ${{ matrix.arch }}
+        run: bash scripts/vendor-r-runtime-mac.sh
+
+      - name: What shipped
+        run: |
+          du -sh resources/r-runtime-mac
+          node -e "const r=require('./resources/r-runtime-mac/sai-runtime.json'); console.log('R', r.r, r.arch, Object.keys(r.packages).length, 'packages')"
+
+      # Every analysis script, spawned the way the app spawns it, against the
+      # runtime that would ship — not a system R.
+      - name: r-validation with the vendored R
+        run: |
+          export PATH="$PWD/resources/r-runtime-mac/bin:$PATH"
+          command -v Rscript
+          Rscript -e 'cat(R.version.string, R.home(), "\n")'
+          Rscript tests/r-validation/run-all.R
+
+      - name: Upload the runtime manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sai-runtime-${{ matrix.arch }}
+          path: app/resources/r-runtime-mac/sai-runtime.json
+          if-no-files-found: ignore
