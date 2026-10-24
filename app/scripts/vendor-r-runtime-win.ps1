@@ -22,10 +22,13 @@
 # CRAN on the full validation suite - 2889/2889, SPSS parity 678 OK / 0 FARK.
 #
 # What is vendored: R itself (incl. its recommended set) + every non-recommended
-# package in shared/r-packages.json "bundled". OPTIONAL packages stay on-demand
-# via the in-app R Packages manager, which installs from the same snapshot.
+# package in shared/r-packages.json "bundled" and "console" — every package any
+# analysis uses, so the installed app never downloads one (there are no optional
+# packages since 0.2.28).
 #
-# Usage:   pnpm vendor:r-runtime:win   (then pnpm sign:r-runtime:win)
+# Usage:   pnpm vendor:r-runtime:win
+#          Official builds then sign the runtime's DLLs with SAI Bilişim's
+#          certificate (release process, not in this repository).
 # Env:     SAI_R_DEST - build somewhere else (e.g. to compare with the shipped one)
 
 $ErrorActionPreference = 'Stop'
@@ -174,4 +177,4 @@ Remove-Item -Force $RelocParent -ErrorAction SilentlyContinue
 
 $size = '{0:N0} MB' -f (((Get-ChildItem -Recurse $Dest | Measure-Object Length -Sum).Sum) / 1MB)
 Write-Host "[vendor-r-runtime] done. $Dest ($size)"
-Write-Host "[vendor-r-runtime] next: pnpm sign:r-runtime:win (CRAN's DLLs are not Authenticode-signed)"
+Write-Host "[vendor-r-runtime] note: CRAN's DLLs are not Authenticode-signed; official builds sign them before packaging"

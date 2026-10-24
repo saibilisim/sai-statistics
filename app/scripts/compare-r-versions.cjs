@@ -27,8 +27,8 @@
  *   node scripts/compare-r-versions.cjs run r433 resources/r-runtime-win/lib/R/bin/x64/Rscript.exe %USERPROFILE%/R/library
  *   node scripts/compare-r-versions.cjs run r461 "tmp/cranr/r 4.6.1/bin/x64/Rscript.exe"
  *   node scripts/compare-r-versions.cjs diff r433 r461
- * <userLibDir> stands in for ~/R/library (optional packages the app installs
- * on demand) — the root holding the per-version folders (4.3/, 4.6/, …); each
+ * <userLibDir> stands in for ~/R/library (packages installed into the user
+ * library) — the root holding the per-version folders (4.3/, 4.6/, …); each
  * R picks its own folder, so the same root serves every run.
  * (a second runtime: SAI_R_VERSION=4.5 SAI_R_DEST=… pnpm vendor:r-runtime:win)
  */

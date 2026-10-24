@@ -31,8 +31,9 @@ params <- read_params(); df <- load_data(params)
 # survival::survdiff cannot produce Breslow/Tarone-Ware: its `rho` selects the
 # Fleming-Harrington G-rho family (rho = 1 is Peto-Peto, NOT Gehan-Breslow),
 # and there is no at-risk-count weighting in it at all. The `coin` package can,
-# but it is an on-demand optional install here (setup.R), so a core SPSS
-# comparison would silently disappear on most machines.
+# but when this was written coin was an on-demand optional install, so a core
+# SPSS comparison would silently have disappeared on most machines; it is
+# bundled now (0.2.28), but a user running their own R may still lack it.
 #
 # So the k-sample score statistic is computed directly from the risk sets. This
 # is not the "hand-rolled permutation algorithm" CLAUDE.md §11 warns against —

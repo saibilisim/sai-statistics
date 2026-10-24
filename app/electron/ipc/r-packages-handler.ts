@@ -59,7 +59,7 @@ export function registerRPackagesHandlers(): void {
     if (missingRequired.length > 0 && isBundledR()) {
       // The shipped runtime contains every required package, so one missing is
       // a damaged copy, not a choice to put to the user: repair it silently
-      // into the user library (same queue as the R Packages manager).
+      // into the user library (same install queue as every other install).
       log.warn(`[r-packages] bundled R lacks ${missingRequired.join(', ')} — reinstalling`)
       for (const pkg of missingRequired) {
         void installRPackage(pkg).then(r => {

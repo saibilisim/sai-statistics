@@ -53,33 +53,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # The conda package cache is what makes a repeat run cheap: the first run
-      # downloads ~500MB, later ones extract from cache in seconds. Keyed on the
-      # manifest so a package-list change correctly busts it.
-      - name: Cache conda packages
-        uses: actions/cache@v4
-        with:
-          path: ~/mamba-root/pkgs
-          key: micromamba-pkgs-${{ runner.os }}-${{ hashFiles('app/shared/r-packages.json', 'app/scripts/vendor-r-runtime-win.ps1') }}
-          restore-keys: micromamba-pkgs-${{ runner.os }}-
-
-      # Pinned to 1.5.8 on purpose — micromamba 2.x has been seen to abort on
-      # startup (STATUS_STACK_BUFFER_OVERRUN) on Windows.
-      - name: Install micromamba
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "$HOME\mamba-root" | Out-Null
-          Invoke-WebRequest `
-            -Uri "https://github.com/mamba-org/micromamba-releases/releases/download/1.5.8-0/micromamba-win-64" `
-            -OutFile "$HOME\micromamba.exe"
-          & "$HOME\micromamba.exe" --version
-
+      # CRAN's R installer + Windows binaries from the dated Posit snapshot in
+      # shared/r-packages.json (no conda since 0.2.23).
       - name: Vendor the R runtime
         shell: pwsh
-        run: |
-          $env:CONDA_BIN = "$HOME\micromamba.exe"
-          $env:MAMBA_ROOT_PREFIX = "$HOME\mamba-root"
-          pnpm vendor:r-runtime:win
+        run: pnpm vendor:r-runtime:win
 
       - name: Build renderer + main
         run: pnpm build

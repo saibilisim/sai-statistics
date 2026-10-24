@@ -13,14 +13,19 @@
 # script for why conda-forge (old SDK baseline, @rpath-relative dylibs, no
 # env juggling at spawn time).
 #
-# What is vendored: everything in setup.R's `required` list — jsonlite + arrow
-# (the JSON/Arrow transport every script needs), R's own recommended package
-# set via r-recommended (boot, class, cluster, MASS, nlme, nnet, rpart,
-# survival, …), and psych + nortest. The rule of thumb: the bundled runtime
-# must never be a weaker R than the "user installs R themselves" path, and a
-# stock CRAN R already ships the recommended set. OPTIONAL_PACKAGES power
-# rarely-used advanced analyses and stay on-demand via the in-app R Packages
-# manager by design — the user installs them in-app, only if they want them.
+# What is vendored: every package in shared/r-packages.json "bundled" (every
+# package any analysis uses) and "console" (ggplot2, readxl, lubridate for the
+# R terminal), as conda-forge builds. There are no optional packages since
+# 0.2.28. The rule of thumb: the bundled runtime must never be a weaker R than
+# the "user installs R themselves" path.
+#
+# OUT OF DATE (2026-10-24): this still ships conda-forge's R 4.3. Windows moved
+# to CRAN's R 4.6.1 + the dated Posit snapshot in shared/r-packages.json
+# (vendor-r-runtime-win.ps1, 0.2.23) and Linux builds R 4.6.1 against that
+# snapshot (vendor-r-runtime.sh), so a macOS build does not run the R the
+# validation and SPSS parity suites were checked against. Before a macOS
+# release, port this to CRAN's macOS R + Posit's macOS binaries from the same
+# snapshot, the way the Windows script does.
 #
 # Usage: scripts/vendor-r-runtime-mac.sh   (or: pnpm vendor:r-runtime:mac)
 # Requires: conda (or micromamba/mamba — edit CONDA_BIN below) on PATH.

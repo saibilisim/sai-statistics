@@ -1,10 +1,12 @@
 // SPDX-FileCopyrightText: 2026 SAI Bilişim
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * PackageNeededDialog — shown in place of an analysis dialog when the required
- * optional R package is not yet installed. Offers an on-demand Install button
- * (downloads from CRAN into the user's R library; requires internet). Once the
- * install succeeds the parent dialog re-renders into its normal form.
+ * PackageNeededDialog — shown in place of an analysis dialog when the R package
+ * it needs is missing. The packaged app bundles every analysis package, so in
+ * practice this appears only for a user running their own R. Offers an Install
+ * button (downloads from the dated snapshot into the user's R library; requires
+ * internet). Once the install succeeds the parent dialog re-renders into its
+ * normal form.
  */
 
 import { useTranslation } from 'react-i18next'

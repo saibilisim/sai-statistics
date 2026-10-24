@@ -23,7 +23,8 @@ app/
 │  ├─ ipc-schemas.ts            ← Kanal başına zod şemaları (handleValidated)
 │  ├─ analysis-types.ts · data-types.ts · settings-types.ts
 │  ├─ data-filter.ts            ← Select Cases ortak filtre tanımı (renderer+main parity)
-│  └─ optional-packages.ts      ← Talep-üzerine CRAN paket allow-list'i
+│  ├─ r-packages.json           ← R paket listesi + R sürümü/Posit snapshot (tek kaynak)
+│  └─ optional-packages.ts      ← r-packages.json'un tipli görünümü + kurulum allow-list'i
 │
 ├─ electron/                    ← Main Process (TypeScript, ESM)
 │  ├─ main.ts                   ← BrowserWindow + crash-recovery autosave
@@ -35,7 +36,7 @@ app/
 │     ├─ analysis-handler.ts    ← generic analysis:run (enrichedParams enjeksiyonu)
 │     ├─ r-bridge.ts · job-manager.ts ← R spawn + FIFO job kuyruğu
 │     ├─ r-session.ts           ← kalıcı R konsolu (Terminal, ayrı şerit)
-│     ├─ r-packages-handler.ts  ← opsiyonel CRAN paket yöneticisi
+│     ├─ r-packages-handler.ts  ← ilk açılış R/paket kontrolü + kendi R'ını kullanan için kurulum
 │     ├─ transform-handler.ts · settings-handler.ts · undo-manager.ts
 │     └─ ...
 │
@@ -204,22 +205,34 @@ VS Code gibi düz JSON, kullanıcı elle de düzenleyebilir.
 
 ### R Katmanı
 
-> **Fiili durum (setup.R + `shared/optional-packages.ts`):** analizlerin büyük çoğunluğu **base R** ile
+> **Fiili durum (`shared/r-packages.json`):** analizlerin büyük çoğunluğu **base R** ile
 > elle/formülle yazılmıştır (SPSS frekans-ağırlık semantiği ve Type III SS gibi konvansiyonlar için —
 > gerekçe: CLAUDE.md §11). haven/dplyr/ggplot2/psych-ağırlıklı eski liste **kullanılmıyor**; .sav/.dta/.sas
 > import R'sız, DuckDB `read_stat` extension ile yapılır. Grafikler elle kurulan Plotly JSON'dur.
 
-| Paket | Tür | Görevi |
-|---|---|---|
-| jsonlite · arrow | zorunlu | JSON I/O · Parquet okuma (`_bootstrap.R`) |
-| psych | zorunlu | describe() (Descriptives) |
-| nortest | zorunlu | Lilliefors K-S (Normality View; yoksa ks.test fallback) |
-| survival · MASS · nnet · nlme | zorunlu (R "recommended") | KM/Cox/Life Tables · lda/polr/glm.nb · multinom · lme |
-| geepack · boot | zorunlu | GEE · Bootstrapping (BOOT1) |
-| lme4 · mice · BayesFactor · coin · randtests · multcomp · mvtnorm · pROC | **opsiyonel, talep-üzerine** (Utilities → R Packages, allow-list) | GLMM · MI · Bayes · exact/MC rank testleri · Runs exact · Dunnett/SMM · DeLong AUC |
+**Bütün analiz paketleri paketlenmiş uygulamanın içindeki R'a gömülüdür** (`bundled`, 0.2.28'den
+beri; talep-üzerine "opsiyonel" paket ve R Packages yöneticisi kaldırıldı, 2026-10-11). Kurulan
+uygulama R için hiçbir paket indirmez, internet gerektirmez.
 
-Opsiyonel paketler `requireNamespace()` ile kapılıdır; eksikse script dürüst uyarı basar
-(`pMethodNotApplied` vb.) veya dialog paket kurulumu önerir (`PackageNeededDialog`).
+| Paket | Görevi |
+|---|---|
+| jsonlite · arrow | JSON I/O · Parquet okuma (`_bootstrap.R`) |
+| psych · nortest | Faktör Analizi (KMO, Bartlett, Promax) · Lilliefors K-S (Normality View) |
+| haven · ordinal | File > Export Data > SPSS (.sav) yazıcı · ordinal regresyon |
+| MASS · boot · survival · nnet · nlme · class · rpart (R "recommended") | Diskriminant/M-tahminciler · Bootstrap CI · KM/Cox · multinom · lme · KNN · CRT ağacı |
+| geepack · lme4 · mice · BayesFactor | GEE · GLMM · Çoklu atama · Bayes testleri |
+| coin · randtests · mvtnorm · multcomp · pROC · agricolae · emmeans | exact/MC rank testleri · Runs · Dunnett/Tukey-Kramer olasılıkları · Dunnett post hoc · DeLong ROC · homojen alt kümeler · EM Means |
+| ggplot2 · readxl · lubridate (`console`) | hiçbir analiz kullanmaz; R terminalinde ilk gün beklenen paketler |
+
+**R kaynağı platforma göre:** Windows CRAN'in R 4.6.1'i + tarihli Posit Package Manager snapshot'ı
+(`runtime.cranSnapshot`); Linux aynı R sürümünü conda-forge araç zinciriyle derler, paketleri aynı
+snapshot'tan kaynaktan kurar. **macOS henüz eski yolda:** conda-forge R 4.3 (`vendor-r-runtime-mac.sh`) —
+macOS sürümünden önce Windows yöntemine geçirilmeli.
+
+Paketler `requireNamespace()` ile kapılı kalır: **kendi R'ını kullanan** (gömülü R'sız) kullanıcıda
+bir paket eksikse script dürüst uyarı basar (`pMethodNotApplied` vb.) veya dialog kurulum önerir
+(`PackageNeededDialog`). Kullanıcının kendi kurduğu paketler (R terminali → Packages paneli)
+`~/R/library/<R sürümü>/`'ne gider.
 
 ---
 
@@ -346,7 +359,7 @@ Analiz dialog state'leri store'da değil, her Dialog bileşeninin kendi local st
 "analysis:run"         → analiz başlat (job kuyruğuna ekler)
 "analysis:cancel"      → analiz iptal
 
-"r:check-packages" / "r:install-package"   → isteğe bağlı CRAN paket yöneticisi (allow-list)
+"r:check-packages" / "r:install-package"   → kendi R'ını kullanan için eksik analiz paketi kontrolü/kurulumu (allow-list)
 "r:check-required-setup"                    → first-run R kurulum sihirbazı kontrolü
 
 "settings:get" / "settings:set" / "settings:reset"

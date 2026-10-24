@@ -89,7 +89,7 @@ const api = {
     getStatus: (): Promise<RStatusPayload> => ipcRenderer.invoke(IPC.R_GET_STATUS)
   },
 
-  // ── Optional R packages (on-demand install) ───────────────
+  // ── R packages: setup check + install for a user's own R ──
   rPackages: {
     check: (): Promise<CheckPackagesResult> => ipcRenderer.invoke(IPC.R_CHECK_PACKAGES),
     install: (req: InstallPackageRequest): Promise<InstallPackageResult> =>

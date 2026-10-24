@@ -3,8 +3,10 @@
 /**
  * r-user-library.ts — layout of the user's own R package library.
  *
- * Packages the app installs on demand (geepack, lme4, BayesFactor, …) live in
- * ~/R/library/<major.minor>/ — one folder per R minor version. A package with
+ * Packages the app installs into the user library — from the R terminal's
+ * Packages pane, the setup dialog for a user's own R, or the repair of a damaged
+ * bundled runtime (the analysis packages themselves are bundled since 0.2.28) —
+ * live in ~/R/library/<major.minor>/ — one folder per R minor version. A package with
  * compiled code only loads in the R minor it was built for: when an app update
  * moves the bundled R from 4.3 to 4.6, a 4.3-built rlang.dll fails with
  * "LoadLibrary failure: the specified procedure could not be found" (seen

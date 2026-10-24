@@ -609,7 +609,7 @@ void app.whenReady().then(() => {
   startRecoveryTimer()
 
   // Detect R and forward status events to the renderer; then, in the
-  // background, carry the user's optional packages over an R version change
+  // background, carry the packages the user installed over an R version change
   void initRBridge().then(migrateUserRLibrary)
   onRStatus(payload => {
     mainWindow?.webContents.send(IPC.R_STATUS, payload)

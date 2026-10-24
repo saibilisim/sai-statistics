@@ -14,18 +14,13 @@
 # completely empty environment after being moved to an arbitrary path, so no
 # LD_LIBRARY_PATH juggling is needed at spawn time.
 #
-# What is vendored: everything in setup.R's `required` list — jsonlite + arrow
-# (REQUIRED_PACKAGE_NAMES in shared/optional-packages.ts, the JSON/Arrow
-# transport every script needs), R's own recommended package set via
-# r-recommended (boot, class, cluster, MASS, nlme, nnet, rpart, survival, …),
-# and psych + nortest. The rule of thumb: the bundled runtime must never be a
-# weaker R than the "user installs R themselves" path, and a stock CRAN R
-# already ships the recommended set.
-#
-# OPTIONAL_PACKAGES (geepack, lme4, mice, BayesFactor, coin, randtests,
-# mvtnorm, multcomp, pROC) power rarely-used advanced analyses and stay
-# on-demand via the existing R Packages manager (r-packages-handler.ts) by
-# design — the user installs them in-app, only if they want them.
+# What is vendored: every package in shared/r-packages.json "bundled" (every
+# package any analysis uses, R's recommended set included) and "console"
+# (ggplot2, readxl, lubridate for the R terminal). The installed app never
+# downloads a package; there are no optional packages since 0.2.28. The rule
+# of thumb: the bundled runtime must never be a weaker R than the "user
+# installs R themselves" path, and a stock CRAN R already ships the
+# recommended set.
 #
 # R version (SAI_R_VERSION, default 4.6.1 = what the Windows runtime ships):
 #   4.6.x  conda-forge supplies r-base, the toolchain and the C/C++ libraries

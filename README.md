@@ -95,6 +95,11 @@ Notes:
   certificate and is part of the official release process only.
 - The Windows installer is x64 (also runs on ARM64 Windows via emulation).
   Cross-building it from Linux additionally requires `wine`.
+- The vendored runtime carries every package the analyses use, so the
+  installed app never downloads an R package. Windows ships CRAN's R and Linux
+  builds the same R version, both with packages from the dated Posit Package
+  Manager snapshot in `app/shared/r-packages.json`. The macOS script still
+  ships conda-forge's older R 4.3 and has not been moved to that route yet.
 - Skipping the vendor step still produces a working installer: the app then
   falls back to a system R found on `PATH` (see `app/electron/ipc/r-bridge.ts`).
 - Each vendor script checks that the runtime still works after being moved to a

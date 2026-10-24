@@ -2,8 +2,9 @@
   "$comment": [
     "Single source of truth for every R package the app cares about.",
     "Consumed by shared/optional-packages.ts (app + IPC allow-list), by the three",
-    "scripts/vendor-r-runtime.* scripts (which read the conda names from here), and",
-    "by r-scripts/setup.R (the user installs their own R path).",
+    "scripts/vendor-r-runtime.* scripts (Windows and Linux read the CRAN names,",
+    "macOS still the conda names), and by r-scripts/setup.R (the user installs",
+    "their own R path).",
     "tests/unit/r-packages-manifest.test.ts fails if any consumer drifts from this file.",
     "",
     "bundled = every package any analysis uses. The vendored runtime carries all of",
@@ -21,11 +22,16 @@
   "runtime": {
     "$comment": [
       "Windows R runtime source (scripts/vendor-r-runtime-win.ps1) and the package",
-      "repository every R package install uses — the vendored runtime AND the in-app",
-      "R Packages manager (r-bridge.ts installRPackage). The repository is a dated",
-      "Posit Package Manager snapshot: the same URL returns the same package versions",
-      "(with Windows/macOS binaries) forever, which is what keeps builds reproducible.",
-      "Linux/macOS runtimes still come from conda-forge (r-base pinned in their scripts).",
+      "repository every R package install uses — the vendored runtimes AND every",
+      "in-app install (r-bridge.ts installRPackage: the setup dialog for a user's own",
+      "R, the repair of a damaged runtime, the R terminal's Packages pane). The",
+      "repository is a dated Posit Package Manager snapshot: the same URL returns the",
+      "same package versions (with Windows/macOS binaries) forever, which is what keeps",
+      "builds reproducible. Linux builds the same R (SAI_R_VERSION, default = windowsR)",
+      "on conda-forge's toolchain and compiles the packages from this snapshot. macOS",
+      "is the exception: vendor-r-runtime-mac.sh still ships conda-forge's R 4.3 and",
+      "conda packages, so a macOS build is NOT the R the other platforms validate —",
+      "moving it to CRAN's R + this snapshot is the first macOS task.",
       "Changing either value = an R upgrade: rerun scripts/compare-r-versions.cjs and",
       "the SPSS parity suites before shipping (roadmap.md, 2026-10-10)."
     ],

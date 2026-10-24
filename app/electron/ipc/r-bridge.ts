@@ -389,8 +389,8 @@ export function userRLibDir(): string {
  * ~/R/library/<ver> first a package the user installed there (older/newer version,
  * or a planted one) silently replaced the bundled copy that tests/r-validation
  * verified. The bundled runtime's library therefore goes first (2026-10-10
- * audit); ~/R/library still follows so optional packages installed there stay
- * visible. R_LIBS, not R_LIBS_USER — R_LIBS_USER would *replace* R's default
+ * audit); ~/R/library still follows so packages the user installed there (R
+ * terminal Packages pane) stay visible. R_LIBS, not R_LIBS_USER — R_LIBS_USER would *replace* R's default
  * personal library (~/R/<platform>-library/<version>), hiding packages the
  * user installed via plain R (e.g. nortest → Normality silently loses its
  * Lilliefors correction). With system R (no bundled root) only the user
@@ -600,9 +600,9 @@ async function ensureLinuxBuildTools(): Promise<{ extraPath: string | null; warn
  * Caller must ensure `name` is allow-listed (validated at the IPC boundary).
  */
 // One install at a time: the background carry-over after an R upgrade
-// (migrateUserRLibrary) and an install the user starts from the R Packages
-// manager would otherwise write the same library concurrently and trip over
-// each other's 00LOCK directories.
+// (migrateUserRLibrary), a runtime repair and an install the user starts (R
+// terminal Packages pane, setup dialog) would otherwise write the same library
+// concurrently and trip over each other's 00LOCK directories.
 let installQueue: Promise<unknown> = Promise.resolve()
 
 export function installRPackage(name: string): Promise<{ success: boolean; detail?: string }> {
@@ -678,14 +678,14 @@ async function installRPackageNow(name: string): Promise<{ success: boolean; det
 }
 
 /**
- * Keep the user's optional packages across an R version change, silently.
+ * Keep the packages the user installed across an R version change, silently.
  * Runs once per launch after R detection, in the background:
  *   1. pre-0.2.22 flat ~/R/library → per-version folders (a rename, no download);
  *   2. allow-listed packages the user had under the previous R version but not
  *      under this one are reinstalled for this version, one by one.
  * Offline or a failed install is only logged — the package stays "not
- * installed" in the R Packages manager (the same state as before it was ever
- * installed) and the next launch tries again.
+ * installed" (the same state as before it was ever installed) and the next
+ * launch tries again.
  */
 export async function migrateUserRLibrary(): Promise<void> {
   const current = rMinor(rVersion)
