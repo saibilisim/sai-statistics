@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 SAI Bilişim
 // SPDX-License-Identifier: AGPL-3.0-only
 import { app, dialog, ipcMain, BrowserWindow } from 'electron'
+import fs from 'fs'
 import { autoUpdater, NsisUpdater } from 'electron-updater'
 import { verifyInstallerSignature } from './update-signature'
 import log from 'electron-log'
@@ -21,6 +22,14 @@ import { dialogStrings } from '../i18n'
 // Ayrıca yalnızca paketlenmiş derlemede: dev'de app-update.yml yok,
 // autoUpdater.checkForUpdates() atar.
 const UPDATER_ENABLED = process.platform === 'win32'
+
+// Flatpak (Flathub) kurulumunu Flathub günceller; uygulama yeni sürüm sorgulamaz
+// ve indirme sayfası önermez — Flathub kuralı, ayrıca indirme sayfasındaki
+// .deb/AppImage Flatpak kullanıcısının kurulumunu ikilemeye götürür.
+// FLATPAK_ID ve /.flatpak-info'yu flatpak çalışma zamanı her uygulamada sağlar.
+const IS_FLATPAK =
+  process.platform === 'linux' &&
+  (Boolean(process.env['FLATPAK_ID']) || fs.existsSync('/.flatpak-info'))
 
 let mainWindow: BrowserWindow | null = null
 // "Yeniden Başlat" tıklandığında true olur; asıl kurulum main.ts'teki
@@ -256,4 +265,4 @@ export function checkForUpdatesManually({ notify = false }: { notify?: boolean }
   })
 }
 
-export { UPDATER_ENABLED }
+export { UPDATER_ENABLED, IS_FLATPAK }

@@ -68,6 +68,7 @@
     "updateActionOpenPage": "Ouvrir la Page de Téléchargement",
     "updateDontShowAgain": "Ne plus afficher pour cette version",
     "updateDontShowAgainHint": "Si coché, la notification de la barre d'état pour cette version est masquée ; elle réapparaîtra lors de la sortie d'une version plus récente.",
+    "updateManagedByFlathub": "Cette installation est mise à jour via Flathub. Les nouvelles versions arrivent par votre logithèque ou avec « flatpak update ».",
     "categories": {
       "general": "Général",
       "appearance": "Apparence",

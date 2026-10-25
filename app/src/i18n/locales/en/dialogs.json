@@ -68,6 +68,7 @@
     "updateActionOpenPage": "Open Download Page",
     "updateDontShowAgain": "Don't show again for this version",
     "updateDontShowAgainHint": "When checked, the StatusBar notification for this version is hidden; it reappears once a newer version is released.",
+    "updateManagedByFlathub": "This installation is updated through Flathub. New versions arrive through your software center or \"flatpak update\".",
     "categories": {
       "general": "General",
       "appearance": "Appearance",

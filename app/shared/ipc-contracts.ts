@@ -653,6 +653,8 @@ export interface AppVersionInfo {
   latestVersion: string | null
   updateAvailable: boolean
   downloadUrl: string | null
+  /** Flatpak kurulumu: güncellemeyi Flathub yapar, sunucuya sorulmaz. */
+  externallyManaged: boolean
 }
 
 // updater:status push (Windows only) — electron-updater'ın kendi event akışının

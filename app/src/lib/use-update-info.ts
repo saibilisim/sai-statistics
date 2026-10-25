@@ -16,6 +16,9 @@ export interface UpdateInfo {
    *  sayfası açılabilir — bkz.
    *  updater-handler.ts UPDATER_ENABLED. */
   usesNativeUpdater: boolean
+  /** Flatpak kurulumu: güncellemeyi Flathub yapar; sürüm sorgusu ve indirme
+   *  sayfası yok (main.ts app:get-version-info). */
+  externallyManaged: boolean
   checkNow: () => void
   download: () => void
   restart: () => void
@@ -35,6 +38,7 @@ export function useUpdateInfo(): UpdateInfo {
   const [currentVersion, setCurrentVersion] = useState<string | null>(null)
   const [serverLatest, setServerLatest] = useState<string | null>(null)
   const [serverChecked, setServerChecked] = useState(false)
+  const [externallyManaged, setExternallyManaged] = useState(false)
   const [native, setNative] = useState<UpdaterStatusPayload | null>(null)
 
   const refreshServerInfo = (): void => {
@@ -42,6 +46,7 @@ export function useUpdateInfo(): UpdateInfo {
       setCurrentVersion(info.currentVersion)
       setServerLatest(info.updateAvailable ? info.latestVersion : null)
       setServerChecked(true)
+      setExternallyManaged(info.externallyManaged)
     })
   }
 
@@ -62,8 +67,10 @@ export function useUpdateInfo(): UpdateInfo {
 
   const usesNativeUpdater = window.api.platform === 'win32'
 
-  const status: UpdateStatus =
-    native?.status ?? (serverChecked ? (serverLatest ? 'available' : 'not-available') : 'idle')
+  // Flatpak'te "güncel" de denmez — bilmiyoruz; Preferences Flathub notunu gösterir.
+  const status: UpdateStatus = externallyManaged
+    ? 'idle'
+    : (native?.status ?? (serverChecked ? (serverLatest ? 'available' : 'not-available') : 'idle'))
   const latestVersion = native?.version ?? serverLatest
   const percent = native?.status === 'downloading' ? (native.percent ?? 0) : null
   const error = native?.status === 'error' ? (native.error ?? null) : null
@@ -75,6 +82,7 @@ export function useUpdateInfo(): UpdateInfo {
     percent,
     error,
     usesNativeUpdater,
+    externallyManaged,
     checkNow: () => {
       if (usesNativeUpdater) {
         void window.api.app.checkForUpdates()

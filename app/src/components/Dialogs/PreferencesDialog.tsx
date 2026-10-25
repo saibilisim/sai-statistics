@@ -828,7 +828,22 @@ export function PreferencesDialog({ onClose, initialCategory }: Props) {
               </>
             )}
 
-            {category === 'update' && (
+            {category === 'update' && updateInfo.externallyManaged && (
+              <>
+                <h2 className={styles.pageTitle}>{t('dialogs:preferences.updateSection')}</h2>
+                <div className={cx(dataStyles.conditionRow, styles.row)}>
+                  <span className={dataStyles.condLabel}>
+                    {t('dialogs:preferences.updateCurrentVersion')}
+                  </span>
+                  <span>{updateInfo.currentVersion ?? '—'}</span>
+                </div>
+                <p className={cx(dataStyles.emptyNote, styles.row)}>
+                  {t('dialogs:preferences.updateManagedByFlathub')}
+                </p>
+              </>
+            )}
+
+            {category === 'update' && !updateInfo.externallyManaged && (
               <>
                 <h2 className={styles.pageTitle}>{t('dialogs:preferences.updateSection')}</h2>
                 <div className={cx(dataStyles.conditionRow, styles.row)}>

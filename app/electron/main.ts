@@ -43,7 +43,8 @@ import { registerClipboardHandlers } from './ipc/clipboard-handler'
 import {
   registerUpdaterHandlers,
   cancelPendingRestart,
-  installPendingUpdateOnQuit
+  installPendingUpdateOnQuit,
+  IS_FLATPAK
 } from './ipc/updater-handler'
 import { seedLanguageFromSystemLocale, applyChromiumLocaleFromSettings } from './locale'
 
@@ -670,8 +671,12 @@ void app.whenReady().then(() => {
       currentVersion,
       latestVersion: null,
       updateAvailable: false,
-      downloadUrl: null
+      downloadUrl: null,
+      externallyManaged: IS_FLATPAK
     }
+    // Flatpak: sunucuya hiç sorulmaz; cachedDownloadUrl boş kaldığından
+    // app:open-download-page de bir şey açmaz (updater-handler.ts IS_FLATPAK).
+    if (IS_FLATPAK) return fallback
     try {
       const res = await fetch(`${AI_SERVER_BASE_URL}/app/version`, {
         signal: AbortSignal.timeout(8_000)
@@ -684,7 +689,8 @@ void app.whenReady().then(() => {
         currentVersion,
         latestVersion: json.latest,
         updateAvailable: isNewerVersion(json.latest, currentVersion),
-        downloadUrl: cachedDownloadUrl
+        downloadUrl: cachedDownloadUrl,
+        externallyManaged: false
       }
     } catch {
       return fallback
