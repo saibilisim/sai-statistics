@@ -219,10 +219,10 @@ uygulama R için hiçbir paket indirmez, internet gerektirmez.
 
 **R kaynağı platforma göre:** Windows CRAN'in R 4.6.1'i + tarihli Posit Package Manager snapshot'ı
 (`runtime.cranSnapshot`); Linux aynı R sürümünü conda-forge araç zinciriyle derler, paketleri aynı
-snapshot'tan kaynaktan kurar. **macOS varsayılanı henüz eski yolda:** conda-forge R 4.3
-(`vendor-r-runtime-mac.sh`). CRAN yolu (`vendor-r-runtime-mac-cran.sh`, `SAI_R_VERSION=4.6.1`: CRAN
-`.pkg` açılır, Mach-O'lar `@rpath`'e taşınır, paketler aynı snapshot'tan) yazıldı; macOS runner'larında
-`.github/workflows/macos-runtime.yml` ile doğrulanınca varsayılan olur.
+snapshot'tan kaynaktan kurar. macOS da CRAN'in R 4.6.1'ini taşır (`vendor-r-runtime-mac-cran.sh`,
+`vendor-r-runtime-mac.sh`'ın varsayılanı: CRAN `.pkg` açılır, Mach-O'lar `@rpath`'e taşınır, paketler
+aynı snapshot'tan), işlemci başına ayrı runtime; `.github/workflows/macos-runtime.yml` arm64 ve Intel
+runner'larında doğrular. Eski conda-forge R 4.3 yolu yalnız `SAI_R_VERSION=4.3` ile kalır.
 
 Paketler `requireNamespace()` ile kapılı kalır: **kendi R'ını kullanan** (gömülü R'sız) kullanıcıda
 bir paket eksikse script dürüst uyarı basar (`pMethodNotApplied` vb.) veya dialog kurulum önerir

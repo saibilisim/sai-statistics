@@ -100,10 +100,9 @@ Notes:
 - The vendored runtime carries every package the analyses use, so the
   installed app never downloads an R package. Windows ships CRAN's R and Linux
   builds the same R version, both with packages from the dated Posit Package
-  Manager snapshot in `app/shared/r-packages.json`. The macOS script still
-  ships conda-forge's older R 4.3 by default; the CRAN route
-  (`SAI_R_VERSION=4.6.1 pnpm vendor:r-runtime:mac`) is written and is being
-  validated on macOS runners (`.github/workflows/macos-runtime.yml`).
+  Manager snapshot in `app/shared/r-packages.json`. macOS ships CRAN's R as
+  well, one runtime per CPU (arm64, Intel), validated on GitHub's macOS
+  runners (`.github/workflows/macos-runtime.yml`).
 - Skipping the vendor step still produces a working installer: the app then
   falls back to a system R found on `PATH` (see `app/electron/ipc/r-bridge.ts`).
 - Each vendor script checks that the runtime still works after being moved to a

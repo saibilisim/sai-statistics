@@ -2,9 +2,9 @@
 # CRAN's R 4.6.1 + the dated Posit snapshot, as Windows ships) on GitHub's
 # macOS runners, then runs the whole r-validation suite with THAT R.
 #
-# The script was written without a Mac (2026-10-24); this workflow is where it
-# is first run. Once it passes on both CPUs, vendor-r-runtime-mac.sh switches
-# its default from conda-forge's R 4.3 to this route.
+# The script was written without a Mac (2026-10-24) and first passed here on
+# both CPUs on 2026-10-25; it is now vendor-r-runtime-mac.sh's default. Run
+# this after changing the script or shared/r-packages.json.
 #
 # Manual only. macOS minutes count ten times on a private repository and are
 # free on a public one.

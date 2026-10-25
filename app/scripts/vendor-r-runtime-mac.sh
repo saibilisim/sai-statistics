@@ -19,27 +19,21 @@
 # 0.2.28. The rule of thumb: the bundled runtime must never be a weaker R than
 # the "user installs R themselves" path.
 #
-# OUT OF DATE (2026-10-24): this still ships conda-forge's R 4.3. Windows moved
-# to CRAN's R 4.6.1 + the dated Posit snapshot in shared/r-packages.json
-# (vendor-r-runtime-win.ps1, 0.2.23) and Linux builds R 4.6.1 against that
-# snapshot (vendor-r-runtime.sh), so a macOS build does not run the R the
-# validation and SPSS parity suites were checked against. Before a macOS
-# release, port this to CRAN's macOS R + Posit's macOS binaries from the same
-# snapshot, the way the Windows script does.
-#
-# The CRAN route (R 4.6.1 + the Posit snapshot) is in vendor-r-runtime-mac-cran.sh
-# and runs with SAI_R_VERSION=4.6.1; it becomes the default here once
-# .github/workflows/macos-runtime.yml has passed on macOS.
+# DEFAULT SINCE 2026-10-25: the CRAN route — vendor-r-runtime-mac-cran.sh, CRAN's
+# R 4.6.1 + the dated Posit snapshot in shared/r-packages.json, as Windows
+# ships. It passed .github/workflows/macos-runtime.yml on arm64 and Intel
+# (2989/2989 r-validation assertions). The conda-forge R 4.3 route below is
+# kept only as a fallback, reached with SAI_R_VERSION=4.3.
 #
 # Usage: scripts/vendor-r-runtime-mac.sh   (or: pnpm vendor:r-runtime:mac)
-#        SAI_R_VERSION=4.6.1 pnpm vendor:r-runtime:mac   (CRAN route)
-# Requires: conda (or micromamba/mamba — edit CONDA_BIN below) on PATH; the CRAN
-# route needs only the Xcode Command Line Tools and node.
+#        SAI_R_VERSION=4.3 pnpm vendor:r-runtime:mac   (old conda-forge route)
+# Requires: the Xcode Command Line Tools and node; the conda route also needs
+# conda (or micromamba/mamba — edit CONDA_BIN below) on PATH.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-case "${SAI_R_VERSION:-4.3}" in
+case "${SAI_R_VERSION:-4.6.1}" in
   4.3*) ;;
   4.6*) exec bash "$SCRIPT_DIR/vendor-r-runtime-mac-cran.sh" ;;
   *) echo "error: SAI_R_VERSION=$SAI_R_VERSION unsupported (use 4.6.x or 4.3)" >&2; exit 1 ;;

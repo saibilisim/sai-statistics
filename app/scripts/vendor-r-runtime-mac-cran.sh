@@ -8,12 +8,10 @@
 # (runtime.cranSnapshot), so macOS ships the R the validation and SPSS parity
 # suites were run against on Windows and Linux.
 #
-# STATUS (2026-10-24): written on Windows from the Windows script and CRAN's
-# installer layout; NOT yet run on macOS. .github/workflows/macos-runtime.yml
-# runs it on GitHub's arm64 and Intel macOS runners and then the r-validation
-# suite with the result. Until that passes, vendor-r-runtime-mac.sh keeps the
-# conda-forge R 4.3 route as its default; this one runs with
-#   SAI_R_VERSION=4.6.1 pnpm vendor:r-runtime:mac
+# STATUS (2026-10-25): the default macOS route (pnpm vendor:r-runtime:mac).
+# .github/workflows/macos-runtime.yml runs it on GitHub's arm64 and Intel macOS
+# runners and then the r-validation suite with the result; package.yml builds
+# the .dmg on top of it.
 #
 # What it does:
 #   1. downloads CRAN's .pkg for this Mac's CPU (cached in tmp/r-installers,
