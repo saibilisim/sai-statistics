@@ -1,18 +1,18 @@
 #!/bin/bash
 # SPDX-FileCopyrightText: 2026 SAI Bilişim
 # SPDX-License-Identifier: AGPL-3.0-only
-# start.sh — tek ve çapraz platformlu geliştirme başlatıcısı (SAI Statistics).
+# start.sh — the single, cross-platform development launcher (SAI Statistics).
 #
-# macOS/Linux'ta doğrudan bash, Windows'ta (Git Bash / MSYS) ise arka planda
-# PowerShell kodlarını çalıştırır. Tek bir script ile tüm platformları destekler.
+# Runs as plain bash on macOS/Linux; on Windows (Git Bash / MSYS) it runs the
+# PowerShell body below instead. One script covers every platform.
 #
-# Kullanım:
-#   ./start.sh            uygulamayı dev modunda başlatır
-#   ./start.sh --check    çözümlenen ortamı yazdırır ve çıkar
+# Usage:
+#   ./start.sh            starts the app in dev mode
+#   ./start.sh --check    prints the resolved environment and exits
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# ── Windows Algılama & PowerShell Çalıştırma ────────────────────────────────
+# ── Windows detection & PowerShell hand-off ─────────────────────────────────
 IS_WINDOWS=0
 case "$(uname -s 2>/dev/null)" in
   MINGW* | MSYS* | CYGWIN*) IS_WINDOWS=1 ;;
@@ -22,11 +22,11 @@ if [ "$OS" = "Windows_NT" ]; then
 fi
 
 if [ "$IS_WINDOWS" -eq 1 ]; then
-  # pwsh (PowerShell 7+) ÖNCE denenir. Eskiden bu blok powershell.exe'yi
-  # tercih ediyor ve pwsh'a ancak o yoksa düşüyordu; pwsh 7 kurulu bir
-  # makinede bu, bilerek daha zayıf kabuğu seçmek demekti (5.1'de `&&`/`||`,
-  # ternary ve `??` yok, çıktı kodlaması da varsayılan UTF-8 değil).
-  # Aşağıdaki gövde 5.1 ile de çalışır — sıra bir tercih, zorunluluk değil.
+  # pwsh (PowerShell 7+) is tried FIRST. This block used to prefer
+  # powershell.exe and fall back to pwsh only when it was missing; on a machine
+  # with pwsh 7 that meant deliberately picking the weaker shell (5.1 has no
+  # `&&`/`||`, ternary or `??`, and its output encoding isn't UTF-8 by default).
+  # The body below also works on 5.1 — the order is a preference, not a need.
   PS_EXE=""
   for candidate in pwsh.exe pwsh powershell.exe powershell; do
     if command -v "$candidate" >/dev/null 2>&1; then
@@ -35,15 +35,15 @@ if [ "$IS_WINDOWS" -eq 1 ]; then
     fi
   done
   if [ -z "$PS_EXE" ]; then
-    echo "PowerShell bulunamadı (denenenler: pwsh.exe, pwsh, powershell.exe, powershell)." >&2
+    echo "PowerShell not found (tried: pwsh.exe, pwsh, powershell.exe, powershell)." >&2
     exit 1
   fi
 
-  # Argümanlar tek tek PowerShell dizi elemanına çevrilir. Bu satır eskiden
-  # @('$@') idi: $@ tırnak dışında genişlediği için birden çok argüman tek bir
-  # string'e çöküyordu (`--check --foo` → @('--check --foo')), dolayısıyla
-  # -contains eşleşmesi sessizce kaçıyordu. Tek argümanla çalıştığı için
-  # fark edilmemişti. PowerShell'de tek tırnak, ikiye katlanarak kaçırılır.
+  # Each argument becomes its own PowerShell array element. This line used to
+  # be @('$@'): $@ expanded unquoted, so several arguments collapsed into one
+  # string (`--check --foo` → @('--check --foo')) and the -contains match
+  # silently missed. It went unnoticed because it worked with one argument.
+  # In PowerShell a single quote is escaped by doubling it.
   PS_ARGS=""
   for arg in "$@"; do
     escaped=$(printf '%s' "$arg" | sed "s/'/''/g")
@@ -58,18 +58,18 @@ if [ "$IS_WINDOWS" -eq 1 ]; then
     \$ErrorActionPreference = 'Stop'
     \$ArgsList = @($PS_ARGS)
     \$IsCheck = \$ArgsList -contains '--check' -or \$ArgsList -contains '-Check' -or \$ArgsList -contains '-c'
-    
-    # Proje dizinini bul
+
+    # Locate the app directory
     \$AppDir = Resolve-Path (Join-Path '$SCRIPT_DIR' 'app') -ErrorAction SilentlyContinue
     if (-not \$AppDir -or -not (Test-Path \$AppDir)) {
       \$AppDir = Join-Path (Get-Location) 'app'
     }
     if (-not (Test-Path \$AppDir)) {
-      Write-Error \"app/ klasörü bulunamadı: \$AppDir\"
+      Write-Error \"app/ folder not found: \$AppDir\"
       exit 1
     }
 
-    # 1. Node.js kontrolü
+    # 1. Node.js
     \$NodeCmd = Get-Command node -ErrorAction SilentlyContinue
     if (-not \$NodeCmd) {
       \$EmbeddedNode = Join-Path \$AppDir '..\.tools\node\node.exe'
@@ -79,7 +79,7 @@ if [ "$IS_WINDOWS" -eq 1 ]; then
       }
     }
     if (-not \$NodeCmd) {
-      Write-Error 'Node.js PATH üzerinde bulunamadı. Lütfen https://nodejs.org adresinden kurun.'
+      Write-Error 'Node.js not found on PATH. Install it from https://nodejs.org.'
       exit 1
     }
 
@@ -91,7 +91,7 @@ if [ "$IS_WINDOWS" -eq 1 ]; then
       \$WantMajor = ((Get-Content \$NvmrcPath -Raw).Trim() -replace '^v','').Split('.')[0]
     }
 
-    # 2. Paket yöneticisi seçimi
+    # 2. Package manager
     \$EmbeddedPnpm = Join-Path \$AppDir '..\.tools\pnpm\pnpm.cmd'
     if (Test-Path \$EmbeddedPnpm) {
       \$env:PATH = \"\$((Resolve-Path (Join-Path \$AppDir '..\.tools\pnpm')).Path);\$env:PATH\"
@@ -124,14 +124,14 @@ if [ "$IS_WINDOWS" -eq 1 ]; then
       \$InstallArgs = @('install')
       \$Label = 'npm (pnpm unavailable)'
     } else {
-      Write-Error 'Paket yöneticisi (pnpm, corepack, npx, npm) bulunamadı.'
+      Write-Error 'No package manager found (pnpm, corepack, npx, npm).'
       exit 1
     }
 
     \$NodeModulesDir = Join-Path \$AppDir 'node_modules'
     \$NeedsInstall = -not (Test-Path \$NodeModulesDir)
 
-    # 3. --check modu
+    # 3. --check mode
     if (\$IsCheck) {
       Write-Host ''
       Write-Host 'Environment check:'
@@ -149,12 +149,12 @@ if [ "$IS_WINDOWS" -eq 1 ]; then
       exit 0
     }
 
-    # 4. Sürüm uyarısı
+    # 4. Version warning
     if (\$WantMajor -and (\$WantMajor -ne \$HaveMajor)) {
       Write-Warning \"Node major \$HaveMajor is running but .nvmrc pins \$WantMajor.\"
     }
 
-    # 5. Başlat
+    # 5. Start
     Write-Host \"Platform: Windows (PowerShell \$(\$PSVersionTable.PSVersion))\"
     Write-Host \"Using Node \$NodeVersion\"
     Write-Host \"Using \$Label\"
@@ -181,7 +181,7 @@ if [ ! -d "$APP_DIR" ]; then
 fi
 cd "$APP_DIR" || exit 1
 
-# ── Argümanlar ─────────────────────────────────────────────────────────────
+# ── Arguments ──────────────────────────────────────────────────────────────
 CHECK=0
 for arg in "$@"; do
   if [ "$arg" = "--check" ] || [ "$arg" = "-Check" ]; then
@@ -189,7 +189,7 @@ for arg in "$@"; do
   fi
 done
 
-# ── nvm: kuruluysa yükle ve .nvmrc sürümüne geç ────────────────────────────
+# ── nvm: if installed, load it and switch to the .nvmrc version ────────────
 NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 if [ -s "$NVM_DIR/nvm.sh" ]; then
   # shellcheck source=/dev/null
@@ -197,7 +197,7 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
   nvm use >/dev/null 2>&1 || echo "WARN: 'nvm use' failed; continuing with $(node -v)" >&2
 fi
 
-# ── Node sürümü ────────────────────────────────────────────────────────────
+# ── Node version ───────────────────────────────────────────────────────────
 if ! command -v node >/dev/null 2>&1; then
   echo "Node.js not found on PATH. Install it from https://nodejs.org (see .nvmrc for the expected major version)." >&2
   exit 1
@@ -211,7 +211,7 @@ if [ -f .nvmrc ]; then
   WANT_MAJOR="$(head -n 1 .nvmrc | tr -d '[:space:]' | sed 's/^v//; s/\..*//')"
 fi
 
-# ── Paket yöneticisi seçimi ────────────────────────────────────────────────
+# ── Package manager ────────────────────────────────────────────────────────
 RUNNER=""
 RUN_ARGS=()
 INSTALL_ARGS=(install)
@@ -255,7 +255,7 @@ cmd_line() {
   echo "$out"
 }
 
-# ── --check modu ───────────────────────────────────────────────────────────
+# ── --check mode ───────────────────────────────────────────────────────────
 if [ "$CHECK" = "1" ]; then
   echo ""
   echo "Environment check:"
@@ -273,12 +273,12 @@ if [ "$CHECK" = "1" ]; then
   exit 0
 fi
 
-# ── Uyarı ──────────────────────────────────────────────────────────────────
+# ── Warning ────────────────────────────────────────────────────────────────
 if [ -n "$WANT_MAJOR" ] && [ "$WANT_MAJOR" != "$HAVE_MAJOR" ]; then
   echo "WARN: Node major $HAVE_MAJOR is running but .nvmrc pins $WANT_MAJOR. If the build misbehaves, switch versions (nvm: 'nvm use $WANT_MAJOR'; fnm: 'fnm use $WANT_MAJOR')." >&2
 fi
 
-# ── Başlat ─────────────────────────────────────────────────────────────────
+# ── Start ──────────────────────────────────────────────────────────────────
 echo "Platform: $(platform_name)"
 echo "Using Node $NODE_VERSION"
 echo "Using $LABEL"

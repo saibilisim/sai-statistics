@@ -1,19 +1,19 @@
 # SPDX-FileCopyrightText: 2026 SAI Bilişim
 # SPDX-License-Identifier: AGPL-3.0-only
-# build-installer.ps1 — build-installer.sh'ı PowerShell'den başlatmak için
-# ince sarmalayıcı.
+# build-installer.ps1 — thin wrapper that launches build-installer.sh from
+# PowerShell.
 #
-# Burada mantık YOK: ön koşul kurulumu, R runtime vendor adımı, build ve
-# electron-builder çağrısı tamamen build-installer.sh'ta (o script Windows
-# host'u zaten destekliyor — MINGW/MSYS tespiti, win-x64 Node, win-64
-# micromamba).
+# There is NO logic here: installing prerequisites, vendoring the R runtime,
+# the build and the electron-builder call all live in build-installer.sh
+# (which already supports a Windows host — MINGW/MSYS detection, win-x64
+# Node, win-64 micromamba).
 #
-# Not: menüdeki Linux hedefleri (deb/rpm/AppImage/Flatpak) yalnızca Linux'ta
-# derlenir; Windows'ta anlamlı seçenek 5 (Windows .exe). Yalnızca paket
-# üretmek istiyorsan menüyü hiç açmadan `pnpm dist:win` de yeterli — menü,
-# R runtime'ının da gömülmesini garanti ettiği için tercih edilir.
+# Note: the menu's Linux targets (deb/rpm/AppImage/Flatpak) only build on
+# Linux; on Windows the meaningful choice is 5 (Windows .exe). If all you
+# want is the package, `pnpm dist:win` works without the menu — the menu is
+# preferred because it guarantees the R runtime is embedded too.
 #
-# Kullanım:
+# Usage:
 #   .\build-installer.ps1
 
 & (Join-Path $PSScriptRoot 'Invoke-GitBash.ps1') `

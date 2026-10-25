@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: 2026 SAI Bilişim
 # SPDX-License-Identifier: AGPL-3.0-only
-# start.ps1 — start.sh'ı PowerShell'den başlatmak için ince sarmalayıcı.
+# start.ps1 — thin wrapper that launches start.sh from PowerShell.
 #
-# Burada mantık YOK: ortam çözümleme, Node/pnpm seçimi ve dev sunucusunu
-# başlatma tamamen start.sh'ta. start.sh Windows'ta zaten kendini PowerShell'e
-# devrediyor; bu dosya sadece "PowerShell'deyken Git Bash açmak zorunda kalma"
-# sürtünmesini kaldırır.
+# There is NO logic here: resolving the environment, picking Node/pnpm and
+# starting the dev server all live in start.sh. On Windows start.sh already
+# hands itself over to PowerShell; this file only removes the friction of
+# having to open Git Bash while you are in PowerShell.
 #
-# Kullanım:
-#   .\start.ps1            uygulamayı dev modunda başlatır
-#   .\start.ps1 --check    çözümlenen ortamı yazdırır ve çıkar
+# Usage:
+#   .\start.ps1            starts the app in dev mode
+#   .\start.ps1 --check    prints the resolved environment and exits
 
 & (Join-Path $PSScriptRoot 'Invoke-GitBash.ps1') `
   -ScriptPath (Join-Path $PSScriptRoot 'start.sh') `
