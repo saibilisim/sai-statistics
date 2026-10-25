@@ -122,6 +122,8 @@ const exeDir = macApp ? path.join(unpacked, macApp, 'Contents', 'MacOS') : unpac
 const exeCandidates = fs
   .readdirSync(exeDir)
   .filter(f => f.endsWith('.exe') || f.endsWith('.AppImage') || !path.extname(f))
+  // Electron's helpers sit next to the Linux binary and sort before it.
+  .filter(f => !f.startsWith('chrome'))
   .map(f => path.join(exeDir, f))
   .filter(f => fs.statSync(f).isFile())
 const exe = exeCandidates[0]

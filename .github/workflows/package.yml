@@ -1,5 +1,7 @@
-# Builds the real Windows installer and verifies it — the thing a user actually
-# downloads, which ci.yml never touches.
+# Builds the real installers — Windows .exe, macOS .dmg per CPU, Linux
+# .deb/.rpm/AppImage — and verifies each: the thing a user actually downloads,
+# which ci.yml never touches. All unsigned; official builds are signed by the
+# release process outside this repository.
 #
 # ci.yml runs on ubuntu against a SYSTEM R it installs fresh. That is the
 # "developer installs their own R" path, not the shipped one, and the gap is
@@ -7,8 +9,8 @@
 # Survival, Bootstrap, Discriminant, KNN and Trees quietly broken while every
 # check was green.
 #
-# Deliberately NOT on every push: a Windows runner burns minutes at 2x the
-# Linux rate and the R runtime is a ~500MB download. Releases and on-demand
+# Deliberately NOT on every push: each job builds a ~400MB R runtime (the
+# Linux one compiles its packages from source) and packages the app. Releases and on-demand
 # only, so day-to-day development is unaffected but no release ever goes out
 # on an unverified installer.
 name: Package
@@ -17,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       upload_installer:
-        description: 'Upload the unsigned .exe / .dmg as run artifacts (public in a public repo)'
+        description: 'Upload the unsigned .exe / .dmg / Linux packages as run artifacts (public in a public repo)'
         type: boolean
         default: false
   push:
@@ -170,5 +172,80 @@ jobs:
         with:
           name: sai-statistics-macos-${{ matrix.arch }}
           path: app/dist/*.dmg
+          retention-days: 14
+          if-no-files-found: error
+
+  # Linux: the .deb / .rpm / AppImage a user downloads, with the runtime
+  # vendor-r-runtime.sh builds (conda-forge R 4.6.1 + the toolchain, packages
+  # compiled from the Posit snapshot), the slowest of the three. ci.yml's e2e
+  # job uses a system R, so only this job runs the shipped Linux runtime.
+  # Flatpak is a separate build (flatpak-builder) and not covered here.
+  linux-packages:
+    name: Build + verify the Linux packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        # Login shell, so the conda that setup-miniconda installs is on PATH.
+        shell: bash -el {0}
+        working-directory: app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Node version
+        id: node
+        run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node.outputs.version }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          auto-activate-base: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # rpm: electron-builder's rpm target calls rpmbuild. xvfb + Electron's
+      # system libraries: the packaged app is booted below, as in ci.yml's e2e.
+      - name: Install packaging + display tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm xvfb
+          npx playwright install-deps chromium
+
+      - name: Vendor the R runtime
+        run: pnpm vendor:r-runtime
+
+      - name: Build renderer + main
+        run: pnpm build
+
+      - name: Package with electron-builder
+        run: |
+          node scripts/gen-third-party-notices.cjs
+          pnpm exec electron-builder --linux --publish never
+
+      - name: Verify the packaged build
+        run: xvfb-run -a node scripts/verify-packaged-build.cjs --with-app
+
+      - name: Report package sizes
+        run: ls -lh dist/*.AppImage dist/*.deb dist/*.rpm
+
+      - name: Upload packages
+        if: inputs.upload_installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: sai-statistics-linux
+          path: |
+            app/dist/*.AppImage
+            app/dist/*.deb
+            app/dist/*.rpm
           retention-days: 14
           if-no-files-found: error
