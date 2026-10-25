@@ -351,8 +351,11 @@ export function registerImportExportHandlers(): void {
 
       try {
         await conn.runAndReadAll('INSTALL excel; LOAD excel;')
+        // The excel extension's COPY format is `xlsx` (`EXCEL` was dropped —
+        // "Copy Function with name excel does not exist"), and it writes no
+        // header row unless asked.
         await conn.runAndReadAll(
-          `COPY (${userFacingSelect(dataset)}) TO '${safeExportPath}' (FORMAT EXCEL)`
+          `COPY (${userFacingSelect(dataset)}) TO '${safeExportPath}' (FORMAT xlsx, HEADER true)`
         )
         log.info('Excel export completed successfully.')
         return targetPath
