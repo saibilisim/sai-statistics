@@ -59,7 +59,10 @@ jobs:
       # shared/r-packages.json (no conda since 0.2.23).
       - name: Vendor the R runtime
         shell: pwsh
-        run: pnpm vendor:r-runtime:win
+        # Directly in pwsh, not via pnpm's `powershell -File`: Windows
+        # PowerShell 5.1 started from pwsh inherits pwsh's PSModulePath and
+        # cannot load Microsoft.PowerShell.Utility (Get-FileHash not found).
+        run: ./scripts/vendor-r-runtime-win.ps1
 
       - name: Build renderer + main
         run: pnpm build
