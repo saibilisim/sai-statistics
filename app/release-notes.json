@@ -2,40 +2,52 @@
   "$comment": "Son kullanıcıya dönük sürüm notları — tek kaynak. Kurallar: app/scripts/check-release-notes.cjs başı ve CLAUDE.md §10.",
   "releases": [
     {
-      "version": "0.2.37",
+      "version": "0.2.38",
       "date": "2026-10-25",
       "notes": {
         "tr": [
+          "Veriyi Excel'e dışa aktarma yeniden çalışıyor; sütun adları ilk satırda geliyor.",
+          "Veriyi SPSS'e dışa aktarırken SPSS'in kabul etmediği değişken adları (çok uzun, rakamla başlayan, boşluk ya da noktalama içeren) artık dosyayı engellemiyor: ad SPSS'e uygun hale getiriliyor, tam adı değişken etiketi olarak korunuyor.",
           "SAI Statistics artık açık kaynak: kaynak kodu GNU AGPL-3.0 lisansıyla herkese açık olarak yayımlanıyor ve Hakkında penceresi de bunu gösteriyor.",
           "macOS'ta uygulama artık Windows ve Linux'takiyle aynı, daha güncel R sürümüyle (4.6.1) geliyor; analizler üç platformda da aynı R ile çalışıyor.",
           "Çıktıyı HTML veya PDF olarak dışa aktarırken ve başka uygulamalardan tablo yapıştırırken güvenlik sıkılaştırıldı: dosyaya ya da panoya gizlenmiş kodlar artık hiçbir durumda çalışmıyor.",
           "Araç şeridindeki simgeler yenilendi ve uygulamanın geri kalanıyla aynı görünüme kavuştu."
         ],
         "en": [
+          "Exporting data to Excel works again, with the column names in the first row.",
+          "When exporting data to SPSS, variable names SPSS does not accept (too long, starting with a digit, containing spaces or punctuation) no longer block the file: the name is adjusted for SPSS and the full name is kept as the variable label.",
           "SAI Statistics is now open source: its source code is published openly under the GNU AGPL-3.0, and the About window says so.",
           "On macOS the app now ships the same, newer R version (4.6.1) as on Windows and Linux, so analyses run on the same R on all three platforms.",
           "Security is tighter when exporting output to HTML or PDF and when pasting tables from other apps: code hidden in a file or on the clipboard never runs.",
           "The ribbon icons have been redrawn to match the look of the rest of the app."
         ],
         "es": [
+          "La exportación de datos a Excel vuelve a funcionar, con los nombres de las columnas en la primera fila.",
+          "Al exportar datos a SPSS, los nombres de variable que SPSS no acepta (demasiado largos, que empiezan por un número o con espacios o signos de puntuación) ya no impiden crear el archivo: el nombre se adapta a SPSS y el nombre completo se conserva como etiqueta de la variable.",
           "SAI Statistics ahora es de código abierto: su código fuente se publica abiertamente bajo la GNU AGPL-3.0, y la ventana Acerca de lo indica.",
           "En macOS la aplicación incluye ahora la misma versión de R, más reciente (4.6.1), que en Windows y Linux, de modo que los análisis se ejecutan con el mismo R en las tres plataformas.",
           "Se ha reforzado la seguridad al exportar resultados a HTML o PDF y al pegar tablas desde otras aplicaciones: el código oculto en un archivo o en el portapapeles nunca se ejecuta.",
           "Los iconos de la cinta de opciones se han rediseñado para que coincidan con el aspecto del resto de la aplicación."
         ],
         "fr": [
+          "L’export des données vers Excel fonctionne de nouveau, avec les noms de colonnes sur la première ligne.",
+          "Lors de l’export des données vers SPSS, les noms de variables que SPSS refuse (trop longs, commençant par un chiffre, contenant des espaces ou de la ponctuation) ne bloquent plus le fichier : le nom est adapté à SPSS et le nom complet est conservé comme étiquette de la variable.",
           "SAI Statistics est désormais open source : son code source est publié librement sous licence GNU AGPL-3.0, et la fenêtre À propos l’indique.",
           "Sur macOS, l’application embarque désormais la même version de R, plus récente (4.6.1), que sous Windows et Linux : les analyses s’exécutent avec le même R sur les trois plateformes.",
           "La sécurité est renforcée lors de l’export des résultats en HTML ou PDF et du collage de tableaux depuis d’autres applications : un code caché dans un fichier ou dans le presse-papiers ne s’exécute jamais.",
           "Les icônes du ruban ont été redessinées pour s’accorder avec le reste de l’application."
         ],
         "pt": [
+          "A exportação de dados para o Excel voltou a funcionar, com os nomes das colunas na primeira linha.",
+          "Ao exportar dados para o SPSS, nomes de variáveis que o SPSS não aceita (longos demais, começando com um número ou com espaços ou pontuação) não impedem mais a criação do arquivo: o nome é ajustado para o SPSS e o nome completo é mantido como rótulo da variável.",
           "O SAI Statistics agora é de código aberto: o código-fonte é publicado abertamente sob a GNU AGPL-3.0, e a janela Sobre informa isso.",
           "No macOS, o aplicativo agora traz a mesma versão do R, mais recente (4.6.1), que no Windows e no Linux, então as análises rodam com o mesmo R nas três plataformas.",
           "A segurança foi reforçada ao exportar resultados para HTML ou PDF e ao colar tabelas de outros aplicativos: código escondido em um arquivo ou na área de transferência nunca é executado.",
           "Os ícones da faixa de opções foram redesenhados para combinar com o restante do aplicativo."
         ],
         "it": [
+          "L’esportazione dei dati in Excel funziona di nuovo, con i nomi delle colonne nella prima riga.",
+          "Esportando i dati in SPSS, i nomi di variabile che SPSS non accetta (troppo lunghi, che iniziano con una cifra o con spazi o punteggiatura) non bloccano più il file: il nome viene adattato a SPSS e il nome completo è conservato come etichetta della variabile.",
           "SAI Statistics è ora open source: il codice sorgente è pubblicato apertamente con licenza GNU AGPL-3.0, e la finestra Informazioni lo indica.",
           "Su macOS l’app include ora la stessa versione di R, più recente (4.6.1), di Windows e Linux, quindi le analisi girano con lo stesso R su tutte e tre le piattaforme.",
           "La sicurezza è più rigorosa quando si esportano i risultati in HTML o PDF e quando si incollano tabelle da altre app: il codice nascosto in un file o negli appunti non viene mai eseguito.",
