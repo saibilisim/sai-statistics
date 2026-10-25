@@ -6,6 +6,9 @@ import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../shared/languages
 import type { AppSettings } from '../shared/settings-types'
 
 function detectSystemLanguage(): SupportedLanguage {
+  // E2E betikleri Türkçe etiketlerle yazılı (tr kaynak dil); CI runner'ı
+  // en-US olduğundan sistem dili tespiti ilk açılışta 'en' yazıyordu.
+  if (!app.isPackaged && process.env['SAI_E2E'] === '1') return 'tr'
   const primary = app.getLocale().split('-')[0]?.toLowerCase()
   return (SUPPORTED_LANGUAGES as readonly string[]).includes(primary ?? '')
     ? (primary as SupportedLanguage)
