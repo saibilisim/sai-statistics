@@ -18,7 +18,8 @@
  *   3. That runtime's OWN Rscript can load every package in
  *      shared/r-packages.json's bundled list — run from the packaged tree, not
  *      the source tree, so a bad copy or a relocation problem shows up here.
- *   4. The packaged Electron binary boots and reports it found the bundled R
+ *   4. The packaged Electron binary boots and its log says it is using the
+ *      bundled R from inside the package — not a system R, not none
  *      (optional, --with-app; needs a display on Linux).
  *
  * Usage:
@@ -26,7 +27,7 @@
  *
  * Exits non-zero with a specific message on the first failed check.
  */
-const { spawnSync } = require('child_process')
+const { spawn, spawnSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
@@ -129,19 +130,67 @@ const exeCandidates = fs
 const exe = exeCandidates[0]
 if (!exe) fail(`no executable found in ${unpacked}`)
 
-// electron-log writes the "[r-bridge] Found bundled R" line to stderr on
-// startup; --sai-selftest is not a thing, so just boot briefly and read it.
-const boot = spawnSync(exe, ['--no-sandbox'], { encoding: 'utf-8', timeout: 60000 })
-const bootOut = `${boot.stdout || ''}${boot.stderr || ''}`
-if (/Found bundled R/i.test(bootOut)) {
-  ok('packaged app boots and reports the bundled R')
-} else if (/Rscript not found/i.test(bootOut)) {
-  fail('the packaged app booted but could NOT find its bundled R:\n' + bootOut.slice(0, 800))
-} else {
-  console.log(
-    '⚠ could not confirm R detection from the app log (it may need a display).\n' +
-      '  The runtime itself passed check 3, which is the part that matters most.'
-  )
+// A packaged build logs to its file only (main.ts turns the console transport
+// off), so read r-bridge's startup line from that file. A fresh
+// --user-data-dir keeps an earlier run's log, settings and single-instance
+// lock out of it; Windows/Linux keep logs under it, macOS in ~/Library/Logs.
+const userData = fs.mkdtempSync(path.join(require('os').tmpdir(), 'sai-verify-'))
+const logFiles = [path.join(userData, 'logs', 'main.log')]
+if (process.platform === 'darwin') {
+  for (const name of ['SAI Statistics', 'sai-statistics']) {
+    logFiles.push(path.join(require('os').homedir(), 'Library', 'Logs', name, 'main.log'))
+  }
 }
+// Only what this run appends counts.
+const startSize = new Map(logFiles.map(f => [f, fs.existsSync(f) ? fs.statSync(f).size : 0]))
+const readNewLog = () =>
+  logFiles
+    .filter(f => fs.existsSync(f))
+    .map(f => fs.readFileSync(f).subarray(startSize.get(f)).toString('utf-8'))
+    .join('\n')
 
-console.log('\nPackage verified.')
+const child = spawn(exe, ['--no-sandbox', `--user-data-dir=${userData}`], { stdio: 'ignore' })
+const BOOT_TIMEOUT_MS = 90000
+const started = Date.now()
+const timer = setInterval(() => {
+  const logText = readNewLog()
+  const bundledLine = /\[r-bridge\] Found bundled R: (.+) \(/.exec(logText)
+  let verdict = null
+  if (bundledLine) {
+    // The path must lie inside this package, not some other copy of the app.
+    const real = p => (fs.existsSync(p) ? fs.realpathSync(p) : p)
+    const rel = path.relative(real(unpacked), real(bundledLine[1].trim()))
+    verdict =
+      rel && !rel.startsWith('..') && !path.isAbsolute(rel)
+        ? () => ok(`packaged app boots and uses its bundled R: ${rel}`)
+        : () => fail(`the packaged app found an R outside the package: ${bundledLine[1]}`)
+  } else if (/\[r-bridge\] Found system R/.test(logText)) {
+    // The fallback a user without the bundled runtime gets — on a runner that
+    // happens to have R installed it would otherwise look like a pass.
+    verdict = () =>
+      fail(
+        'the packaged app fell back to a SYSTEM R — its bundled runtime was not found:\n' +
+          logText.slice(-800)
+      )
+  } else if (/Rscript not found/.test(logText)) {
+    verdict = () => fail('the packaged app booted but found no R at all:\n' + logText.slice(-800))
+  } else if (child.exitCode !== null) {
+    verdict = () =>
+      fail(
+        `the packaged app exited (code ${child.exitCode}) before detecting R:\n` +
+          logText.slice(-800)
+      )
+  } else if (Date.now() - started > BOOT_TIMEOUT_MS) {
+    verdict = () =>
+      fail(
+        `no R detection line in the app log after ${BOOT_TIMEOUT_MS / 1000}s:\n` +
+          logText.slice(-800)
+      )
+  }
+  if (!verdict) return
+  clearInterval(timer)
+  child.kill()
+  verdict()
+  console.log('\nPackage verified.')
+  process.exit(0)
+}, 1000)
