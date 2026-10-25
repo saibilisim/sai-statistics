@@ -3003,6 +3003,7 @@
         "title": "Paneles de R",
         "toggle": "Panel Entorno / Gráficos / Ayuda",
         "hide": "Ocultar panel",
+        "resize": "Cambiar el tamaño del panel",
         "env": "Entorno",
         "plots": "Gráficos",
         "help": "Ayuda",

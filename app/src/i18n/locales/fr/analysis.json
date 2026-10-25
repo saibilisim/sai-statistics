@@ -3003,6 +3003,7 @@
         "title": "Panneaux R",
         "toggle": "Panneau Environnement / Graphiques / Aide",
         "hide": "Masquer le panneau",
+        "resize": "Redimensionner le panneau",
         "env": "Environnement",
         "plots": "Graphiques",
         "help": "Aide",

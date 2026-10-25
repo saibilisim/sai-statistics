@@ -390,6 +390,7 @@
   },
   "output": {
     "navigator": "Contenido",
+    "resizeNavigator": "Cambiar el tamaño del panel de contenido",
     "empty": "Aún no hay resultados",
     "emptyHint": "Ejecute un análisis desde el menú Analizar",
     "noResults": "Sin resultados",

@@ -390,6 +390,7 @@
   },
   "output": {
     "navigator": "Contents",
+    "resizeNavigator": "Resize contents panel",
     "empty": "No output yet",
     "emptyHint": "Run an analysis from the Analyze menu",
     "noResults": "No results",

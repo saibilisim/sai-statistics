@@ -3003,6 +3003,7 @@
         "title": "R panes",
         "toggle": "Environment / Plots / Help pane",
         "hide": "Hide pane",
+        "resize": "Resize pane",
         "env": "Environment",
         "plots": "Plots",
         "help": "Help",

@@ -390,6 +390,7 @@
   },
   "output": {
     "navigator": "Sommaire",
+    "resizeNavigator": "Redimensionner le sommaire",
     "empty": "Aucun résultat pour l'instant",
     "emptyHint": "Exécutez une analyse depuis le menu Analyse",
     "noResults": "Aucun résultat",

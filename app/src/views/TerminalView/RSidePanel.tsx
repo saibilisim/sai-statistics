@@ -14,11 +14,13 @@
  *   • History — commands run this session: click writes one to the console
  *     input, double-click runs it.
  */
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TerminalREnvItem } from '@shared/ipc-contracts'
 import { useTerminalStore } from '../../store/terminal-store'
 import { cx } from '../../lib/cx'
+import { useWidthResizer } from '../../lib/use-width-resizer'
+import { WidthHandle } from '../../components/WidthHandle/WidthHandle'
 import {
   CloseIcon,
   CodeIcon,
@@ -33,6 +35,9 @@ import styles from './TerminalView.module.css'
 
 export type RSideTab = 'env' | 'files' | 'history' | 'plots' | 'help' | 'packages'
 const TABS: RSideTab[] = ['env', 'files', 'history', 'plots', 'help', 'packages']
+/** Panel width bounds while dragging its edge (px). */
+const SIDE_MIN_PX = 220
+const SIDE_MIN_REST_PX = 320
 
 interface RSidePanelProps {
   tab: RSideTab
@@ -70,53 +75,86 @@ export function RSidePanel({
 }: RSidePanelProps) {
   const { t } = useTranslation(['analysis'])
   const plotCount = useTerminalStore(s => s.rPlots.length)
+  const { panelRef, panelStyle, handleProps } = useWidthResizer<HTMLElement>({
+    storageKey: 'sai.terminal.rSideWidth',
+    edge: 'left',
+    minPx: SIDE_MIN_PX,
+    minRestPx: SIDE_MIN_REST_PX
+  })
+  const tabListRef = useRef<HTMLDivElement>(null)
+
+  // A narrow panel scrolls its tab strip — keep the chosen tab in view.
+  useEffect(() => {
+    tabListRef.current
+      ?.querySelector('[aria-selected="true"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+  }, [tab])
+
   return (
-    <aside className={styles.plotPanel} aria-label={t('terminal.r.side.title')}>
-      <div className={styles.sideTabs} role="tablist" aria-label={t('terminal.r.side.title')}>
-        {TABS.map(k => (
-          <button
-            key={k}
-            type="button"
-            role="tab"
-            aria-selected={tab === k}
-            className={cx(styles.sideTab, tab === k && styles.sideTabActive)}
-            onClick={() => {
-              onTabChange(k)
+    <>
+      <WidthHandle label={t('terminal.r.side.resize')} {...handleProps} />
+      <aside
+        ref={panelRef}
+        className={styles.plotPanel}
+        style={panelStyle}
+        aria-label={t('terminal.r.side.title')}
+      >
+        <div className={styles.sideTabs}>
+          <div
+            ref={tabListRef}
+            className={styles.sideTabList}
+            role="tablist"
+            aria-label={t('terminal.r.side.title')}
+            onWheel={e => {
+              // Mouse wheel scrolls the tab strip sideways.
+              if (e.deltaX === 0) e.currentTarget.scrollLeft += e.deltaY
             }}
           >
-            {t(`terminal.r.side.${k}`)}
-            {k === 'plots' && plotCount > 0 && (
-              <span className={styles.sideTabCount}>{plotCount}</span>
-            )}
+            {TABS.map(k => (
+              <button
+                key={k}
+                type="button"
+                role="tab"
+                aria-selected={tab === k}
+                className={cx(styles.sideTab, tab === k && styles.sideTabActive)}
+                onClick={() => {
+                  onTabChange(k)
+                }}
+              >
+                {t(`terminal.r.side.${k}`)}
+                {k === 'plots' && plotCount > 0 && (
+                  <span className={styles.sideTabCount}>{plotCount}</span>
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            onClick={onHide}
+            title={t('terminal.r.side.hide')}
+            aria-label={t('terminal.r.side.hide')}
+          >
+            <CloseIcon size={13} />
           </button>
-        ))}
-        <span className={styles.spacer} />
-        <button
-          type="button"
-          className={styles.iconBtn}
-          onClick={onHide}
-          title={t('terminal.r.side.hide')}
-          aria-label={t('terminal.r.side.hide')}
-        >
-          <CloseIcon size={13} />
-        </button>
-      </div>
-      {tab === 'env' && <REnvPane onInsertName={onInsertName} onView={onView} />}
-      {tab === 'files' && (
-        <RFilesPane
-          onRunCode={onRunCode}
-          onWriteToConsole={onWriteToConsole}
-          onOpenScript={onOpenScript}
-          scriptDir={scriptDir}
-        />
-      )}
-      {tab === 'history' && (
-        <RHistoryPane onRunCode={onRunCode} onWriteToConsole={onWriteToConsole} />
-      )}
-      {tab === 'plots' && <RPlotPanel onSendToOutput={onSendPlotToOutput} />}
-      {tab === 'help' && <RHelpPane />}
-      {tab === 'packages' && <RPackagesPane onToggle={onTogglePackage} />}
-    </aside>
+        </div>
+        {tab === 'env' && <REnvPane onInsertName={onInsertName} onView={onView} />}
+        {tab === 'files' && (
+          <RFilesPane
+            onRunCode={onRunCode}
+            onWriteToConsole={onWriteToConsole}
+            onOpenScript={onOpenScript}
+            scriptDir={scriptDir}
+          />
+        )}
+        {tab === 'history' && (
+          <RHistoryPane onRunCode={onRunCode} onWriteToConsole={onWriteToConsole} />
+        )}
+        {tab === 'plots' && <RPlotPanel onSendToOutput={onSendPlotToOutput} />}
+        {tab === 'help' && <RHelpPane />}
+        {tab === 'packages' && <RPackagesPane onToggle={onTogglePackage} />}
+      </aside>
+    </>
   )
 }
 

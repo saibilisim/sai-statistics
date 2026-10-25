@@ -3003,6 +3003,7 @@
         "title": "Painéis do R",
         "toggle": "Painel Ambiente / Gráficos / Ajuda",
         "hide": "Ocultar painel",
+        "resize": "Redimensionar painel",
         "env": "Ambiente",
         "plots": "Gráficos",
         "help": "Ajuda",

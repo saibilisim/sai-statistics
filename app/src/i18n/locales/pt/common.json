@@ -390,6 +390,7 @@
   },
   "output": {
     "navigator": "Sumário",
+    "resizeNavigator": "Redimensionar o painel de sumário",
     "empty": "Ainda não há resultados",
     "emptyHint": "Execute uma análise no menu Analisar",
     "noResults": "Nenhum resultado",

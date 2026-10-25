@@ -22,6 +22,8 @@ import {
 import { useUIStore } from '../../store/ui-store'
 import { translateOutputKey } from '../../lib/output-format'
 import { cx } from '../../lib/cx'
+import { useWidthResizer } from '../../lib/use-width-resizer'
+import { WidthHandle } from '../../components/WidthHandle/WidthHandle'
 import {
   ContextMenu,
   EyeOffIcon,
@@ -56,6 +58,10 @@ import styles from './OutputView.module.css'
 /** Formats offered by the Output toolbar's export split-button (HTML lives
  *  under the save split-button as "Save Output as HTML"). */
 const TOOLBAR_EXPORT_FORMATS: ExportFormat[] = ['pdf', 'word', 'excel', 'csv', 'markdown']
+
+/** Navigator width bounds while dragging its edge (px). */
+const NAV_MIN_PX = 140
+const NAV_MIN_REST_PX = 320
 
 // ─────────────────────────────────────────────────────────────
 //  Main OutputView
@@ -110,6 +116,16 @@ export function OutputView() {
   const collapseAll = useOutputStore(s => s.collapseAll)
   const expandAll = useOutputStore(s => s.expandAll)
   const toggleCollapse = useOutputStore(s => s.toggleCollapse)
+  const {
+    panelRef: navRef,
+    panelStyle: navStyle,
+    handleProps: navHandleProps
+  } = useWidthResizer<HTMLDivElement>({
+    storageKey: 'sai.output.navigatorWidth',
+    edge: 'right',
+    minPx: NAV_MIN_PX,
+    minRestPx: NAV_MIN_REST_PX
+  })
 
   const blocksById = new Map(blocks.map(b => [b.id, b]))
 
@@ -529,7 +545,7 @@ export function OutputView() {
   return (
     <div className={styles.root}>
       {/* Left navigator */}
-      <div className={styles.navigator}>
+      <div className={styles.navigator} ref={navRef} style={navStyle}>
         <div className={styles.navigatorHeader}>{t('output.navigator')}</div>
         {hasContent && (
           <div className={styles.navSearchBox}>
@@ -769,6 +785,8 @@ export function OutputView() {
           />
         )}
       </div>
+
+      <WidthHandle label={t('output.resizeNavigator')} {...navHandleProps} />
 
       {/* Right content */}
       <div className={styles.rightPanel}>

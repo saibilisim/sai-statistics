@@ -1,0 +1,32 @@
+.handle {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: var(--space-sm);
+  /* Overlap both neighbours so the visible line stays the panel's border. */
+  margin-inline: calc(var(--space-sm) / -2);
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.handle::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: var(--border-width-thick);
+  transform: translateX(-50%);
+  background: transparent;
+  transition: background var(--duration-fast) ease;
+}
+
+.handle:hover::after,
+.handle:active::after,
+.handle:focus-visible::after {
+  background: var(--color-accent);
+}
+
+.handle:focus-visible {
+  outline: none;
+}

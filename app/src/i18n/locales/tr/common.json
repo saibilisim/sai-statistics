@@ -390,6 +390,7 @@
   },
   "output": {
     "navigator": "İçindekiler",
+    "resizeNavigator": "İçindekiler panelini boyutlandır",
     "empty": "Henüz çıktı yok",
     "emptyHint": "Analyze menüsünden bir analiz çalıştırın",
     "noResults": "Sonuç yok",

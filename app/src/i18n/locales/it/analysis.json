@@ -3003,6 +3003,7 @@
         "title": "Pannelli R",
         "toggle": "Pannello Ambiente / Grafici / Guida",
         "hide": "Nascondi pannello",
+        "resize": "Ridimensiona pannello",
         "env": "Ambiente",
         "plots": "Grafici",
         "help": "Guida",

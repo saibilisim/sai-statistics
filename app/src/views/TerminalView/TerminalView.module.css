@@ -833,6 +833,7 @@
   flex-direction: column;
   width: var(--terminal-plot-width);
   flex-shrink: 0;
+  min-width: 0;
   min-height: 0;
   background: var(--color-bg-header);
   border-left: var(--border-width-thin) solid var(--color-border);
@@ -1170,11 +1171,22 @@
 .sideTabs {
   display: flex;
   align-items: center;
-  gap: calc(var(--space-xs) / 2);
+  gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
   min-height: var(--control-height-md);
   border-bottom: var(--border-width-thin) solid var(--color-border);
   flex-shrink: 0;
+}
+
+/* Tabs scroll sideways when the panel is narrower than the strip. */
+.sideTabList {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--space-xs) / 2);
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .sideTab {
@@ -1189,6 +1201,8 @@
   font-family: var(--font-family-ui);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
