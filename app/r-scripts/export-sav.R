@@ -19,7 +19,7 @@
 #     variables: [ { colId, name, label, type, width, decimals, columns,
 #                    valueLabels: { "<code>": "<label>" },
 #                    missing: null | { type, discrete?, rangeLow?, rangeHigh? } } ] }
-# Output: { ok: true, rows, cols } or { ok: false, error: "<code>", detail }
+# Output: { ok: true, rows, cols, renamed } or { ok: false, error: "<code>", detail }
 #         between the __SAI_RESULT__ / __END_RESULT__ markers.
 
 suppressPackageStartupMessages(library(jsonlite))
@@ -43,6 +43,45 @@ build_labels <- function(vl, is_num) {
   } else {
     stats::setNames(codes, labs)
   }
+}
+
+# SPSS variable names (the rules haven's validate_sav enforces): at most 64
+# bytes, start with a letter or @, then letters/digits/currency/._$#@, not
+# ending in ".", not a reserved word, unique ignoring case. Names the app
+# allows (long, spaces, punctuation) are made valid here instead of failing
+# the whole export; the original name survives as the variable label.
+SPSS_RESERVED <- c("ALL", "AND", "BY", "EQ", "GE", "GT", "LE", "LT", "NE", "NOT", "OR", "TO", "WITH")
+
+truncate_bytes <- function(s, max_bytes) {
+  if (nchar(s, type = "bytes") <= max_bytes) return(s)
+  ch <- strsplit(s, "")[[1]]
+  keep <- cumsum(nchar(ch, type = "bytes")) <= max_bytes
+  paste(ch[keep], collapse = "")
+}
+
+spss_name <- function(nm, max_bytes = 64L) {
+  s <- gsub("[^\\pL\\pN\\pSc._$#@]", "_", enc2utf8(nm), perl = TRUE)
+  if (!grepl("^[\\pL@]", s, perl = TRUE)) s <- paste0("v", s)
+  s <- truncate_bytes(s, max_bytes)
+  s <- sub("\\.+$", "", s)
+  if (!nzchar(s)) s <- "v"
+  if (toupper(s) %in% SPSS_RESERVED) s <- paste0(s, "_")
+  s
+}
+
+spss_names <- function(names) {
+  out <- character(length(names))
+  for (i in seq_along(names)) {
+    s <- spss_name(names[i])
+    k <- 1L
+    while (tolower(s) %in% tolower(out[seq_len(i - 1L)])) {
+      k <- k + 1L
+      suffix <- paste0("_", k)
+      s <- paste0(spss_name(names[i], 64L - nchar(suffix, type = "bytes")), suffix)
+    }
+    out[i] <- s
+  }
+  out
 }
 
 to_spss_column <- function(x, v) {
@@ -107,11 +146,20 @@ result <- tryCatch(
     } else {
       src <- as.data.frame(arrow::read_parquet(params$parquet))
       vars <- params$variables
+      orig <- vapply(vars, function(v) v$name, character(1))
+      safe <- spss_names(orig)
+      renamed <- safe != orig
+      # A renamed variable without its own label keeps its full name as one.
+      for (i in which(renamed)) {
+        lab <- vars[[i]]$label
+        if (is.null(lab) || !nzchar(lab) || identical(lab, orig[i])) vars[[i]]$label <- orig[i]
+        vars[[i]]$name <- safe[i]
+      }
       out <- lapply(vars, function(v) to_spss_column(src[[v$colId]], v))
-      names(out) <- vapply(vars, function(v) v$name, character(1))
-      df <- tibble::as_tibble(out)
+      names(out) <- safe
+      df <- tibble::as_tibble(out, .name_repair = "minimal")
       haven::write_sav(df, params$out)
-      list(ok = TRUE, rows = nrow(df), cols = ncol(df))
+      list(ok = TRUE, rows = nrow(df), cols = ncol(df), renamed = sum(renamed))
     }
   },
   error = function(e) list(ok = FALSE, error = "failed", detail = conditionMessage(e))
