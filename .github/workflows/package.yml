@@ -67,8 +67,13 @@ jobs:
       - name: Build renderer + main
         run: pnpm build
 
+      # Unsigned: electron-builder.json names the official certificate by
+      # thumbprint, which only the release machine has. CI builds from a copy
+      # without it (electron-builder then skips signing); the file stays as is.
       - name: Package with electron-builder
-        run: pnpm exec electron-builder --win --publish never
+        run: |
+          node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('electron-builder.json','utf8')); delete c.win.signtoolOptions.certificateSha1; fs.mkdirSync('tmp',{recursive:true}); fs.writeFileSync('tmp/electron-builder.ci.json', JSON.stringify(c))"
+          pnpm exec electron-builder --win --publish never --config tmp/electron-builder.ci.json
 
       # The point of this whole workflow. Boots the packaged binary too, so a
       # runtime that copied in but cannot actually start still fails here.
