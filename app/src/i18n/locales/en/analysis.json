@@ -3127,6 +3127,7 @@
     },
     "vars": {
       "title": "Variables",
+      "resize": "Resize variable panel",
       "search": "Search variables…",
       "toggle": "Variable list",
       "insertHint": "Click to insert into the editor",

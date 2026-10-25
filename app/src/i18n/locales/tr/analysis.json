@@ -3127,6 +3127,7 @@
     },
     "vars": {
       "title": "Değişkenler",
+      "resize": "Değişken panelini boyutlandır",
       "search": "Değişken ara…",
       "toggle": "Değişken listesi",
       "insertHint": "Düzenleyiciye eklemek için tıklayın",

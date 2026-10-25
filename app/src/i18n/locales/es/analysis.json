@@ -3127,6 +3127,7 @@
     },
     "vars": {
       "title": "Variables",
+      "resize": "Cambiar el tamaño del panel de variables",
       "search": "Buscar variables…",
       "toggle": "Lista de variables",
       "insertHint": "Haga clic para insertar en el editor",

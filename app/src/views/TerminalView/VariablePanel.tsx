@@ -10,8 +10,14 @@ import { useTranslation } from 'react-i18next'
 import type { Variable } from '@shared/data-types'
 import { useDatasetStore } from '../../store/dataset-store'
 import { cx } from '../../lib/cx'
+import { useWidthResizer } from '../../lib/use-width-resizer'
+import { WidthHandle } from '../../components/WidthHandle/WidthHandle'
 import { ListIcon } from './terminal-icons'
 import styles from './TerminalView.module.css'
+
+/** Panel width bounds while dragging its edge (px). */
+const VARS_MIN_PX = 140
+const VARS_MIN_REST_PX = 320
 
 interface VariablePanelProps {
   onInsert: (variable: Variable) => void
@@ -21,6 +27,12 @@ export function VariablePanel({ onInsert }: VariablePanelProps) {
   const { t } = useTranslation(['analysis'])
   const variables = useDatasetStore(s => s.variables)
   const [query, setQuery] = useState('')
+  const { panelRef, panelStyle, handleProps } = useWidthResizer<HTMLElement>({
+    storageKey: 'sai.terminal.varsWidth',
+    edge: 'right',
+    minPx: VARS_MIN_PX,
+    minRestPx: VARS_MIN_REST_PX
+  })
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -31,45 +43,55 @@ export function VariablePanel({ onInsert }: VariablePanelProps) {
   }, [variables, query])
 
   return (
-    <aside className={styles.varPanel} aria-label={t('terminal.vars.title')}>
-      <div className={styles.sidePanelHeader}>{t('terminal.vars.title')}</div>
-      <input
-        type="search"
-        className={styles.varSearch}
-        value={query}
-        onChange={e => {
-          setQuery(e.target.value)
-        }}
-        placeholder={t('terminal.vars.search')}
-        aria-label={t('terminal.vars.search')}
-      />
-      <ul className={styles.varItems}>
-        {variables.length === 0 && <li className={styles.sideEmpty}>{t('terminal.vars.empty')}</li>}
-        {shown.map(v => (
-          <li key={v.colId}>
-            <button
-              type="button"
-              className={styles.varItemBtn}
-              title={
-                v.label
-                  ? `${v.label} — ${t('terminal.vars.insertHint')}`
-                  : t('terminal.vars.insertHint')
-              }
-              onMouseDown={e => {
-                // Keep focus (and the caret) in the editor / R input.
-                e.preventDefault()
-              }}
-              onClick={() => {
-                onInsert(v)
-              }}
-            >
-              <span className={styles.varItemName}>{v.name}</span>
-              {v.label && <span className={styles.varItemLabel}>{v.label}</span>}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </aside>
+    <>
+      <aside
+        ref={panelRef}
+        className={styles.varPanel}
+        style={panelStyle}
+        aria-label={t('terminal.vars.title')}
+      >
+        <div className={styles.sidePanelHeader}>{t('terminal.vars.title')}</div>
+        <input
+          type="search"
+          className={styles.varSearch}
+          value={query}
+          onChange={e => {
+            setQuery(e.target.value)
+          }}
+          placeholder={t('terminal.vars.search')}
+          aria-label={t('terminal.vars.search')}
+        />
+        <ul className={styles.varItems}>
+          {variables.length === 0 && (
+            <li className={styles.sideEmpty}>{t('terminal.vars.empty')}</li>
+          )}
+          {shown.map(v => (
+            <li key={v.colId}>
+              <button
+                type="button"
+                className={styles.varItemBtn}
+                title={
+                  v.label
+                    ? `${v.label} — ${t('terminal.vars.insertHint')}`
+                    : t('terminal.vars.insertHint')
+                }
+                onMouseDown={e => {
+                  // Keep focus (and the caret) in the editor / R input.
+                  e.preventDefault()
+                }}
+                onClick={() => {
+                  onInsert(v)
+                }}
+              >
+                <span className={styles.varItemName}>{v.name}</span>
+                {v.label && <span className={styles.varItemLabel}>{v.label}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </aside>
+      <WidthHandle label={t('terminal.vars.resize')} {...handleProps} />
+    </>
   )
 }
 

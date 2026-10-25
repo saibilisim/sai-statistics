@@ -224,6 +224,7 @@
   flex-direction: column;
   width: var(--terminal-side-width);
   flex-shrink: 0;
+  min-width: 0;
   min-height: 0;
   background: var(--color-bg-surface);
   border-right: var(--border-width-thin) solid var(--color-border);
