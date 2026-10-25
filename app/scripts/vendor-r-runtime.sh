@@ -119,11 +119,22 @@ if [ "$R_ROUTE" = conda ]; then
     "r-base=$R_PIN" "r-recommended=$R_PIN" $EXTRA_CONDA "${BLAS_SPEC[@]}"
 else
   # Toolchain + the C/C++ libraries the compiled R packages link against.
-  # libarrow ships Parquet/Dataset/Acero/Substrait as SEPARATE conda packages;
-  # arrow's configure fails on missing parquet/type_fwd.h without them.
+  # libarrow ships Parquet/Dataset/Acero/Substrait/Compute as SEPARATE conda
+  # packages; arrow's configure fails on missing parquet/type_fwd.h without them.
+  # They are pinned to the major version of the snapshot's R arrow: Arrow C++
+  # breaks ABI every major release, and an unpinned env pulled libarrow 26 for
+  # R arrow 25.0.1 (arrow.so: undefined symbol arrow::compute::Function).
+  ARROW_MAJOR="$(curl -fsSL "$CRAN_SNAPSHOT/src/contrib/PACKAGES" |
+    awk '/^Package: arrow$/ { f = 1 } f && !done && /^Version:/ { split($2, v, "."); print v[1]; done = 1 }')"
+  [ -n "$ARROW_MAJOR" ] || { echo "error: no arrow version in $CRAN_SNAPSHOT/src/contrib/PACKAGES" >&2; exit 1; }
+  echo "[vendor-r-runtime] libarrow pinned to $ARROW_MAJOR.* (R arrow in the snapshot)"
+  ARROW_LIBS=()
+  for lib in libarrow libparquet libarrow-dataset libarrow-acero libarrow-substrait libarrow-compute; do
+    ARROW_LIBS+=("$lib=$ARROW_MAJOR.*")
+  done
   "$CONDA_BIN" create -y -p "$TMP_ENV" -c conda-forge --override-channels \
     "r-base=$R_PIN" compilers pkg-config cmake make \
-    libarrow libparquet libarrow-dataset libarrow-acero libarrow-substrait \
+    "${ARROW_LIBS[@]}" \
     icu zlib libxml2 libcurl openssl libpng libjpeg-turbo freetype fontconfig \
     "${BLAS_SPEC[@]}"
 
