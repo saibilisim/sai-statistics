@@ -192,7 +192,7 @@ rm -rf \
   "$TMP_ENV/share/pkgconfig" \
   "$TMP_ENV"/share/cmake* \
   "$TMP_ENV"/bin/cmake "$TMP_ENV"/bin/ctest "$TMP_ENV"/bin/cpack "$TMP_ENV"/bin/ccmake \
-  "$TMP_ENV"/bin/make "$TMP_ENV"/bin/pkg-config \
+  "$TMP_ENV"/bin/make "$TMP_ENV"/bin/gmake "$TMP_ENV"/bin/pkg-config \
   "$TMP_ENV"/share/gcc-* \
   "$TMP_ENV/share/man" \
   "$TMP_ENV/share/info" \
