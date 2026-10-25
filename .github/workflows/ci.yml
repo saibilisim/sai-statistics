@@ -1,10 +1,12 @@
 name: CI
 
-# Every push to main and every pull request runs everything, R validation and
-# E2E included (the repository is public, so Actions minutes are free).
+# Every push to main runs the quick checks (hygiene + typecheck/lint/unit/build).
+# The slow suites (R validation ~12 min, E2E ~70 min) run on a version tag
+# (v*, the same trigger as package.yml), on pull requests and on demand.
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -85,6 +87,7 @@ jobs:
 
   r-validation:
     name: R script validation
+    if: github.event_name != 'push' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -118,6 +121,7 @@ jobs:
 
   e2e:
     name: E2E (Playwright-driven Electron)
+    if: github.event_name != 'push' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     # Non-blocking until the suite is green on CI: as of 2026-10-21 a set of
     # scripts still fails there (see the run log) and is being worked through.
