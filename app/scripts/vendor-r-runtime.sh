@@ -273,6 +273,9 @@ while [ "$i" -le "$n" ]; do
     if [ "$arg" = "-e" ]; then
       i=$((i + 1))
       r_args+=("-e" "${!i}")
+    elif [ "$arg" = "-" ]; then
+      # `Rscript - args`: the script is read from stdin (R console session).
+      file="-"
     elif [[ "$arg" == -* ]]; then
       r_args+=("$arg")
     else
