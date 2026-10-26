@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { BrowserWindow, ipcMain, shell } from 'electron'
 import type { z } from 'zod'
+import { isRendererUrl } from '../renderer-url'
 
 /**
  * Registers an `ipcMain.handle` handler that is sender-checked and whose payload
@@ -41,6 +42,12 @@ export function validateSender(event: Electron.IpcMainInvokeEvent): void {
   const senderFrame = event.senderFrame
   if (!senderFrame || senderFrame !== webContents.mainFrame) {
     throw new Error('IPC Security Violation: Invoked from an invalid frame')
+  }
+
+  // The frame must still be the app's own page — a navigated-away window
+  // (foreign file:// content with the preload attached) is refused.
+  if (!isRendererUrl(senderFrame.url)) {
+    throw new Error('IPC Security Violation: unexpected sender origin')
   }
 
   const win = BrowserWindow.fromWebContents(webContents)

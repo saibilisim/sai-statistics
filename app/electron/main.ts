@@ -4,9 +4,10 @@ import { app, BrowserWindow, session, shell, dialog, ipcMain } from 'electron'
 import { join, dirname } from 'path'
 import os from 'os'
 import fs from 'fs'
+import { z } from 'zod'
 import log from 'electron-log'
 import { buildMenu } from './menu/menu-builder'
-import { registerSettingsHandlers } from './ipc/settings-handler'
+import { registerSettingsHandlers, getSettings } from './ipc/settings-handler'
 import {
   registerDbHandlers,
   hasUnsavedDatasets,
@@ -28,7 +29,7 @@ import {
   FileApprovePathRequestSchema
 } from '../shared/ipc-schemas'
 import { initRBridge, onRStatus, getCurrentRStatus, migrateUserRLibrary } from './ipc/r-bridge'
-import { setJobManagerWindow } from './ipc/job-manager'
+import { setJobManagerWindow, cancelAllJobs } from './ipc/job-manager'
 import { registerAnalysisHandlers } from './ipc/analysis-handler'
 import { registerRPackagesHandlers } from './ipc/r-packages-handler'
 import { registerRSessionHandlers, setRSessionWindow, killRSession } from './ipc/r-session'
@@ -38,10 +39,14 @@ import {
   WIDGET_SCHEME,
   WIDGET_CSP
 } from './ipc/r-widgets'
+import { isRendererUrl } from './renderer-url'
+import { RECOVERY_PATH } from './recovery-path'
+import { removePrivateTmpDir } from './private-tmp'
 import { registerAiBridgeHandlers } from './ipc/ai-bridge'
 import { registerClipboardHandlers } from './ipc/clipboard-handler'
 import {
   registerUpdaterHandlers,
+  setUpdaterWindow,
   cancelPendingRestart,
   installPendingUpdateOnQuit,
   IS_FLATPAK
@@ -118,6 +123,25 @@ function isNewerVersion(latest: string, current: string): boolean {
   return false
 }
 
+// /app/version is server-supplied: only a plain semver and an https URL on our
+// own domain are trusted (the browser download has no signature check).
+const VersionInfoSchema = z.object({
+  latest: z.string().regex(/^\d+\.\d+\.\d+$/),
+  url: z.string().nullish()
+})
+
+function safeDownloadUrl(raw: string | null | undefined): string | null {
+  if (!raw) return null
+  try {
+    const u = new URL(raw)
+    const host = u.hostname.toLowerCase()
+    const ours = host === 'saistatistics.com' || host.endsWith('.saistatistics.com')
+    return u.protocol === 'https:' && ours ? u.href : null
+  } catch {
+    return null
+  }
+}
+
 let pendingOpenPath: string | undefined = extractFilePathFromArgv(process.argv)
 
 // app:get-version-info'nun son bildiği indirme URL'i — app:open-download-page
@@ -129,6 +153,8 @@ function flushPendingOpen(win: BrowserWindow): void {
   if (!pendingOpenPath) return
   const filePath = pendingOpenPath
   pendingOpenPath = undefined
+  // The OS handed us this path (double-click / "Open With") — a trusted source.
+  approvePath(filePath)
   setTimeout(() => {
     win.webContents.send('menu:file:open', filePath)
   }, 500)
@@ -172,6 +198,7 @@ app.on('second-instance', (_event, argv) => {
   mainWindow.focus()
   const filePath = extractFilePathFromArgv(argv)
   if (filePath) {
+    approvePath(filePath)
     mainWindow.webContents.send('menu:file:open', filePath)
   }
 })
@@ -232,7 +259,6 @@ function showUnsavedDialog(win: BrowserWindow): number {
 // snapshot the active dataset to a recovery .sdf in userData; offer it back
 // on the next launch. This is best-effort data safety, not a real save: it
 // never touches dataset.filePath/isModified (writeDatasetSdf doesn't mutate).
-const RECOVERY_PATH = join(app.getPath('userData'), 'recovery.sdf')
 const RECOVERY_INTERVAL_MS = 5 * 60 * 1000
 let recoveryTimer: NodeJS.Timeout | null = null
 
@@ -447,10 +473,7 @@ function openLoginWindow(): void {
     return { action: 'deny' }
   })
   loginWindow.webContents.on('will-navigate', (event, url) => {
-    const isLocalDevServer = isDev && url.startsWith('http://localhost')
-    if (!url.startsWith('file://') && !isLocalDevServer) {
-      event.preventDefault()
-    }
+    if (!isRendererUrl(url)) event.preventDefault()
   })
 
   loginWindow.on('ready-to-show', () => {
@@ -472,6 +495,14 @@ function openLoginWindow(): void {
       query: { window: 'login' }
     })
   }
+}
+
+/** Points every module that pushes events to the renderer at `win`. */
+function attachWindow(win: BrowserWindow): void {
+  buildMenu(win)
+  setJobManagerWindow(win)
+  setRSessionWindow(win)
+  setUpdaterWindow(win)
 }
 
 function createWindow(): void {
@@ -513,11 +544,11 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
+  // Pinned to the renderer's own URL: any other navigation (e.g. an HTML file
+  // dropped onto the window) would load a foreign page with the preload — and
+  // therefore the whole window.api surface — attached.
   mainWindow.webContents.on('will-navigate', (event, url) => {
-    const isLocalDevServer = isDev && url.startsWith('http://localhost')
-    if (!url.startsWith('file://') && !isLocalDevServer) {
-      event.preventDefault()
-    }
+    if (!isRendererUrl(url)) event.preventDefault()
   })
 
   // Pipe renderer logs to the terminal — DEVELOPMENT ONLY. In production the
@@ -554,6 +585,11 @@ function createWindow(): void {
     mainWindow.webContents.send(IPC.APP_SAVE_AND_QUIT)
   })
 
+  const thisWindow = mainWindow
+  thisWindow.on('closed', () => {
+    if (mainWindow === thisWindow) mainWindow = null
+  })
+
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
     if (!mainWindow) return
@@ -588,9 +624,7 @@ void app.whenReady().then(() => {
   registerWidgetProtocol()
   createWindow()
   if (mainWindow) {
-    buildMenu(mainWindow)
-    setJobManagerWindow(mainWindow)
-    setRSessionWindow(mainWindow)
+    attachWindow(mainWindow)
     registerAnalysisHandlers()
     registerRSessionHandlers()
     registerUpdaterHandlers(mainWindow)
@@ -677,14 +711,17 @@ void app.whenReady().then(() => {
     // Flatpak: sunucuya hiç sorulmaz; cachedDownloadUrl boş kaldığından
     // app:open-download-page de bir şey açmaz (updater-handler.ts IS_FLATPAK).
     if (IS_FLATPAK) return fallback
+    // Privacy opt-out (Preferences ▸ Update): no request leaves the machine.
+    if (!getSettings().update.autoCheck) return fallback
     try {
       const res = await fetch(`${AI_SERVER_BASE_URL}/app/version`, {
         signal: AbortSignal.timeout(8_000)
       })
       if (!res.ok) return fallback
-      const json = (await res.json()) as { latest?: string; url?: string }
-      if (!json.latest) return fallback
-      cachedDownloadUrl = json.url ?? null
+      const parsed = VersionInfoSchema.safeParse(await res.json())
+      if (!parsed.success) return fallback
+      const json = parsed.data
+      cachedDownloadUrl = safeDownloadUrl(json.url)
       return {
         currentVersion,
         latestVersion: json.latest,
@@ -706,17 +743,25 @@ void app.whenReady().then(() => {
   })
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+      // macOS keeps the app alive with no window; the re-created one must be
+      // re-bound or job results / R console events go to the destroyed window.
+      if (mainWindow) attachWindow(mainWindow)
+    }
   })
 })
 
 app.on('before-quit', () => {
+  cancelAllJobs()
   killRSession()
+  removePrivateTmpDir()
   if (recoveryTimer) clearInterval(recoveryTimer)
   // A clean quit (isQuitting is only ever set after the close-guard resolved
   // — saved, explicitly discarded, or there was nothing unsaved) means the
   // recovery copy no longer reflects "work the user might want back".
-  if (!hasUnsavedDatasets()) deleteRecoveryFile()
+  // An explicit Discard (isQuitting while datasets are still modified) drops it too.
+  if (isQuitting || !hasUnsavedDatasets()) deleteRecoveryFile()
 })
 
 app.on('window-all-closed', () => {

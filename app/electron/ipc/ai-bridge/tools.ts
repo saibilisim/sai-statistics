@@ -172,13 +172,24 @@ async function profileVariable(
 
   if (variable.type === 'numeric') {
     const statsReader = await conn.runAndReadAll(
-      `SELECT MEAN(${col}) AS mean, STDDEV_SAMP(${col}) AS sd, MIN(${col}) AS min, MAX(${col}) AS max FROM ${table}`
+      `SELECT MEAN(${col}) AS mean, STDDEV_SAMP(${col}) AS sd, MIN(${col}) AS min, MAX(${col}) AS max, ` +
+        `COUNT(DISTINCT ${col}) AS d, SUM(CASE WHEN ${col} <> FLOOR(${col}) THEN 1 ELSE 0 END) AS frac FROM ${table}`
     )
     const row = statsReader.getRows()[0]
     profile['mean'] = sqlNumber(row?.[0])
     profile['sd'] = sqlNumber(row?.[1])
-    profile['min'] = sqlNumber(row?.[2])
-    profile['max'] = sqlNumber(row?.[3])
+    // Identifier-like columns (national id, phone, patient no): whole numbers
+    // that are almost all distinct. Their min/max would be two real
+    // identifiers, i.e. cell values (§9) — withheld.
+    const distinct = sqlNumber(row?.[4]) ?? 0
+    const fractional = sqlNumber(row?.[5]) ?? 0
+    const identifierLike = valid >= 20 && fractional === 0 && distinct / valid > 0.9
+    if (identifierLike) {
+      profile['minMaxWithheld'] = 'identifier-like column'
+    } else {
+      profile['min'] = sqlNumber(row?.[2])
+      profile['max'] = sqlNumber(row?.[3])
+    }
   }
 
   // Kategorik değişkenler (ve nominal/ordinal kodlanmış sayısallar) için yalnız

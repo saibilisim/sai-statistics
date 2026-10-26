@@ -1417,6 +1417,7 @@
       "equationTitle": "Variables in the Equation",
       "depFootnote": "Dependent Variable: {{name}}",
       "notConverged": "The model did not converge within the maximum number of iterations — results may be unreliable.",
+      "separation": "Perfect or near-perfect separation: some fitted probabilities are numerically 0 or 1, so coefficients and standard errors are unreliable (very large B and SE).",
       "iterationTitle": "Iteration History",
       "iterationUnavailable": "The iteration history could not be recovered from the model fit.",
       "correlationTitle": "Correlation Matrix of Estimates",
@@ -1591,6 +1592,7 @@
       "stepLRNote": "Stepwise selection used the partial likelihood-ratio (LR) statistic for both entry and removal.",
       "stepWaldNote": "Stepwise selection used the partial likelihood-ratio (LR) statistic for entry and the Wald statistic for removal.",
       "stepLimit": "Stepwise selection reached its step limit; the model is reported as it stood at that point.",
+      "coefInfinite": "The Cox fit reported a non-converged or infinite coefficient (often complete separation); the estimates and standard errors are unreliable.",
       "noTermsEntered": "No covariate met the entry criterion — the model is empty.",
       "baselineUnavailable": "The baseline function table could not be computed for this model.",
       "phUnavailable": "The proportional hazards test could not be computed for this model.",
@@ -1729,6 +1731,7 @@
     },
     "kmeans": {
       "centersTitle": "Final Cluster Centers",
+      "notConverged": "K-means did not converge within 50 iterations; the clusters are provisional.",
       "sizesTitle": "Number of Cases in each Cluster",
       "clusterHdr": "Cluster {{name}}",
       "newVar": {
@@ -1975,6 +1978,7 @@
     },
     "crosstabs": {
       "crosstabTitle": "{{name}} — Crosstabulation",
+      "warnFisherMonteCarlo": "Fisher's exact test could not be computed exactly for this table; the value shown is a Monte Carlo estimate (fixed seed, 20,000 replicates).",
       "cellCount": "Count",
       "cellExpected": "Expected Count",
       "cellRowPct": "% within Row",
@@ -2265,7 +2269,8 @@
     "newVars": {
       "created": "{{name}} added to the dataset as new variables. The file was not saved — Ctrl+Z undoes this.",
       "failed": "Could not create the new variables; the dataset is unchanged: {{name}}",
-      "noDataset": "Could not create new variables: no dataset is open."
+      "noDataset": "Could not create new variables: no dataset is open.",
+      "datasetChanged": "Could not create the new variables: the analysis ran on a dataset that is no longer the active one."
     }
   },
   "col": {

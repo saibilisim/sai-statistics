@@ -203,7 +203,7 @@ export function useAppEffects({
       // the block can report what happened to the dataset. applyCaseVars()
       // returns the payload untouched for the analyses that produce none, so
       // this costs nothing for the other ~50.
-      void applyCaseVars(payload.result, i18n.t.bind(i18n)).then(result => {
+      void applyCaseVars(payload.result, i18n.t.bind(i18n), payload.datasetId).then(result => {
         useOutputStore.getState().addBlock({
           id: payload.jobId,
           analysisId: payload.analysisId,

@@ -5,6 +5,7 @@ import fs from 'fs'
 import { autoUpdater, NsisUpdater } from 'electron-updater'
 import { verifyInstallerSignature } from './update-signature'
 import log from 'electron-log'
+import { getSettings } from './settings-handler'
 import { IPC } from '../../shared/ipc-contracts'
 import type { UpdaterStatusPayload } from '../../shared/ipc-contracts'
 import { validateSender } from './security'
@@ -96,7 +97,9 @@ function startDownload(): void {
 
 function send(payload: UpdaterStatusPayload): void {
   lastStatus = payload
-  mainWindow?.webContents.send(IPC.UPDATER_STATUS, payload)
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(IPC.UPDATER_STATUS, payload)
+  }
 }
 
 /**
@@ -104,6 +107,11 @@ function send(payload: UpdaterStatusPayload): void {
  * saniye sonra ilk kontrolü tetikler ve `updater:restart-to-install` IPC
  * handler'ını kaydeder. Windows dışında / dev'de no-op.
  */
+/** Re-point status pushes at a re-created window (macOS dock re-open). */
+export function setUpdaterWindow(win: BrowserWindow): void {
+  mainWindow = win
+}
+
 export function registerUpdaterHandlers(win: BrowserWindow): void {
   mainWindow = win
 
@@ -204,6 +212,7 @@ export function registerUpdaterHandlers(win: BrowserWindow): void {
   // Açılıştan hemen sonra değil — pencere/Renderer daha ayağa kalkarken ağ
   // I/O'suyla yarışmasın diye kısa bir gecikme.
   setTimeout(() => {
+    if (!getSettings().update.autoCheck) return
     autoUpdater.checkForUpdates().catch((err: unknown) => {
       log.error('[updater] initial checkForUpdates failed', err)
     })

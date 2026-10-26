@@ -68,6 +68,8 @@
     "updateActionOpenPage": "Abrir Página de Download",
     "updateDontShowAgain": "Não mostrar novamente para esta versão",
     "updateDontShowAgainHint": "Quando marcado, a notificação da barra de status para esta versão fica oculta; ela reaparece quando uma versão mais recente for lançada.",
+    "updateAutoCheck": "Procurar atualizações automaticamente",
+    "updateAutoCheckHint": "Desativado, o SAI Statistics não envia nenhum pedido de versão ao iniciar e a barra de estado não mostra avisos de atualização. A alteração aplica-se a partir do próximo arranque.",
     "updateManagedByFlathub": "Esta instalação é atualizada pelo Flathub. As novas versões chegam pela sua central de programas ou com \"flatpak update\".",
     "categories": {
       "general": "Geral",

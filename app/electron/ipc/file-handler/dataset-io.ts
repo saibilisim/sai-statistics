@@ -3,6 +3,7 @@
 import { ipcMain, dialog, app } from 'electron'
 import path from 'path'
 import fs from 'fs'
+import { randomUUID } from 'crypto'
 import AdmZip from 'adm-zip'
 import { z } from 'zod'
 import { IPC } from '../../../shared/ipc-contracts'
@@ -28,6 +29,7 @@ import {
 import log from 'electron-log'
 import { validateSender, handleValidated } from '../security'
 import { approvePath, assertApprovedPath } from '../approved-paths'
+import { isRecoveryPath } from '../../recovery-path'
 import {
   dialogText,
   warnIfLargeDataset,
@@ -54,16 +56,21 @@ export async function writeDatasetSdf(
   outputDocument?: OutputDocument | null
 ): Promise<void> {
   const conn = await getDbConnection()
-  const tempParquetPath = path.join(app.getPath('temp'), `data_${dataset.id}.parquet`)
-  const tempVariablesPath = path.join(app.getPath('temp'), `variables_${dataset.id}.json`)
-  const tempStylesPath = path.join(app.getPath('temp'), `styles_${dataset.id}.json`)
-  const tempMetadataPath = path.join(app.getPath('temp'), `metadata_${dataset.id}.json`)
-  const tempChatPath = path.join(app.getPath('temp'), `ai-chat_${dataset.id}.json`)
-  const tempOutputPath = path.join(app.getPath('temp'), `output_${dataset.id}.json`)
+  // Private per-call directory: unpredictable (no symlink pre-planting in a
+  // shared /tmp) and never shared with a concurrent save or recovery checkpoint.
+  const tempDir = await fs.promises.mkdtemp(path.join(app.getPath('temp'), 'sai-sdf-'))
+  const tempParquetPath = path.join(tempDir, 'data.parquet')
+  const tempVariablesPath = path.join(tempDir, 'variables.json')
+  const tempStylesPath = path.join(tempDir, 'styles.json')
+  const tempMetadataPath = path.join(tempDir, 'metadata.json')
+  const tempChatPath = path.join(tempDir, 'ai-chat.json')
+  const tempOutputPath = path.join(tempDir, 'output.json')
+  // The zip is built next to the target and renamed over it, so a crash or a
+  // full disk never leaves a truncated .sdf in place of the previous save.
+  const tempTargetPath = `${targetPath}.tmp-${randomUUID()}`
 
   try {
     // 1. Export DuckDB table to Parquet
-    if (fs.existsSync(tempParquetPath)) fs.unlinkSync(tempParquetPath)
     const safeParquetPath = tempParquetPath.replace(/'/g, "''")
 
     // Exclude __row_idx (positional, rebuilt on load) but KEEP __case_id: the
@@ -114,24 +121,19 @@ export async function writeDatasetSdf(
     zip.addLocalFile(tempMetadataPath, undefined, 'metadata.json')
     zip.addLocalFile(tempChatPath, undefined, 'ai-chat.json')
     if (outputDocument) zip.addLocalFile(tempOutputPath, undefined, 'output.json')
-    zip.writeZip(targetPath)
+    await zip.writeZipPromise(tempTargetPath)
+    await fs.promises.rename(tempTargetPath, targetPath)
 
     log.info(`Dataset written to: ${targetPath}`)
   } catch (err) {
     log.error('Failed to write dataset', err)
     throw err
   } finally {
-    // Cleanup temp files — non-blocking, errors are suppressed so one failure
-    // doesn't prevent the others from being cleaned up.
-    const cleanups = [
-      tempParquetPath,
-      tempVariablesPath,
-      tempStylesPath,
-      tempMetadataPath,
-      tempChatPath,
-      tempOutputPath
-    ]
-    await Promise.allSettled(cleanups.map(p => fs.promises.unlink(p).catch(() => undefined)))
+    // Cleanup — errors are suppressed so one failure doesn't block the other.
+    await Promise.allSettled([
+      fs.promises.rm(tempDir, { recursive: true, force: true }),
+      fs.promises.rm(tempTargetPath, { force: true })
+    ])
   }
 }
 
@@ -145,6 +147,9 @@ async function saveDatasetToSdf(
   chatHistory?: PersistedAiChatEntry[] | null,
   outputDocument?: OutputDocument | null
 ): Promise<void> {
+  // The recovery snapshot is housekeeping state that Main deletes — a user
+  // "save" must never land there (the only copy of their work would vanish).
+  if (isRecoveryPath(targetPath)) throw new Error('Cannot save into the recovery file')
   await writeDatasetSdf(dataset, targetPath, customStyles, chatHistory, outputDocument)
   if (customStyles) datasetCustomStyles.set(dataset.id, customStyles)
   dataset.filePath = targetPath
@@ -302,8 +307,7 @@ export function registerDatasetHandlers(): void {
       assertApprovedPath(filePath)
 
       log.info(`Opening SDF file: ${filePath}`)
-      const tempExtractPath = path.join(app.getPath('temp'), `extract_${String(Date.now())}`)
-      await fs.promises.mkdir(tempExtractPath, { recursive: true })
+      const tempExtractPath = await fs.promises.mkdtemp(path.join(app.getPath('temp'), 'sai-sdf-'))
 
       try {
         extractZipSafely(
@@ -439,14 +443,21 @@ export function registerDatasetHandlers(): void {
           `CREATE TABLE ${tempTableName} AS SELECT * FROM read_parquet('${safeParquetPath}')`
         )
 
-        const fileName = path.basename(filePath, '.sdf')
+        // A crash-recovery copy opens as an untitled dataset: Save then has to go
+        // through Save As, and Main deleting the recovery file loses nothing.
+        const isRecovery = isRecoveryPath(filePath)
+        const fileName = isRecovery ? dialogText().untitledDataset : path.basename(filePath, '.sdf')
         const dataset = await loadDatasetIntoDb(
           datasetId,
           fileName,
-          filePath,
+          isRecovery ? null : filePath,
           variables,
           tempTableName
         )
+
+        // Recovered work has no saved home yet — keep it "modified" so the
+        // unsaved-changes guard and the recovery checkpoint protect it.
+        if (isRecovery) setDatasetModified(dataset, true)
 
         warnIfLargeDataset(dataset)
         if (styles) datasetCustomStyles.set(datasetId, styles)
@@ -494,6 +505,7 @@ export function registerDatasetHandlers(): void {
           return null
         }
 
+        approvePath(result.filePath)
         await saveDatasetToSdf(dataset, result.filePath, customStyles, chatHistory, outputDocument)
         return result.filePath
       }
@@ -517,6 +529,7 @@ export function registerDatasetHandlers(): void {
         return null
       }
 
+      approvePath(result.filePath)
       await saveDatasetToSdf(dataset, result.filePath, customStyles, chatHistory, outputDocument)
       return result.filePath
     }

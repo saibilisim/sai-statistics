@@ -17,6 +17,7 @@ import { writeFile, unlink, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { tmpdir, devNull, homedir } from 'os'
+import { privateTmpDir } from '../private-tmp'
 import { randomUUID, createHash } from 'crypto'
 import log from 'electron-log'
 import type { RStatus, RStatusPayload } from '../../shared/ipc-contracts'
@@ -262,10 +263,10 @@ export async function runRScript(opts: RunRScriptOptions): Promise<RunRScriptRes
     throw new Error('R is not available — Rscript not found')
   }
 
-  const paramsFile = join(tmpdir(), `sai-params-${randomUUID()}.json`)
+  const paramsFile = join(privateTmpDir(), `sai-params-${randomUUID()}.json`)
 
   try {
-    await writeFile(paramsFile, JSON.stringify(opts.params), 'utf8')
+    await writeFile(paramsFile, JSON.stringify(opts.params), { encoding: 'utf8', mode: 0o600 })
     log.debug(`[r-bridge] params written to ${paramsFile}`)
   } catch (err) {
     throw new Error(`Failed to write R params file: ${String(err)}`)

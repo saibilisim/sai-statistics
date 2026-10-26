@@ -461,6 +461,8 @@ export interface JobCompletePayload {
   jobId: string
   analysisId: string
   result: AnalysisResult
+  /** Dataset the job ran on (case variables must be written back to THIS one). */
+  datasetId?: string
   /**
    * Set when the job was enqueued by the AI agent (ai-bridge.ts) rather than
    * a Renderer dialog/tab. NormalityView's own job:complete listener uses

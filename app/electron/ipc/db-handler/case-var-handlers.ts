@@ -21,7 +21,8 @@ import { CreateVariablesRequestSchema } from '../../../shared/ipc-schemas'
 import type { CaseVar } from '../../../shared/analysis-types'
 import { VariableSchema } from '../../../shared/data-types'
 import type { Variable } from '../../../shared/data-types'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
+import { isValidVariableName } from '../../../shared/variable-name'
 import { getDbConnection, getDatasetOrThrow, setDatasetModified } from './state'
 import { captureForMutation } from '../undo-manager'
 
@@ -30,17 +31,8 @@ import { captureForMutation } from '../undo-manager'
 // peak memory flat and the statement size predictable.
 const INSERT_CHUNK = 500
 
-/**
- * A new variable name has to be usable from R and from SPSS syntax later, so
- * it is held to the same shape the rest of the app assumes for identifiers
- * rather than merely being non-empty.
- */
-function isValidVariableName(name: string): boolean {
-  return /^[A-Za-z][A-Za-z0-9_.]{0,63}$/.test(name)
-}
-
 export function registerCaseVarHandlers(): void {
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_CREATE_VARIABLES,
     CreateVariablesRequestSchema,
     async (req): Promise<TransformResult> => {

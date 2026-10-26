@@ -7,13 +7,14 @@
 
 import { app } from 'electron'
 import { join, basename } from 'path'
-import { unlink } from 'fs/promises'
+import { unlinkSync } from 'fs'
 import { randomUUID } from 'crypto'
 import log from 'electron-log'
 import type { WebContents } from 'electron'
 import { IPC } from '../../../shared/ipc-contracts'
 import type { JobCompletePayload, JobErrorPayload } from '../../../shared/ipc-contracts'
 import type { AnalysisResult } from '../../../shared/analysis-types'
+import { isAnalysisScriptAllowed } from '../../../shared/analysis-scripts'
 import { getSettings } from '../settings-handler'
 import {
   exportDatasetToParquet,
@@ -110,6 +111,27 @@ function waitForJob(jobId: string, signal: AbortSignal): Promise<AnalysisResult>
  * kullanıcının onayladığı SELECT IF'ten bağımsız olarak DAİMA tam veri kümesi
  * üzerinde koşuyordu (destek talebi). Artık weight/split ile aynı choke point.
  */
+/**
+ * §9: raw data rows never reach the model. Case-level listings (SUMMARIZE /
+ * REPORT case lists, EXAMINE extreme values) are switched off for every
+ * AI-initiated job, whatever the model's syntax asked for.
+ */
+function withoutCaseLevelOutput(params: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...params, displayCases: false }
+  const options = out['options']
+  if (options && typeof options === 'object' && !Array.isArray(options)) {
+    const o = options as Record<string, unknown>
+    const stats = o['stats']
+    out['options'] = {
+      ...o,
+      ...(stats && typeof stats === 'object' && !Array.isArray(stats)
+        ? { stats: { ...(stats as Record<string, unknown>), outliers: false } }
+        : {})
+    }
+  }
+  return out
+}
+
 export async function enqueueAiAnalysis(args: {
   datasetId: string
   analysisId: string
@@ -123,6 +145,9 @@ export async function enqueueAiAnalysis(args: {
   const safeFile = basename(args.scriptFile)
   if (safeFile !== args.scriptFile || !safeFile.endsWith('.R')) {
     throw new Error(`Invalid scriptFile: ${args.scriptFile}`)
+  }
+  if (!isAnalysisScriptAllowed(safeFile)) {
+    throw new Error(`Script not allowed: ${args.scriptFile}`)
   }
   const rScriptsDir = !app.isPackaged
     ? join(app.getAppPath(), 'r-scripts')
@@ -140,7 +165,7 @@ export async function enqueueAiAnalysis(args: {
   const variableDecimals = getVariableDecimalsMap(args.datasetId)
 
   const enrichedParams: Record<string, unknown> = {
-    ...args.params,
+    ...withoutCaseLevelOutput(args.params),
     parquetPath,
     rScriptsDir,
     datasetId: args.datasetId,
@@ -162,9 +187,12 @@ export async function enqueueAiAnalysis(args: {
     params: enrichedParams,
     source: 'ai',
     onFinally: () => {
-      void unlink(parquetPath).catch((err: unknown) => {
+      // Sync: also fired from cancelAllJobs() while the app is quitting.
+      try {
+        unlinkSync(parquetPath)
+      } catch (err) {
         log.warn(`[ai-bridge] Failed to delete parquet ${parquetPath}: ${String(err)}`)
-      })
+      }
     }
   })
   const result = await resultPromise

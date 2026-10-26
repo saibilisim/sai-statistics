@@ -161,7 +161,10 @@ export const SettingsSchema = z
     // otomatik geri döner.
     update: z
       .object({
-        dismissedVersion: z.string().nullable().default(null)
+        dismissedVersion: z.string().nullable().default(null),
+        // false → no version query at startup / in the status bar (privacy
+        // opt-out); the user can still update manually.
+        autoCheck: z.boolean().default(true)
       })
       .prefault({}),
     ribbon: z

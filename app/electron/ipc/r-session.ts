@@ -19,7 +19,8 @@ import { app, BrowserWindow, dialog } from 'electron'
 import { spawn, type ChildProcess } from 'child_process'
 import { join, resolve, sep, dirname, basename } from 'path'
 import { tmpdir } from 'os'
-import { randomUUID } from 'crypto'
+import { randomBytes, randomUUID } from 'crypto'
+import { rmSync } from 'fs'
 import { unlink, readFile, mkdtemp, rm, stat } from 'fs/promises'
 import log from 'electron-log'
 import { IPC } from '../../shared/ipc-contracts'
@@ -560,6 +561,14 @@ const MARKERS: [string, (rest: string) => void][] = [
   ]
 ]
 
+// Per-session secret baked into every side-channel marker (see .sai_emit in
+// _r_console.R): output printed by user data cannot forge a control line.
+let markerNonce = ''
+
+function markerText(name: string): string {
+  return markerNonce ? name.replace('__SAI_', `__SAI${markerNonce}_`) : name
+}
+
 function setStatus(s: RSessionStatus): void {
   status = s
   if (win && !win.isDestroyed()) {
@@ -714,9 +723,10 @@ function handleStdout(text: string): void {
       pump()
       continue
     }
-    const marker = MARKERS.find(([m]) => line.includes(m))
+    const marker = MARKERS.find(([m]) => line.includes(markerText(m)))
     if (marker) {
-      const [m, handle] = marker
+      const [name, handle] = marker
+      const m = markerText(name)
       const idx = line.indexOf(m)
       if (idx > 0) out.push(line.slice(0, idx))
       flush() // preserve ordering: text before the side output it produced
@@ -819,14 +829,21 @@ function wire(child: ChildProcess): void {
       log.warn(`[r-session] stdio error: ${err.message}`)
     })
   }
+  // A replaced (killed, not yet dead) process must not feed the new session.
   child.stdout?.on('data', (b: Buffer) => {
-    handleStdout(b.toString('utf8'))
+    if (child === proc) handleStdout(b.toString('utf8'))
   })
   child.stderr?.on('data', (b: Buffer) => {
-    handleStderr(b.toString('utf8'))
+    if (child === proc) handleStderr(b.toString('utf8'))
   })
   child.on('exit', code => {
     log.info(`[r-session] R console exited (code=${String(code)})`)
+    if (child !== proc) {
+      // kill() already reset the state; a newer session may be running — its
+      // status must not be flipped to "dead" by this late exit.
+      killing = false
+      return
+    }
     // An exit nobody asked for (crash, q(), killed from outside) — say so,
     // otherwise the console just flips to "stopped" with no explanation.
     if (!killing && code !== 0) emitNotice('terminal.r.notice.exited', { code: String(code) })
@@ -840,6 +857,7 @@ function wire(child: ChildProcess): void {
     setStatus('dead')
   })
   child.on('error', err => {
+    if (child !== proc) return
     log.error(`[r-session] spawn error: ${err.message}`)
     emitNotice('terminal.r.notice.startFailed', { detail: err.message })
     setStatus('dead')
@@ -865,7 +883,18 @@ async function killParquet(): Promise<void> {
 
 // ─── Lifecycle ──────────────────────────────────────────────────────────────
 
-async function start(datasetId?: string): Promise<RSessionStatus> {
+// start() awaits several things before it spawns; a second call (double-click on
+// Restart) must join the first instead of spawning a second Rscript.
+let starting: Promise<RSessionStatus> | null = null
+
+function start(datasetId?: string): Promise<RSessionStatus> {
+  starting ??= startSession(datasetId).finally(() => {
+    starting = null
+  })
+  return starting
+}
+
+async function startSession(datasetId?: string): Promise<RSessionStatus> {
   if (proc) return status
   // CLAUDE.md §9 R-console exception rule 1: opt-out via settings.json
   // (r.consoleEnabled) for restricted/enterprise deployments.
@@ -897,10 +926,16 @@ async function start(datasetId?: string): Promise<RSessionStatus> {
   // (with --file=<script> it would read the script file and never stop).
   const args = parquetPath ? ['-', parquetPath] : ['-']
   log.info(`[r-session] spawn: ${rscript} ${args.join(' ')} (${scriptPath})`)
+  markerNonce = randomBytes(8).toString('hex')
   proc = spawn(rscript, args, {
     shell: false,
     cwd: sessionCwd(),
-    env: { ...rEnv(), SAI_R_SIDE_DIR: sideDir, SAI_R_CONSOLE_SCRIPT: scriptPath }
+    env: {
+      ...rEnv(),
+      SAI_R_SIDE_DIR: sideDir,
+      SAI_R_CONSOLE_SCRIPT: scriptPath,
+      SAI_R_MARKER_NONCE: markerNonce
+    }
   })
   wire(proc)
   resetDebug()
@@ -1020,6 +1055,17 @@ async function interrupt(datasetId?: string): Promise<{ restarted: boolean }> {
 /** Kill on app shutdown. */
 export function killRSession(): void {
   kill()
+  // kill() defers removing the side dir (the process may still hold files);
+  // at shutdown there is no later, so remove it now.
+  const dir = sideDir
+  if (dir && resolve(dir).startsWith(resolve(tmpdir()) + sep)) {
+    sideDir = null
+    try {
+      rmSync(dir, { recursive: true, force: true })
+    } catch {
+      // best effort — a locked file on Windows is cleaned by the OS temp sweep
+    }
+  }
 }
 
 // ─── IPC ────────────────────────────────────────────────────────────────────

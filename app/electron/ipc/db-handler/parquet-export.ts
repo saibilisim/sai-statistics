@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 SAI Bilişim
 // SPDX-License-Identifier: AGPL-3.0-only
 import { join } from 'path'
-import { tmpdir } from 'os'
+import { privateTmpDir } from '../../private-tmp'
 import { randomUUID } from 'crypto'
 import { buildFilterWhere } from '../../../shared/data-filter'
 import log from 'electron-log'
@@ -22,7 +22,7 @@ export async function exportDatasetToParquet(
   const dataset = getDatasetOrThrow(datasetId)
 
   const tableName = `dataset_${datasetId}`
-  const parquetPath = join(tmpdir(), `sai-export-${randomUUID()}.parquet`)
+  const parquetPath = join(privateTmpDir(), `sai-export-${randomUUID()}.parquet`)
 
   // Build WHERE clause from column filters (may be empty)
   const { sql: where, params } = buildFilterWhere(columnFilters, dataset.variables)
@@ -69,7 +69,10 @@ export async function exportDatasetForConsole(datasetId: string): Promise<string
   if (dataset.variables.length === 0) throw new Error(`Dataset has no variables: ${datasetId}`)
 
   const tableName = `dataset_${datasetId}`
-  const parquetPath = join(tmpdir(), `sai-rconsole-${randomUUID()}.parquet`).replace(/\\/g, '/')
+  const parquetPath = join(privateTmpDir(), `sai-rconsole-${randomUUID()}.parquet`).replace(
+    /\\/g,
+    '/'
+  )
   const projection = dataset.variables
     .map(v => `"${v.colId}" AS "${v.name.replace(/"/g, '""')}"`)
     .join(', ')

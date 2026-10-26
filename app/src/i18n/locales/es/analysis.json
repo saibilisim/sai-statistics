@@ -1429,6 +1429,7 @@
         "dfbeta": "DfBeta — {{name}}"
       },
       "notConverged": "El modelo no convergió dentro del número máximo de iteraciones — los resultados pueden no ser fiables.",
+      "separation": "Separación perfecta o casi perfecta: algunas probabilidades ajustadas son numéricamente 0 o 1, por lo que los coeficientes y errores estándar no son fiables (B y SE muy grandes).",
       "iterationTitle": "Historial de Iteraciones",
       "iterationUnavailable": "No se pudo recuperar el historial de iteraciones a partir del ajuste del modelo.",
       "correlationTitle": "Matriz de Correlación de las Estimaciones",
@@ -1591,6 +1592,7 @@
       "stepLRNote": "La selección por pasos usó el estadístico de razón de verosimilitudes parcial (RV) tanto para la entrada como para la eliminación.",
       "stepWaldNote": "La selección por pasos usó el estadístico de razón de verosimilitudes parcial (RV) para la entrada y el estadístico de Wald para la eliminación.",
       "stepLimit": "La selección por pasos alcanzó su límite de pasos; el modelo se informa tal como estaba en ese punto.",
+      "coefInfinite": "El ajuste de Cox informó de un coeficiente no convergente o infinito (a menudo separación completa); las estimaciones y errores estándar no son fiables.",
       "noTermsEntered": "Ninguna covariable cumplió el criterio de entrada: el modelo está vacío.",
       "baselineUnavailable": "No se pudo calcular la tabla de la función de base para este modelo.",
       "phUnavailable": "No se pudo calcular el contraste de riesgos proporcionales para este modelo.",
@@ -1729,6 +1731,7 @@
     },
     "kmeans": {
       "centersTitle": "Centros de los conglomerados finales",
+      "notConverged": "K-medias no convergió en 50 iteraciones; los conglomerados son provisionales.",
       "sizesTitle": "Número de casos en cada conglomerado",
       "clusterHdr": "Conglomerado {{name}}",
       "newVar": {
@@ -1975,6 +1978,7 @@
     },
     "crosstabs": {
       "crosstabTitle": "{{name}} — Tabla de contingencia",
+      "warnFisherMonteCarlo": "La prueba exacta de Fisher no pudo calcularse de forma exacta para esta tabla; el valor mostrado es una estimación Monte Carlo (semilla fija, 20 000 réplicas).",
       "cellCount": "Recuento",
       "cellExpected": "Recuento esperado",
       "cellRowPct": "% de fila",
@@ -2265,7 +2269,8 @@
     "newVars": {
       "created": "{{name}} se han añadido al conjunto de datos como nuevas variables. El archivo no se guardó — Ctrl+Z lo deshace.",
       "failed": "No se pudieron crear las nuevas variables; el conjunto de datos no ha cambiado: {{name}}",
-      "noDataset": "No se pudieron crear nuevas variables: no hay ningún conjunto de datos abierto."
+      "noDataset": "No se pudieron crear nuevas variables: no hay ningún conjunto de datos abierto.",
+      "datasetChanged": "No se pudieron crear las nuevas variables: el análisis se ejecutó en un conjunto de datos que ya no es el activo."
     }
   },
   "col": {

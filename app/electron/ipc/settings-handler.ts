@@ -8,7 +8,7 @@ import { SettingsSetRequestSchema } from '@shared/ipc-schemas'
 import log from 'electron-log'
 import { rebuildMenu } from '../menu/menu-builder'
 import { validateSender, handleValidated } from './security'
-import { approvePaths } from './approved-paths'
+import { approvePaths, isApprovedPath } from './approved-paths'
 
 // Store, app ready olduktan sonra (registerSettingsHandlers içinde) oluşturulur;
 // modül yükleme anında app.getName() henüz hazır olmadığı için lazy init şart.
@@ -52,6 +52,19 @@ export function registerSettingsHandlers(): void {
     const [section, key] = req.path.split('.')
     if (!section) return
     const sectionKey = section as keyof AppSettings
+    // recentFiles is re-approved as trusted paths on the next launch, so the
+    // renderer may only reorder/prune it or add paths Main already approved
+    // (dialog / drop / menu) — never introduce an arbitrary path.
+    if (req.path === 'recentFiles') {
+      const known = new Set(readSettings().recentFiles)
+      const value = req.value
+      if (
+        !Array.isArray(value) ||
+        !value.every(p => typeof p === 'string' && (known.has(p) || isApprovedPath(p)))
+      ) {
+        throw new Error('recentFiles may only contain paths Main has already approved')
+      }
+    }
     const current = (store.get(sectionKey) as Record<string, unknown> | undefined) ?? {}
 
     // Build potential updated section data
@@ -73,6 +86,15 @@ export function registerSettingsHandlers(): void {
       log.warn('Settings validation failed, rejecting write request:', result.error)
       throw new Error(`Invalid settings: ${result.error.message}`)
     }
+
+    // zod strips unknown keys, so a typo'd path would "succeed" and write
+    // nothing: report it instead of silently dropping the value.
+    const writtenSection = (result.data as Record<string, unknown>)[sectionKey]
+    const known =
+      writtenSection !== undefined &&
+      (!key ||
+        (typeof writtenSection === 'object' && writtenSection !== null && key in writtenSection))
+    if (!known) throw new Error(`Unknown setting: ${req.path}`)
 
     // Validation succeeded, write the verified data
     store.store = result.data

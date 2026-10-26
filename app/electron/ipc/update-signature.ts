@@ -31,10 +31,52 @@ const PS_SCRIPT = [
   "[Console]::Out.Write($s.Status.ToString() + '|' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($subj)))"
 ].join('; ')
 
+/**
+ * Splits a DN ("CN=X, O=\"a, CN=b\", …") into [key, value] pairs, honouring
+ * double quotes — a quoted value may itself contain ", CN=" and must not be
+ * mistaken for a second attribute.
+ */
+function parseDn(dn: string): [string, string][] {
+  const pairs: [string, string][] = []
+  let i = 0
+  while (i < dn.length) {
+    while (i < dn.length && /[\s,]/.test(dn[i] ?? '')) i++
+    const eq = dn.indexOf('=', i)
+    if (eq < 0) break
+    const key = dn.slice(i, eq).trim().toUpperCase()
+    i = eq + 1
+    while (i < dn.length && dn[i] === ' ') i++
+    let value = ''
+    if (dn[i] === '"') {
+      i++
+      while (i < dn.length) {
+        if (dn[i] === '"') {
+          if (dn[i + 1] === '"') {
+            value += '"'
+            i += 2
+            continue
+          }
+          i++
+          break
+        }
+        value += dn.charAt(i)
+        i++
+      }
+      while (i < dn.length && dn[i] !== ',') i++
+    } else {
+      const comma = dn.indexOf(',', i)
+      const end = comma < 0 ? dn.length : comma
+      value = dn.slice(i, end)
+      i = end
+    }
+    pairs.push([key, value.trim()])
+  }
+  return pairs
+}
+
 /** CN of a distinguished name ("CN=X, O=Y, …"), or the name itself when it is not a DN. */
 export function commonName(name: string): string {
-  const m = /(?:^|,)\s*CN=(?:"([^"]*)"|([^,]*))/.exec(name)
-  const cn = m ? (m[1] ?? m[2] ?? '') : name.includes('=') ? '' : name
+  const cn = name.includes('=') ? (parseDn(name).find(([k]) => k === 'CN')?.[1] ?? '') : name
   return cn.trim().normalize('NFC')
 }
 

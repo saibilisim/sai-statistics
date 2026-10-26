@@ -37,6 +37,15 @@ import { restoreTerminalDrafts, startTerminalDraftAutosave } from './lib/termina
   useChatStore
 }
 
+// Never let Chromium navigate to a file dropped outside a drop zone — that
+// would replace the app with the dropped page. DataFileDropZone handles its own
+// drops and stops propagation, so it keeps working.
+for (const type of ['dragover', 'drop'] as const) {
+  window.addEventListener(type, e => {
+    if (e.dataTransfer?.types.includes('Files')) e.preventDefault()
+  })
+}
+
 const root = document.getElementById('root')
 if (!root) throw new Error('Root element not found')
 

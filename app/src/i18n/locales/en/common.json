@@ -108,6 +108,7 @@
     "empty": "0 rows",
     "numericInvalid": "Text can't be entered in a numeric column — the cell was reverted to its previous value.",
     "numericInvalidCount": "{{count}} cell(s) were skipped because they aren't numeric.",
+    "pastePersistFailed": "The pasted values could not be saved; the cells were restored.",
     "pasteGrowFailed": "Couldn't add the rows/columns needed for this paste — the paste was cancelled.",
     "editLockedWhileLoading": "Data is still loading — editing will be available once loading finishes.",
     "cannotDeleteLastColumn": "Cannot delete the last column — the dataset must have at least one variable.",
@@ -389,6 +390,7 @@
     "closeUnsavedMessage": "Unsaved changes in this script will be lost. Close it anyway?"
   },
   "output": {
+    "documentTitle": "SAI Statistics — Output",
     "navigator": "Contents",
     "resizeNavigator": "Resize contents panel",
     "empty": "No output yet",

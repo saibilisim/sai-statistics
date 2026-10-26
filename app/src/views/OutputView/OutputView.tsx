@@ -10,6 +10,7 @@
  * show running indicators and add completed results to the store.
  */
 
+import { useStatusNoticeStore } from '../../store/status-notice-store'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
@@ -373,6 +374,7 @@ export function OutputView() {
     setExportMenuPos(null)
     void exportOutputAs(format, i18nInstance.t).catch((err: unknown) => {
       console.error('Failed to export output:', err)
+      useStatusNoticeStore.getState().show('status.exportFailed', 'error', 5000)
     })
   }
 

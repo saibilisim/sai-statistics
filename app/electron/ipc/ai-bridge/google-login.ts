@@ -135,6 +135,12 @@ export async function performGoogleLogin(
         return
       }
       const returnedState = url.searchParams.get('state')
+      // A request without our state is not Google's redirect (e.g. a local
+      // process probing the port): ignore it instead of killing the sign-in.
+      if (returnedState !== state) {
+        res.writeHead(400).end()
+        return
+      }
       const code = url.searchParams.get('code')
       const errorParam = url.searchParams.get('error')
       const ok = !errorParam && !!code && returnedState === state

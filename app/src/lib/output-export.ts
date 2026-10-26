@@ -13,6 +13,7 @@
  */
 
 import type { TFunction } from 'i18next'
+import i18n from '../i18n'
 import type * as PlotlyTypes from 'plotly.js'
 import { useOutputStore, type OutputBlock } from '../store/output-store'
 import type { OutputPlot } from '@shared/analysis-types'
@@ -259,15 +260,15 @@ export async function buildOutputHtml(
   )
 
   return `<!doctype html>
-<html lang="en">
+<html lang="${escapeHtml(i18n.language)}">
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'" />
-<title>SAI Statistics — Output</title>
+<title>${escapeHtml(t('output.documentTitle'))}</title>
 <style>${CSS}</style>
 </head>
 <body>
-<h1>SAI Statistics — Output</h1>
+<h1>${escapeHtml(t('output.documentTitle'))}</h1>
 ${sections.filter(s => s !== '').join('\n')}
 </body>
 </html>`
@@ -411,7 +412,7 @@ export async function exportOutputAs(
       path = await window.api.file.exportOutputBinary(
         format === 'word'
           ? {
-              data: await office.buildOutputDocx(parts),
+              data: await office.buildOutputDocx(parts, t('output.documentTitle')),
               defaultName: 'output.docx',
               filterName: 'Word',
               extensions: ['docx']

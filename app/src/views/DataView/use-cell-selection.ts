@@ -1412,7 +1412,24 @@ export function useCellSelection(params: UseCellSelectionParams) {
         try {
           await window.api.data.updateCells({ datasetId: dsId, updates })
         } catch (err) {
+          // The grid was updated optimistically above; the DB write failed, so
+          // put the previous values (and formulas) back instead of showing
+          // data that Save and the analyses will never see.
           console.error('Paste persist failed:', err)
+          for (const b of batch) {
+            const rowArr = rowsRef.current[b.visRow]
+            if (rowArr) rowArr[b.col] = b.prevValue
+            if (b.prevFormula !== null) {
+              formulaOps?.setCellFormula(
+                toDbRow(b.visRow, visibleToOriginalIndexRef.current),
+                b.colId,
+                b.prevFormula
+              )
+            }
+          }
+          gridApiRef.current?.refreshCells({ force: true })
+          warnCell(t('dataset.pastePersistFailed'))
+          return
         }
         recordBatch(batch)
         // Pasted values may feed formulas elsewhere → recompute.

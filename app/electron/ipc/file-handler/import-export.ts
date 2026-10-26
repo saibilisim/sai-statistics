@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { dialog } from 'electron'
 import path from 'path'
-import { tmpdir } from 'os'
+import { privateTmpDir } from '../../private-tmp'
 import { randomUUID } from 'crypto'
 import { unlink } from 'fs/promises'
 import { z } from 'zod'
@@ -194,7 +194,7 @@ export function registerImportExportHandlers(): void {
         } else if (STAT_EXTENSIONS.includes(ext)) {
           // Preferred: haven (bundled R) — keeps user-missing codes + their
           // definitions, labels, formats in one read, works offline.
-          const parquetPath = path.join(tmpdir(), `sai-import-${randomUUID()}.parquet`)
+          const parquetPath = path.join(privateTmpDir(), `sai-import-${randomUUID()}.parquet`)
           try {
             havenMeta = await importStatFileWithHaven(
               filePath,
@@ -314,7 +314,7 @@ export function registerImportExportHandlers(): void {
       const safeExportPath = targetPath.replace(/'/g, "''")
 
       await conn.runAndReadAll(
-        `COPY (${userFacingSelect(dataset)}) TO '${safeExportPath}' (HEADER, DELIMITER ',')`
+        `COPY (${userFacingSelect(dataset, true)}) TO '${safeExportPath}' (HEADER, DELIMITER ',')`
       )
 
       log.info('CSV export completed successfully.')
@@ -399,7 +399,7 @@ export function registerImportExportHandlers(): void {
       }
 
       // Case order + colId-named columns; the path is ours (tmpdir + UUID).
-      const parquetPath = path.join(tmpdir(), `sai-sav-${randomUUID()}.parquet`)
+      const parquetPath = path.join(privateTmpDir(), `sai-sav-${randomUUID()}.parquet`)
       const conn = await getDbConnection()
       const cols = dataset.variables.map(v => `"${v.colId}"`).join(', ')
       await conn.runAndReadAll(
@@ -455,12 +455,28 @@ export function registerImportExportHandlers(): void {
  * (col_1, …), so name each one after its variable, and keep case order
  * (Sort Cases rewrites __row_idx, not necessarily the physical order).
  */
-function userFacingSelect(dataset: {
-  id: string
-  variables: { colId: string; name: string }[]
-}): string {
+function userFacingSelect(
+  dataset: {
+    id: string
+    variables: { colId: string; name: string; type: string }[]
+  },
+  /** CSV only: neutralise spreadsheet formula injection in text columns. */
+  neutraliseFormulas = false
+): string {
   const cols = dataset.variables
-    .map(v => `"${v.colId}" AS "${v.name.replace(/"/g, '""')}"`)
+    .map(v => {
+      const alias = `"${v.name.replace(/"/g, '""')}"`
+      if (neutraliseFormulas && v.type === 'string') {
+        // A leading = + - @ TAB CR makes Excel/LibreOffice evaluate the cell;
+        // plain numbers ("-5") stay untouched.
+        return (
+          `CASE WHEN regexp_matches("${v.colId}", '^[=+\\-@\t\r]') ` +
+          `AND NOT regexp_matches("${v.colId}", '^[+-]?[0-9]+([.,][0-9]+)?$') ` +
+          `THEN '''' || "${v.colId}" ELSE "${v.colId}" END AS ${alias}`
+        )
+      }
+      return `"${v.colId}" AS ${alias}`
+    })
     .join(', ')
   return `SELECT ${cols} FROM dataset_${dataset.id} ORDER BY __row_idx`
 }

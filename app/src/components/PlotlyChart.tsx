@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useEffect, useRef } from 'react'
 import type * as PlotlyTypes from 'plotly.js'
+import { sanitizePlotlyFigure } from '../lib/plotly-sanitize'
 
 // plotly.js-dist-min has no bundled types; we borrow the interface from @types/plotly.js
 type PlotlyModule = {
@@ -54,10 +55,12 @@ export function PlotlyChart({
     void (import('plotly.js-dist-min') as Promise<PlotlyModule>).then(Plotly => {
       if (!ref.current) return
       plotlyRef.current = Plotly
-      const plotData = data as {
-        data: PlotlyTypes.Data[]
-        layout: Partial<PlotlyTypes.Layout>
-      }
+      const plotData = sanitizePlotlyFigure(
+        data as {
+          data: PlotlyTypes.Data[]
+          layout: Partial<PlotlyTypes.Layout>
+        }
+      )
 
       // Strip hardcoded dimensions — autosize + responsive handles sizing
       const layoutCopy = { ...plotData.layout }

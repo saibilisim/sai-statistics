@@ -10,12 +10,14 @@
 import { app, dialog } from 'electron'
 import { z } from 'zod'
 import { join, basename } from 'path'
-import { unlink, writeFile } from 'fs/promises'
+import { unlinkSync } from 'fs'
+import { writeFile } from 'fs/promises'
 import { randomUUID } from 'crypto'
 import log from 'electron-log'
 import { IPC } from '../../shared/ipc-contracts'
 import { AnalysisRunRequestSchema, AnalysisCancelRequestSchema } from '../../shared/ipc-schemas'
 import { handleValidated } from './security'
+import { isAnalysisScriptAllowed } from '../../shared/analysis-scripts'
 import {
   exportDatasetToParquet,
   getWeightVariable,
@@ -61,6 +63,10 @@ export function registerAnalysisHandlers(): void {
       const safeFile = basename(req.scriptFile)
       if (safeFile !== req.scriptFile || !safeFile.endsWith('.R')) {
         throw new Error(`Invalid scriptFile: ${req.scriptFile}`)
+      }
+      // Helper scripts that read/write caller-supplied paths are Main-only.
+      if (!isAnalysisScriptAllowed(safeFile)) {
+        throw new Error(`Script not allowed: ${req.scriptFile}`)
       }
 
       let modelExportPath: string | undefined
@@ -165,9 +171,12 @@ export function registerAnalysisHandlers(): void {
           await writeFile(modelExportPath, result.modelXml, 'utf8')
         },
         onFinally: () => {
-          void unlink(parquetPath).catch((err: unknown) => {
+          // Sync: also fired from cancelAllJobs() while the app is quitting.
+          try {
+            unlinkSync(parquetPath)
+          } catch (err) {
             log.warn(`[analysis-handler] Failed to delete parquet ${parquetPath}: ${String(err)}`)
-          })
+          }
         }
       })
 

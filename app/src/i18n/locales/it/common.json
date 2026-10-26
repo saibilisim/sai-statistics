@@ -108,6 +108,7 @@
     "empty": "0 righe",
     "numericInvalid": "Non è possibile inserire testo in una colonna numerica — la cella è stata ripristinata al valore precedente.",
     "numericInvalidCount": "{{count}} cella/e saltata/e perché non numerica/che.",
+    "pastePersistFailed": "Impossibile salvare i valori incollati; le celle sono state ripristinate.",
     "pasteGrowFailed": "Impossibile aggiungere le righe/colonne necessarie per l'incolla — l'operazione è stata annullata.",
     "editLockedWhileLoading": "I dati sono ancora in fase di caricamento — la modifica sarà disponibile al termine del caricamento.",
     "cannotDeleteLastColumn": "Impossibile eliminare l'ultima colonna — il set di dati deve avere almeno una variabile.",
@@ -389,6 +390,7 @@
     "closeUnsavedMessage": "Le modifiche non salvate di questo script andranno perse. Chiuderlo comunque?"
   },
   "output": {
+    "documentTitle": "SAI Statistics — Risultati",
     "navigator": "Sommario",
     "resizeNavigator": "Ridimensiona il pannello sommario",
     "empty": "Nessun output ancora disponibile",

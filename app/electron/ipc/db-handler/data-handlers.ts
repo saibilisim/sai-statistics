@@ -15,7 +15,7 @@ import {
 import { buildFilterWhere } from '../../../shared/data-filter'
 import type { CellValue } from '../../../shared/data-types'
 import log from 'electron-log'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
 import { clearUndoHistory } from '../undo-manager'
 import {
   getDbConnection,
@@ -46,7 +46,7 @@ async function releaseDataset(datasetId: string): Promise<void> {
 export function registerDataHandlers(): void {
   // 1. data:get-all — DataView loads the full dataset at once. Pagination is out
   //    of scope (see CLAUDE.md §12); analysis reads straight from DuckDB.
-  handleValidated(
+  handleSerialized(
     IPC.DATA_GET_ALL,
     DatasetIdRequestSchema,
     async (req): Promise<DataSliceResult> => {
@@ -80,7 +80,7 @@ export function registerDataHandlers(): void {
   // rather than a __row_idx BETWEEN range — gap-safe if rows were ever
   // deleted (holes in __row_idx), and the cost difference is immeasurable
   // for an in-memory DuckDB scan.
-  handleValidated(
+  handleSerialized(
     IPC.DATA_GET_CHUNK,
     GetChunkRequestSchema,
     async (req): Promise<DataSliceResult> => {
@@ -112,7 +112,7 @@ export function registerDataHandlers(): void {
   // 2b. data:get-filtered — same shape as data:get-all but applies the active
   //     column filter (Select Cases) as a parameterised WHERE. The analysis
   //     layer calls this so statistics run on exactly the selected cases.
-  handleValidated(
+  handleSerialized(
     IPC.DATA_GET_FILTERED,
     GetFilteredRequestSchema,
     async (req): Promise<DataSliceResult> => {
@@ -144,7 +144,7 @@ export function registerDataHandlers(): void {
   // 2c. data:get-split-groups — distinct values of the Split File variable,
   //     respecting the active filter, ordered. The analysis runner loops these
   //     and runs the procedure once per group (adding an equality predicate).
-  handleValidated(
+  handleSerialized(
     IPC.DATA_GET_SPLIT_GROUPS,
     GetSplitGroupsRequestSchema,
     async (req): Promise<SplitGroupsResult> => {
@@ -180,7 +180,7 @@ export function registerDataHandlers(): void {
   // variable so analysis-handler can inject it into every subsequent
   // analysis:run; validated against the dataset's variables to reject stale
   // colIds (e.g. a weight column deleted after being selected).
-  handleValidated(IPC.DATA_SET_WEIGHT, SetWeightRequestSchema, (req): void => {
+  handleSerialized(IPC.DATA_SET_WEIGHT, SetWeightRequestSchema, (req): void => {
     const dataset = getDatasetOrThrow(req.datasetId)
     if (req.colId !== null && !dataset.variables.some(v => v.colId === req.colId)) {
       throw new Error(`Column not found: ${req.colId}`)
@@ -191,7 +191,7 @@ export function registerDataHandlers(): void {
   // 2e. data:set-split — Split File (B2). Records the active split variable
   // so analysis-handler can inject it into every subsequent analysis:run;
   // validated against the dataset's variables like data:set-weight.
-  handleValidated(IPC.DATA_SET_SPLIT, SetSplitRequestSchema, (req): void => {
+  handleSerialized(IPC.DATA_SET_SPLIT, SetSplitRequestSchema, (req): void => {
     const dataset = getDatasetOrThrow(req.datasetId)
     if (req.colId !== null && !dataset.variables.some(v => v.colId === req.colId)) {
       throw new Error(`Column not found: ${req.colId}`)
@@ -206,7 +206,7 @@ export function registerDataHandlers(): void {
   // on unknown/deleted colIds are dropped rather than rejected — buildFilterWhere
   // already ignores unknown columns, so a stale entry would be a silent no-op
   // there too; failing the whole sync over one stale filter would be worse.
-  handleValidated(IPC.DATA_SET_COLUMN_FILTERS, SetColumnFiltersRequestSchema, (req): void => {
+  handleSerialized(IPC.DATA_SET_COLUMN_FILTERS, SetColumnFiltersRequestSchema, (req): void => {
     const dataset = getDatasetOrThrow(req.datasetId)
     const validIds = new Set(dataset.variables.map(v => v.colId))
     const columnFilters = Object.fromEntries(
@@ -216,14 +216,14 @@ export function registerDataHandlers(): void {
   })
 
   // 2g. data:release-dataset — the renderer replaced the active dataset.
-  handleValidated(IPC.DATA_RELEASE_DATASET, DatasetIdRequestSchema, req =>
+  handleSerialized(IPC.DATA_RELEASE_DATASET, DatasetIdRequestSchema, req =>
     releaseDataset(req.datasetId)
   )
 
   // 2h. data:set-custom-styles — cell formats/formulas changed in the
   // renderer: keep a copy for the recovery checkpoint and mark the dataset
   // dirty (a format-only edit touches no DuckDB data, so nothing else would).
-  handleValidated(IPC.DATA_SET_CUSTOM_STYLES, SetCustomStylesRequestSchema, (req): void => {
+  handleSerialized(IPC.DATA_SET_CUSTOM_STYLES, SetCustomStylesRequestSchema, (req): void => {
     const dataset = getDatasetOrThrow(req.datasetId)
     if (req.customStyles) datasetCustomStyles.set(req.datasetId, req.customStyles)
     else datasetCustomStyles.delete(req.datasetId)

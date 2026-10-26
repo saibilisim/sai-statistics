@@ -1429,6 +1429,7 @@
         "dfbeta": "DfBeta — {{name}}"
       },
       "notConverged": "Il modello non è converso entro il numero massimo di iterazioni — i risultati potrebbero non essere affidabili.",
+      "separation": "Separazione perfetta o quasi perfetta: alcune probabilità stimate sono numericamente 0 o 1, quindi coefficienti ed errori standard non sono affidabili (B e SE molto grandi).",
       "iterationTitle": "Cronologia delle Iterazioni",
       "iterationUnavailable": "Non è stato possibile recuperare la cronologia delle iterazioni dall'adattamento del modello.",
       "correlationTitle": "Matrice di Correlazione delle Stime",
@@ -1591,6 +1592,7 @@
       "stepLRNote": "La selezione per passi ha usato la statistica del rapporto di verosimiglianza parziale (RV) sia per l'ingresso sia per la rimozione.",
       "stepWaldNote": "La selezione per passi ha usato la statistica del rapporto di verosimiglianza parziale (RV) per l'ingresso e la statistica di Wald per la rimozione.",
       "stepLimit": "La selezione per passi ha raggiunto il limite di passi; il modello è riportato come si presentava a quel punto.",
+      "coefInfinite": "L'adattamento di Cox ha segnalato un coefficiente non convergente o infinito (spesso separazione completa); stime ed errori standard non sono affidabili.",
       "noTermsEntered": "Nessuna covariata ha soddisfatto il criterio di ingresso: il modello è vuoto.",
       "baselineUnavailable": "La tabella della funzione di base non ha potuto essere calcolata per questo modello.",
       "phUnavailable": "Il test dei rischi proporzionali non ha potuto essere calcolato per questo modello.",
@@ -1729,6 +1731,7 @@
     },
     "kmeans": {
       "centersTitle": "Centri finali dei cluster",
+      "notConverged": "K-medie non è convergente entro 50 iterazioni; i cluster sono provvisori.",
       "sizesTitle": "Numero di casi in ogni cluster",
       "clusterHdr": "Cluster {{name}}",
       "newVar": {
@@ -1975,6 +1978,7 @@
     },
     "crosstabs": {
       "crosstabTitle": "{{name}} — Tavola di contingenza",
+      "warnFisherMonteCarlo": "Il test esatto di Fisher non è stato calcolabile esattamente per questa tabella; il valore mostrato è una stima Monte Carlo (seme fisso, 20.000 repliche).",
       "cellCount": "Conteggio",
       "cellExpected": "Conteggio atteso",
       "cellRowPct": "% entro riga",
@@ -2265,7 +2269,8 @@
     "newVars": {
       "created": "{{name}} aggiunte al set di dati come nuove variabili. Il file non è stato salvato — Ctrl+Z annulla.",
       "failed": "Impossibile creare le nuove variabili; il set di dati è invariato: {{name}}",
-      "noDataset": "Impossibile creare nuove variabili: nessun set di dati aperto."
+      "noDataset": "Impossibile creare nuove variabili: nessun set di dati aperto.",
+      "datasetChanged": "Impossibile creare le nuove variabili: l'analisi è stata eseguita su un set di dati che non è più quello attivo."
     }
   },
   "col": {

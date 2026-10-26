@@ -108,6 +108,7 @@
     "empty": "0 satır",
     "numericInvalid": "Sayısal sütuna metin girilemez — hücre önceki değerine döndürüldü.",
     "numericInvalidCount": "{{count}} hücre sayısal olmadığı için atlandı.",
+    "pastePersistFailed": "Yapıştırılan değerler kaydedilemedi; hücreler eski haline döndürüldü.",
     "pasteGrowFailed": "Yapıştırma için gereken satır/sütun eklenemedi — yapıştırma iptal edildi.",
     "editLockedWhileLoading": "Veri hâlâ yükleniyor — düzenleme, yükleme tamamlanınca kullanılabilir.",
     "cannotDeleteLastColumn": "Son sütun silinemez — veri kümesinde en az bir değişken olmalı.",
@@ -389,6 +390,7 @@
     "closeUnsavedMessage": "Bu betikteki kaydedilmemiş değişiklikler kaybolacak. Yine de kapatılsın mı?"
   },
   "output": {
+    "documentTitle": "SAI Statistics — Çıktı",
     "navigator": "İçindekiler",
     "resizeNavigator": "İçindekiler panelini boyutlandır",
     "empty": "Henüz çıktı yok",

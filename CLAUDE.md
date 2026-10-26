@@ -232,10 +232,13 @@ preload, Main handlers and renderer calls share those types.
 
 **IPC & process boundary:**
 - No direct `fs`, `child_process` or DuckDB access in the renderer — only `window.api`.
-- IPC handlers **verify the sender** (`event.senderFrame` origin) and **validate
-  the payload with zod** before doing anything.
+- IPC handlers **verify the sender** (`validateSender`: main frame of a known
+  window whose URL is still the app's own renderer page — `electron/renderer-url.ts`)
+  and **validate the payload with zod** before doing anything.
 - New windows and navigation are blocked: `setWindowOpenHandler` (external
-  links → default browser), `will-navigate` denied.
+  links → default browser), `will-navigate` is pinned to the renderer's own URL
+  (a dropped `.html` must never load with the preload attached), and
+  `src/main.tsx` cancels file drops outside the drop zone.
 
 **Injection:**
 - Every user input that reaches R (column names, formulas) is validated against
@@ -250,6 +253,8 @@ The R terminal is the user running *their own code on their own machine* by
 choice (the RStudio/Jupyter category) — a different threat model. Its rules:
 1. Opt-in / power-user, can be disabled: `r.consoleEnabled` in `settings.json`
    (default `true`); `electron/ipc/r-session.ts` refuses to start when it is `false`.
+   This is a user *preference*, not a lock: `settings:set` lets the renderer
+   write any setting, so an administrator cannot enforce it from outside.
 2. **Nothing runs automatically** — even if an opened file contains code, it
    runs only when the user explicitly presses Run.
 3. Only the `senderFrame`-verified renderer drives the console.

@@ -13,6 +13,7 @@
  * CLAUDE.md §9 exception: the user's own local code — nothing auto-runs; the
  * script only reaches R on an explicit Run / Ctrl+Enter.
  */
+import { useStatusNoticeStore } from '../../store/status-notice-store'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Variable } from '@shared/data-types'
@@ -1154,7 +1155,12 @@ export function RConsole({ modeSwitch, active }: { modeSwitch: React.ReactNode; 
                     report={rReport}
                     running={reportRunning}
                     onRerun={() => void runReport()}
-                    onSave={format => void saveReport(format)}
+                    onSave={format =>
+                      void saveReport(format).catch((err: unknown) => {
+                        console.error('Failed to save report:', err)
+                        useStatusNoticeStore.getState().show('status.exportFailed', 'error', 5000)
+                      })
+                    }
                   />
                 )}
                 {activeWidget && (

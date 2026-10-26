@@ -63,6 +63,7 @@ vi.mock('electron', () => ({
   }
 }))
 
+vi.mock('../../electron/renderer-url', () => ({ isRendererUrl: () => true }))
 vi.mock('electron-log', () => ({
   default: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() }
 }))

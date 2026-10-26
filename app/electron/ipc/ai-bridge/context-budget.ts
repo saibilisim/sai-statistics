@@ -36,6 +36,13 @@ function roundNumber(value: number): number {
   return Number(value.toPrecision(SIGNIFICANT_DIGITS))
 }
 
+/** Tables that list individual cases (§9: raw rows never go to the model). */
+const CASE_LEVEL_TITLE_PREFIXES = [
+  'output.caseSummaries.listTitle',
+  'output.explore.extremeTitle',
+  'output.reportSummaries.cases'
+]
+
 /**
  * AnalysisResult'ın modele giden kısaltılmış hâli. Yorum için gereken her
  * şey (tablolar, warnings, notes) korunur; model zaten göremeyeceği grafik
@@ -43,22 +50,24 @@ function roundNumber(value: number): number {
  * kuralının da gereği) almaz, yalnız varlıklarından haberdar edilir.
  */
 export function compactAnalysisResult(result: AnalysisResult): Record<string, unknown> {
-  const tables = result.tables.map(table => {
-    const rows = table.rows
-      .slice(0, MAX_TABLE_ROWS)
-      .map(row => row.map(cell => (typeof cell === 'number' ? roundNumber(cell) : cell)))
-    return {
-      titleKey: table.titleKey,
-      columns: table.columns,
-      rows,
-      ...(table.footnoteKey ? { footnoteKey: table.footnoteKey } : {}),
-      ...(table.rows.length > MAX_TABLE_ROWS
-        ? {
-            rowsOmitted: `${String(table.rows.length - MAX_TABLE_ROWS)} more rows are shown in the Output tab but not here; do not guess their values.`
-          }
-        : {})
-    }
-  })
+  const tables = result.tables
+    .filter(table => !CASE_LEVEL_TITLE_PREFIXES.some(p => table.titleKey.startsWith(p)))
+    .map(table => {
+      const rows = table.rows
+        .slice(0, MAX_TABLE_ROWS)
+        .map(row => row.map(cell => (typeof cell === 'number' ? roundNumber(cell) : cell)))
+      return {
+        titleKey: table.titleKey,
+        columns: table.columns,
+        rows,
+        ...(table.footnoteKey ? { footnoteKey: table.footnoteKey } : {}),
+        ...(table.rows.length > MAX_TABLE_ROWS
+          ? {
+              rowsOmitted: `${String(table.rows.length - MAX_TABLE_ROWS)} more rows are shown in the Output tab but not here; do not guess their values.`
+            }
+          : {})
+      }
+    })
   return {
     success: result.success,
     tables,
@@ -158,4 +167,18 @@ export function trimHistory(messages: ChatMessage[], max: number): ChatMessage[]
   // mesajından başla (limit biraz aşılır ama geçmiş geçerli kalır).
   const lastUser = messages.findLastIndex(m => m.role === 'user')
   return lastUser === -1 ? sliced : messages.slice(lastUser)
+}
+
+/**
+ * Drops role:'tool' messages whose toolCallId was never announced by an earlier
+ * assistant message. History comes from the renderer / a shared .sdf, so a
+ * forged "tool result" must not reach the model as if a tool had produced it.
+ */
+export function dropUnannouncedToolMessages(messages: ChatMessage[]): ChatMessage[] {
+  const announced = new Set<string>()
+  return messages.filter(m => {
+    for (const tc of m.toolCalls ?? []) announced.add(tc.id)
+    if (m.role !== 'tool') return true
+    return m.toolCallId !== undefined && announced.has(m.toolCallId)
+  })
 }

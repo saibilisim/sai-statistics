@@ -278,7 +278,13 @@ const MARKDOWN_COMPONENTS: Components = {
     <a
       href={href}
       title={href}
+      // Middle-click fires auxclick (not click) and Chromium would open the
+      // link in a new window → setWindowOpenHandler → the system browser.
+      draggable={false}
       onClick={e => {
+        e.preventDefault()
+      }}
+      onAuxClick={e => {
         e.preventDefault()
       }}
     >

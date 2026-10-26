@@ -125,7 +125,7 @@ function fitImage(image: PlotImage, maxWidth: number): { width: number; height: 
 
 // ─── Word (.docx) ──────────────────────────────────────────────────────────
 
-const DOC_TITLE = 'SAI Statistics — Output'
+const DEFAULT_DOC_TITLE = 'SAI Statistics — Output'
 // A4 with Word's default 1" margins leaves ~6.3" of text width ≈ 600 px @96dpi.
 const DOCX_MAX_IMAGE_WIDTH = 600
 const TABLE_FONT_SIZE = 18 // half-points → 9 pt
@@ -272,9 +272,13 @@ function docxBlock(part: ExportBlockPart): (Paragraph | Table)[] {
   return out
 }
 
-export async function buildOutputDocx(parts: ExportPart[]): Promise<Uint8Array> {
+export async function buildOutputDocx(
+  parts: ExportPart[],
+  /** Localised document title (output.documentTitle). */
+  docTitle: string = DEFAULT_DOC_TITLE
+): Promise<Uint8Array> {
   const children: (Paragraph | Table)[] = [
-    new Paragraph({ heading: HeadingLevel.TITLE, text: DOC_TITLE })
+    new Paragraph({ heading: HeadingLevel.TITLE, text: docTitle })
   ]
   for (const part of parts) {
     switch (part.kind) {
@@ -294,7 +298,7 @@ export async function buildOutputDocx(parts: ExportPart[]): Promise<Uint8Array> 
   }
   const doc = new Document({
     creator: 'SAI Statistics',
-    title: DOC_TITLE,
+    title: docTitle,
     styles: { default: { document: { run: { font: 'Arial', size: 20 } } } },
     sections: [{ children }]
   })

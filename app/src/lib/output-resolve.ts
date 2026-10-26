@@ -168,19 +168,31 @@ export function resolveTable(
   return { title, columns, rows, footnotes }
 }
 
+/**
+ * Spreadsheet formula injection: a cell starting with = + - @ TAB CR is
+ * evaluated by Excel/LibreOffice. Numbers ("-0.25", "−1,5") are left alone;
+ * anything else gets a leading apostrophe.
+ */
+const FORMULA_LEAD = /^[=+\-@\t\r]/
+const PLAIN_NUMBER = /^[+\u2212-]?\d[\d.,]*(?:[eE][+-]?\d+)?%?$/
+function neutraliseFormula(text: string): string {
+  return FORMULA_LEAD.test(text) && !PLAIN_NUMBER.test(text) ? `'${text}` : text
+}
+
 /** Tab-separated text — pastes cleanly into Excel/Sheets/SPSS. */
 export function resolvedTableToTsv(resolved: ResolvedTable): string {
   const lines = [
-    resolved.columns.join('\t'),
-    ...resolved.rows.map(row => row.map(c => c.text).join('\t'))
+    resolved.columns.map(neutraliseFormula).join('\t'),
+    ...resolved.rows.map(row => row.map(c => neutraliseFormula(c.text)).join('\t'))
   ]
   if (resolved.footnotes.length > 0) lines.push(...resolved.footnotes)
   return lines.join('\n')
 }
 
 /** RFC 4180 CSV — commas/quotes/newlines get quoted, embedded quotes doubled. */
-function csvCell(text: string): string {
-  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
+function csvCell(raw: string): string {
+  const text = neutraliseFormula(raw)
+  return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
 }
 
 export function resolvedTableToCsv(resolved: ResolvedTable): string {

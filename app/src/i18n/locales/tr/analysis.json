@@ -1417,6 +1417,7 @@
       "equationTitle": "Denklemdeki Değişkenler",
       "depFootnote": "Bağımlı Değişken: {{name}}",
       "notConverged": "Model, en fazla yineleme sayısı içinde yakınsamadı — sonuçlar güvenilir olmayabilir.",
+      "separation": "Tam veya tama yakın ayrışma: bazı kestirilen olasılıklar sayısal olarak 0 ya da 1; katsayılar ve standart hatalar güvenilir değil (çok büyük B ve SE).",
       "iterationTitle": "Yineleme Geçmişi",
       "iterationUnavailable": "Yineleme geçmişi model uyumundan geri kazanılamadı.",
       "correlationTitle": "Kestirimlerin Korelasyon Matrisi",
@@ -1591,6 +1592,7 @@
       "stepLRNote": "Adımsal seçimde giriş ve çıkarma ölçütü kısmi olabilirlik oranı (LR) istatistiğidir.",
       "stepWaldNote": "Adımsal seçimde giriş ölçütü kısmi olabilirlik oranı (LR), çıkarma ölçütü Wald istatistiğidir.",
       "stepLimit": "Adımsal seçim adım sınırına ulaştı; model bu noktadaki haliyle raporlanmıştır.",
+      "coefInfinite": "Cox uyumu yakınsamayan ya da sonsuz bir katsayı bildirdi (çoğunlukla tam ayrışma); tahminler ve standart hatalar güvenilir değil.",
       "noTermsEntered": "Hiçbir ortak değişken giriş ölçütünü karşılamadı — model boş kaldı.",
       "baselineUnavailable": "Temel fonksiyon tablosu bu model için hesaplanamadı.",
       "phUnavailable": "Orantılı tehlike testi bu model için hesaplanamadı.",
@@ -1729,6 +1731,7 @@
     },
     "kmeans": {
       "centersTitle": "Nihai Küme Merkezleri",
+      "notConverged": "K-ortalamalar 50 yineleme içinde yakınsamadı; kümeler geçicidir.",
       "sizesTitle": "Her Kümedeki Vaka Sayısı",
       "clusterHdr": "Küme {{name}}",
       "newVar": {
@@ -1975,6 +1978,7 @@
     },
     "crosstabs": {
       "crosstabTitle": "{{name}} — Çapraz Tablo",
+      "warnFisherMonteCarlo": "Bu tablo için Fisher kesin testi tam olarak hesaplanamadı; gösterilen değer Monte Carlo kestirimidir (sabit tohum, 20.000 tekrar).",
       "cellCount": "Sayım",
       "cellExpected": "Beklenen Sayım",
       "cellRowPct": "Satır İçi %",
@@ -2265,7 +2269,8 @@
     "newVars": {
       "created": "{{name}} veri setine yeni değişken olarak eklendi. Dosya kaydedilmedi — Ctrl+Z ile geri alabilirsiniz.",
       "failed": "Yeni değişkenler oluşturulamadı, veri seti değişmedi: {{name}}",
-      "noDataset": "Yeni değişkenler oluşturulamadı: açık bir veri seti yok."
+      "noDataset": "Yeni değişkenler oluşturulamadı: açık bir veri seti yok.",
+      "datasetChanged": "Yeni değişkenler oluşturulamadı: analiz artık etkin olmayan bir veri seti üzerinde çalıştırılmıştı."
     }
   },
   "col": {

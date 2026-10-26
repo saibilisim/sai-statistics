@@ -12,7 +12,7 @@ import {
 import { isValidVariableName, namesEqual } from '../../../shared/variable-name'
 import { VariableSchema, type Variable } from '../../../shared/data-types'
 import log from 'electron-log'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
 import { captureForMutation } from '../undo-manager'
 import {
   getDbConnection,
@@ -121,25 +121,25 @@ async function deleteColumnsHandler(req: { datasetId: string; colIds: string[] }
 }
 
 export function registerVariableHandlers(): void {
-  handleValidated(IPC.DATA_INSERT_COLUMN, InsertColumnRequestSchema, req => addColumnHandler(req))
-  handleValidated(IPC.VARIABLE_ADD, InsertColumnRequestSchema, req => addColumnHandler(req))
+  handleSerialized(IPC.DATA_INSERT_COLUMN, InsertColumnRequestSchema, req => addColumnHandler(req))
+  handleSerialized(IPC.VARIABLE_ADD, InsertColumnRequestSchema, req => addColumnHandler(req))
 
-  handleValidated(IPC.DATA_DELETE_COLUMN, ColIdRequestSchema, req =>
+  handleSerialized(IPC.DATA_DELETE_COLUMN, ColIdRequestSchema, req =>
     deleteColumnsHandler({ datasetId: req.datasetId, colIds: [req.colId] })
   )
-  handleValidated(IPC.VARIABLE_DELETE, ColIdRequestSchema, req =>
+  handleSerialized(IPC.VARIABLE_DELETE, ColIdRequestSchema, req =>
     deleteColumnsHandler({ datasetId: req.datasetId, colIds: [req.colId] })
   )
-  handleValidated(IPC.VARIABLE_DELETE_MANY, ColIdsRequestSchema, req => deleteColumnsHandler(req))
+  handleSerialized(IPC.VARIABLE_DELETE_MANY, ColIdsRequestSchema, req => deleteColumnsHandler(req))
 
   // 8. variable:get-all
-  handleValidated(IPC.VARIABLE_GET_ALL, DatasetIdRequestSchema, (req): Variable[] => {
+  handleSerialized(IPC.VARIABLE_GET_ALL, DatasetIdRequestSchema, (req): Variable[] => {
     const dataset = getDatasetOrThrow(req.datasetId)
     return dataset.variables
   })
 
   // 9. variable:update
-  handleValidated(IPC.VARIABLE_UPDATE, VariableUpdateRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.VARIABLE_UPDATE, VariableUpdateRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -169,7 +169,6 @@ export function registerVariableHandlers(): void {
       ) {
         throw new Error(`Variable with name ${req.updates.name} already exists`)
       }
-      variable.name = req.updates.name
     }
 
     // 2. Cast column type in DB if requested
@@ -186,14 +185,16 @@ export function registerVariableHandlers(): void {
       variable.type = req.updates.type
     }
 
-    // 3. Update all other metadata fields
+    // 3. Update all metadata fields (name included) only now that the ALTER, the
+    // one step that can fail, has succeeded — a failed cast must not leave a
+    // renamed-in-memory variable behind.
     Object.assign(variable, req.updates)
     setDatasetModified(dataset, true)
     log.info(`Variable metadata updated for column: ${req.colId} in dataset ${req.datasetId}`)
   })
 
   // 9b. variable:reorder
-  handleValidated(
+  handleSerialized(
     IPC.VARIABLE_REORDER,
     VariableReorderRequestSchema,
     async (req): Promise<void> => {

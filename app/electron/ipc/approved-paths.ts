@@ -34,6 +34,10 @@ export function approvePaths(paths: readonly string[]): void {
   for (const p of paths) approvePath(p)
 }
 
+export function isApprovedPath(p: string): boolean {
+  return approved.has(normalize(p))
+}
+
 export function assertApprovedPath(p: string): void {
   if (e2eBypass() || approved.has(normalize(p))) return
   throw new Error('IPC Security Violation: path was not chosen through a trusted source')

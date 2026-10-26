@@ -10,14 +10,14 @@ import {
 } from '../../../shared/ipc-schemas'
 import type { CellValue } from '../../../shared/data-types'
 import log from 'electron-log'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
 import { captureForMutation } from '../undo-manager'
 import { getDbConnection, getDatasetOrThrow, setDatasetModified } from './state'
 import { parseLocalizedNumber } from './value-utils'
 
 export function registerCellRowHandlers(): void {
   // 3. data:update-cell
-  handleValidated(IPC.DATA_UPDATE_CELL, UpdateCellRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_UPDATE_CELL, UpdateCellRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -40,7 +40,7 @@ export function registerCellRowHandlers(): void {
   })
 
   // 3b. data:update-cells (batch)
-  handleValidated(IPC.DATA_UPDATE_CELLS, UpdateCellsRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_UPDATE_CELLS, UpdateCellsRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -53,25 +53,35 @@ export function registerCellRowHandlers(): void {
     }
 
     // Prepared statements cached per colId to avoid re-preparing the same SQL.
+    // One transaction: a failure half-way must not leave a partial paste, and
+    // thousands of single-statement commits are the slow path.
     const stmtCache = new Map<string, Awaited<ReturnType<typeof conn.prepare>>>()
-    for (const u of req.updates) {
-      let stmt = stmtCache.get(u.colId)
-      if (!stmt) {
-        stmt = await conn.prepare(`UPDATE ${tableName} SET "${u.colId}" = ? WHERE __row_idx = ?`)
-        stmtCache.set(u.colId, stmt)
-      }
-      const variable = dataset.variables.find(v => v.colId === u.colId)
-      const val: CellValue = variable?.type === 'numeric' ? parseLocalizedNumber(u.value) : u.value
+    await conn.run('BEGIN TRANSACTION')
+    try {
+      for (const u of req.updates) {
+        let stmt = stmtCache.get(u.colId)
+        if (!stmt) {
+          stmt = await conn.prepare(`UPDATE ${tableName} SET "${u.colId}" = ? WHERE __row_idx = ?`)
+          stmtCache.set(u.colId, stmt)
+        }
+        const variable = dataset.variables.find(v => v.colId === u.colId)
+        const val: CellValue =
+          variable?.type === 'numeric' ? parseLocalizedNumber(u.value) : u.value
 
-      stmt.bind([val, u.rowIndex])
-      await stmt.run()
+        stmt.bind([val, u.rowIndex])
+        await stmt.run()
+      }
+      await conn.run('COMMIT')
+    } catch (err) {
+      await conn.run('ROLLBACK').catch(() => undefined)
+      throw err
     }
 
     setDatasetModified(dataset, true)
   })
 
   // 4. data:insert-row
-  handleValidated(IPC.DATA_INSERT_ROW, InsertRowRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_INSERT_ROW, InsertRowRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -103,7 +113,7 @@ export function registerCellRowHandlers(): void {
   // captureForMutation snapshot + a single rowCount/dataVersion update for
   // N rows, instead of N data:insert-row round trips (each of which would
   // otherwise bump dataVersion and trigger a full DataView reload N times).
-  handleValidated(IPC.DATA_APPEND_ROWS, AppendRowsRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_APPEND_ROWS, AppendRowsRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -126,15 +136,20 @@ export function registerCellRowHandlers(): void {
   })
 
   // 5. data:delete-rows — indices are schema-validated as non-negative integers.
-  handleValidated(IPC.DATA_DELETE_ROWS, RowIndicesRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_DELETE_ROWS, RowIndicesRequestSchema, async (req): Promise<void> => {
     if (req.rowIndices.length === 0) return
 
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
+    // Main is the trust boundary: duplicates / out-of-range indices would make
+    // the caller's idea of the row count diverge from what was really deleted.
+    const uniqueIndices = [...new Set(req.rowIndices)].filter(i => i < dataset.rowCount)
+    if (uniqueIndices.length === 0) return
+
     await captureForMutation(req.datasetId)
     const tableName = `dataset_${req.datasetId}`
-    const indicesStr = req.rowIndices.join(', ')
+    const indicesStr = uniqueIndices.join(', ')
 
     // Delete matched rows
     await conn.runAndReadAll(`DELETE FROM ${tableName} WHERE __row_idx IN (${indicesStr})`)
@@ -149,13 +164,16 @@ export function registerCellRowHandlers(): void {
     await conn.runAndReadAll(`ALTER TABLE ${tempTableName} RENAME TO ${tableName}`)
     await conn.runAndReadAll(`ALTER TABLE ${tableName} RENAME COLUMN new_row_idx TO __row_idx`)
 
-    dataset.rowCount -= req.rowIndices.length
+    const countReader = await conn.runAndReadAll(`SELECT COUNT(*) FROM ${tableName}`)
+    dataset.rowCount = Number(
+      countReader.getRows()[0]?.[0] ?? dataset.rowCount - uniqueIndices.length
+    )
     setDatasetModified(dataset, true)
-    log.info(`Deleted ${String(req.rowIndices.length)} rows in dataset ${req.datasetId}`)
+    log.info(`Deleted ${String(uniqueIndices.length)} rows in dataset ${req.datasetId}`)
   })
 
   // 5b. data:reorder-rows — indices are schema-validated as non-negative integers.
-  handleValidated(IPC.DATA_REORDER_ROWS, RowIndicesRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_REORDER_ROWS, RowIndicesRequestSchema, async (req): Promise<void> => {
     if (req.rowIndices.length === 0) return
 
     const conn = await getDbConnection()

@@ -1429,6 +1429,7 @@
         "dfbeta": "DfBeta — {{name}}"
       },
       "notConverged": "Le modèle n'a pas convergé dans le nombre maximal d'itérations — les résultats peuvent ne pas être fiables.",
+      "separation": "Séparation parfaite ou quasi parfaite : certaines probabilités ajustées valent numériquement 0 ou 1 ; les coefficients et erreurs standard ne sont pas fiables (B et SE très grands).",
       "iterationTitle": "Historique des Itérations",
       "iterationUnavailable": "L'historique des itérations n'a pas pu être récupéré à partir de l'ajustement du modèle.",
       "correlationTitle": "Matrice de Corrélation des Estimations",
@@ -1591,6 +1592,7 @@
       "stepLRNote": "La sélection pas à pas a utilisé la statistique du rapport de vraisemblance partiel (RV) pour l'entrée comme pour l'élimination.",
       "stepWaldNote": "La sélection pas à pas a utilisé la statistique du rapport de vraisemblance partiel (RV) pour l'entrée et la statistique de Wald pour l'élimination.",
       "stepLimit": "La sélection pas à pas a atteint sa limite d'étapes ; le modèle est rapporté tel quel à ce point.",
+      "coefInfinite": "L'ajustement de Cox a signalé un coefficient non convergent ou infini (souvent une séparation complète) ; les estimations et erreurs standard ne sont pas fiables.",
       "noTermsEntered": "Aucune covariable n'a satisfait au critère d'entrée — le modèle est vide.",
       "baselineUnavailable": "La table de la fonction de base n'a pas pu être calculée pour ce modèle.",
       "phUnavailable": "Le test des risques proportionnels n'a pas pu être calculé pour ce modèle.",
@@ -1729,6 +1731,7 @@
     },
     "kmeans": {
       "centersTitle": "Centres de classes finaux",
+      "notConverged": "Les k-moyennes n'ont pas convergé en 50 itérations ; les classes sont provisoires.",
       "sizesTitle": "Nombre d'observations par classe",
       "clusterHdr": "Classe {{name}}",
       "newVar": {
@@ -1975,6 +1978,7 @@
     },
     "crosstabs": {
       "crosstabTitle": "{{name}} — Tableau croisé",
+      "warnFisherMonteCarlo": "Le test exact de Fisher n'a pas pu être calculé exactement pour ce tableau ; la valeur affichée est une estimation Monte Carlo (graine fixe, 20 000 réplications).",
       "cellCount": "Effectif",
       "cellExpected": "Effectif théorique",
       "cellRowPct": "% dans la ligne",
@@ -2265,7 +2269,8 @@
     "newVars": {
       "created": "{{name}} ont été ajoutées au jeu de données en tant que nouvelles variables. Le fichier n’a pas été enregistré — Ctrl+Z annule.",
       "failed": "Impossible de créer les nouvelles variables ; le jeu de données est inchangé : {{name}}",
-      "noDataset": "Impossible de créer de nouvelles variables : aucun jeu de données ouvert."
+      "noDataset": "Impossible de créer de nouvelles variables : aucun jeu de données ouvert.",
+      "datasetChanged": "Impossible de créer les nouvelles variables : l'analyse a été exécutée sur un jeu de données qui n'est plus actif."
     }
   },
   "col": {

@@ -15,7 +15,7 @@ import {
 import { VariableSchema, type Variable, type Dataset } from '../../../shared/data-types'
 import { namesEqual } from '../../../shared/variable-name'
 import log from 'electron-log'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
 import { captureForMutation } from '../undo-manager'
 import { getDbConnection, getDatasetOrThrow, setDatasetModified } from './state'
 
@@ -43,7 +43,7 @@ async function reclaimTargetName(
 
 export function registerTransformHandlers(): void {
   // 12. transform:recode — recode into same or different variable
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_RECODE,
     RecodeRequestSchema,
     async (req): Promise<TransformResult> => {
@@ -170,7 +170,7 @@ export function registerTransformHandlers(): void {
   )
 
   // 13. transform:auto-recode — assign sequential integers to distinct string values
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_AUTO_RECODE,
     AutoRecodeRequestSchema,
     async (req): Promise<TransformResult> => {
@@ -243,7 +243,7 @@ export function registerTransformHandlers(): void {
   )
 
   // 14. transform:count-values — count matching values across selected columns per row
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_COUNT_VALUES,
     CountValuesRequestSchema,
     async (req): Promise<TransformResult> => {
@@ -304,7 +304,7 @@ export function registerTransformHandlers(): void {
   )
 
   // 15. transform:rank-cases — assign rank values to a new column via DuckDB window functions
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_RANK_CASES,
     RankCasesRequestSchema,
     async (req): Promise<TransformResult> => {
@@ -372,7 +372,7 @@ export function registerTransformHandlers(): void {
   // 15b. transform:visual-binning — SPSS Visual Binning: groups a continuous
   // variable into a new ordinal variable via equal-width, equal-count
   // (quantile), or user-supplied cut points.
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_VISUAL_BINNING,
     VisualBinningRequestSchema,
     async (req): Promise<TransformResult> => {
@@ -470,7 +470,7 @@ export function registerTransformHandlers(): void {
   // 15c. transform:shift-values — SPSS Shift Values: a new variable holding
   // the value of an existing variable n cases before (lag) or after (lead)
   // the current case, in current row order.
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_SHIFT_VALUES,
     ShiftValuesRequestSchema,
     async (req): Promise<TransformResult> => {
@@ -527,7 +527,7 @@ export function registerTransformHandlers(): void {
   )
 
   // 16. transform:replace-missing — fill NULL values in an existing column
-  handleValidated(
+  handleSerialized(
     IPC.TRANSFORM_REPLACE_MISSING,
     ReplaceMissingRequestSchema,
     async (req): Promise<void> => {

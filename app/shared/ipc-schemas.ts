@@ -124,13 +124,15 @@ export type UpdateCellRequest = z.infer<typeof UpdateCellRequestSchema>
 
 export const UpdateCellsRequestSchema = z.object({
   datasetId: datasetIdField,
-  updates: z.array(
-    z.object({
-      rowIndex: z.number().int().nonnegative(),
-      colId: colIdField,
-      value: cellValueField
-    })
-  )
+  updates: z
+    .array(
+      z.object({
+        rowIndex: z.number().int().nonnegative(),
+        colId: colIdField,
+        value: cellValueField
+      })
+    )
+    .max(1_000_000)
 })
 export type UpdateCellsRequest = z.infer<typeof UpdateCellsRequestSchema>
 
@@ -299,7 +301,8 @@ export type RestructureWideToLongRequest = z.infer<typeof RestructureWideToLongR
 export const VariableUpdateRequestSchema = z.object({
   datasetId: datasetIdField,
   colId: colIdField,
-  updates: VariableSchema.partial()
+  // colId identifies the variable and is never changed through an update.
+  updates: VariableSchema.partial().omit({ colId: true })
 })
 export type VariableUpdateRequest = z.infer<typeof VariableUpdateRequestSchema>
 

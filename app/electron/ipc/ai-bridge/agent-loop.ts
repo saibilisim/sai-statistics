@@ -24,7 +24,7 @@ import { AiProviderError, AiTimeoutError, abortableSleep, retryDelayMs } from '.
 import { requireProviderConfig, toAiError } from './provider-config'
 import { agentPrompt, buildToolDefinitions } from './prompts'
 import { executeToolCall } from './tools'
-import { elideStaleToolResults, trimHistory } from './context-budget'
+import { dropUnannouncedToolMessages, elideStaleToolResults, trimHistory } from './context-budget'
 
 // ─── Agent provider round-trip (tool'lu, streaming) ─────────────────────────
 // ai-provider.ts F0 kapsamında tool'suz yazıldı ve bu fazın dosya sınırı
@@ -69,6 +69,14 @@ const RoundResponseSchema = z.object({
 // SSE parçası: content ve tool_call'lar PARÇA PARÇA gelir (arguments string'i
 // karakter karakter birikir), bu yüzden alanların hepsi opsiyonel.
 const StreamRoundChunkSchema = z.object({
+  // Some providers report mid-stream failures as `data: {"error": {...}}`
+  // with HTTP 200 — surfaced as a provider error, not as an empty answer.
+  error: z
+    .object({
+      message: z.string().nullish(),
+      code: z.union([z.string(), z.number()]).nullish()
+    })
+    .optional(),
   choices: z
     .array(
       z.object({
@@ -297,6 +305,13 @@ async function chatCompletionRound(
       }
       const chunk = StreamRoundChunkSchema.safeParse(json)
       if (!chunk.success) return
+      if (chunk.data.error) {
+        const code = chunk.data.error.code
+        throw new AiProviderError(
+          chunk.data.error.message ?? 'Provider reported an error mid-stream',
+          code === 'insufficient_credits' || code === 402 ? 402 : undefined
+        )
+      }
       const delta = chunk.data.choices?.[0]?.delta
       if (!delta) return
       if (delta.content) {
@@ -327,6 +342,7 @@ async function chatCompletionRound(
       }
       if (buffer.trim()) handleLine(buffer)
     } catch (err) {
+      if (err instanceof AiProviderError && !(err instanceof AiTimeoutError)) throw err
       throw toProviderError(err)
     } finally {
       reader.releaseLock()
@@ -341,6 +357,10 @@ async function chatCompletionRound(
 // ─── Turn yönetimi (ai:send / ai:cancel) ─────────────────────────────────────
 
 export const activeTurns = new Map<string, AbortController>()
+
+// Per-round fan-out caps (calls the model may issue before results are fed back).
+const MAX_TOOL_CALLS_PER_ROUND = 5
+const MAX_R_JOBS_PER_ROUND = 3
 
 // §3.1: tool turu üst sınırı (sonsuz döngü koruması + maliyet sınırı, §10).
 // 2026-09-29: 6'dan 10'a — normallik → test → post-hoc gibi zincirler 6'ya
@@ -443,7 +463,9 @@ export async function runAgentTurn(args: {
     // Bağlam tur başında bir kez alınır (o anki veri seti/filtre durumu).
     const saiPrompt = agentPrompt(language, mentionBlocks)
     const conversation: ChatMessage[] = [
-      ...elideStaleToolResults(trimHistory(messages, MAX_HISTORY_MESSAGES))
+      ...elideStaleToolResults(
+        trimHistory(dropUnannouncedToolMessages(messages), MAX_HISTORY_MESSAGES)
+      )
     ]
     const tools = buildToolDefinitions()
     // Boş-cevap kurtarma dürtmesi en fazla bir kez denenir (sonsuz döngü
@@ -485,7 +507,11 @@ export async function runAgentTurn(args: {
         // akmadıysa (sağlayıcı stream'i yok saydı ve içerik boş, ya da
         // dürtmeden sonra da sessiz kaldı) uydurma yapmadan sabit bir not
         // gösterilir — sonuç zaten Output'a düştü, sessiz kalmak yanlış.
-        if (streamedChars === 0) sendChunk(emptyResponseFallback(language), false)
+        if (streamedChars === 0) {
+          // No tool ran and nothing streamed: that is a failure, not "analysis done".
+          if (!sawToolCall) throw new AiProviderError('Provider returned an empty response')
+          sendChunk(emptyResponseFallback(language), false)
+        }
         // §6.5: yalnız metadata — içerik/prompt asla loglanmaz.
         log.info(
           `[ai-bridge] turn ${turnId} completed after ${String(round)} tool rounds (${String(streamedChars)} chars streamed)`
@@ -503,7 +529,24 @@ export async function runAgentTurn(args: {
       conversation.push(assistantMessage)
       const roundMessages: ChatMessage[] = [{ ...assistantMessage, content: '' }]
 
-      for (const call of response.toolCalls) {
+      let rJobs = 0
+      for (const [callIndex, call] of response.toolCalls.entries()) {
+        // Bounded fan-out: a round's call count and R-job count come from the
+        // model / server stream and were otherwise unlimited (cost + CPU).
+        const isRJob = call.name === 'run_analysis' || call.name === 'run_syntax'
+        if (callIndex >= MAX_TOOL_CALLS_PER_ROUND || (isRJob && rJobs >= MAX_R_JOBS_PER_ROUND)) {
+          const skipped: ChatMessage = {
+            role: 'tool',
+            content: JSON.stringify({
+              error: 'Tool call budget for this round exhausted; ask the user to continue.'
+            }),
+            toolCallId: call.id
+          }
+          conversation.push(skipped)
+          roundMessages.push(skipped)
+          continue
+        }
+        if (isRJob) rJobs++
         const label = toolLabelKey(call)
         sendToolEvent(call.name, 'running', label)
         const result = await executeToolCall(call, sender, signal, turnId)

@@ -10,13 +10,13 @@ import {
 import { isValidVariableName, namesEqual } from '../../../shared/variable-name'
 import { VariableSchema, type Variable } from '../../../shared/data-types'
 import log from 'electron-log'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
 import { captureForMutation } from '../undo-manager'
 import { getDbConnection, getDatasetOrThrow, setDatasetModified } from './state'
 
 export function registerSortHandlers(): void {
   // 10. data:sort — colId + direction ('asc'|'desc') are enforced by the schema.
-  handleValidated(IPC.DATA_SORT, SortRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_SORT, SortRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -46,7 +46,7 @@ export function registerSortHandlers(): void {
 
   // 10b. data:sort-multi — Sort Cases (Data menu): same rebuild as data:sort,
   // generalised to an ordered list of {colId, direction} keys.
-  handleValidated(IPC.DATA_SORT_MULTI, SortMultiRequestSchema, async (req): Promise<void> => {
+  handleSerialized(IPC.DATA_SORT_MULTI, SortMultiRequestSchema, async (req): Promise<void> => {
     const conn = await getDbConnection()
     const dataset = getDatasetOrThrow(req.datasetId)
 
@@ -78,7 +78,7 @@ export function registerSortHandlers(): void {
   // adds a primary-indicator (1 = first case in its matching group) and a
   // match-sequence (1-based rank within the group, by current row order; 0
   // for unduplicated cases), mirroring SPSS's PrimaryFirst/MatchSequence.
-  handleValidated(
+  handleSerialized(
     IPC.DATA_IDENTIFY_DUPLICATES,
     IdentifyDuplicatesRequestSchema,
     async (req): Promise<TransformResult> => {

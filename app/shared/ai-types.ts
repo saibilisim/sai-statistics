@@ -93,7 +93,9 @@ export type AiAppConfig = z.infer<typeof AiAppConfigSchema>
 
 // ─── Chat mesajları ──────────────────────────────────────────────────────────
 
-export const ChatRoleSchema = z.enum(['system', 'user', 'assistant', 'tool'])
+// No 'system': instructions live on the server (§9). A client/disk-supplied
+// system message would reach the model as authoritative context.
+export const ChatRoleSchema = z.enum(['user', 'assistant', 'tool'])
 export type ChatRole = z.infer<typeof ChatRoleSchema>
 
 // OpenAI tool-calling konvansiyonu: arguments JSON-encoded string.

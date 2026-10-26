@@ -1429,6 +1429,7 @@
         "dfbeta": "DfBeta — {{name}}"
       },
       "notConverged": "O modelo não convergiu dentro do número máximo de iterações — os resultados podem não ser confiáveis.",
+      "separation": "Separação perfeita ou quase perfeita: algumas probabilidades ajustadas são numericamente 0 ou 1, pelo que os coeficientes e erros-padrão não são fiáveis (B e SE muito grandes).",
       "iterationTitle": "Histórico de Iterações",
       "iterationUnavailable": "Não foi possível recuperar o histórico de iterações a partir do ajuste do modelo.",
       "correlationTitle": "Matriz de Correlação das Estimativas",
@@ -1591,6 +1592,7 @@
       "stepLRNote": "A seleção por passos usou a estatística da razão de verossimilhanças parcial (RV) tanto para a entrada quanto para a remoção.",
       "stepWaldNote": "A seleção por passos usou a estatística da razão de verossimilhanças parcial (RV) para a entrada e a estatística de Wald para a remoção.",
       "stepLimit": "A seleção por passos atingiu o limite de passos; o modelo é relatado como estava nesse ponto.",
+      "coefInfinite": "O ajuste de Cox indicou um coeficiente não convergente ou infinito (muitas vezes separação completa); as estimativas e erros-padrão não são fiáveis.",
       "noTermsEntered": "Nenhuma covariável atendeu ao critério de entrada — o modelo está vazio.",
       "baselineUnavailable": "A tabela da função de base não pôde ser calculada para este modelo.",
       "phUnavailable": "O teste de riscos proporcionais não pôde ser calculado para este modelo.",
@@ -1729,6 +1731,7 @@
     },
     "kmeans": {
       "centersTitle": "Centros Finais dos Agrupamentos",
+      "notConverged": "As k-médias não convergiram em 50 iterações; os agrupamentos são provisórios.",
       "sizesTitle": "Número de Casos em Cada Agrupamento",
       "clusterHdr": "Agrupamento {{name}}",
       "newVar": {
@@ -1975,6 +1978,7 @@
     },
     "crosstabs": {
       "crosstabTitle": "{{name}} — Tabela de Contingência",
+      "warnFisherMonteCarlo": "O teste exato de Fisher não pôde ser calculado exatamente para esta tabela; o valor mostrado é uma estimativa Monte Carlo (semente fixa, 20 000 réplicas).",
       "cellCount": "Contagem",
       "cellExpected": "Contagem Esperada",
       "cellRowPct": "% na Linha",
@@ -2265,7 +2269,8 @@
     "newVars": {
       "created": "{{name}} adicionadas ao conjunto de dados como novas variáveis. O ficheiro não foi guardado — Ctrl+Z desfaz.",
       "failed": "Não foi possível criar as novas variáveis; o conjunto de dados está inalterado: {{name}}",
-      "noDataset": "Não foi possível criar novas variáveis: nenhum conjunto de dados aberto."
+      "noDataset": "Não foi possível criar novas variáveis: nenhum conjunto de dados aberto.",
+      "datasetChanged": "Não foi possível criar as novas variáveis: a análise foi executada num conjunto de dados que já não é o ativo."
     }
   },
   "col": {

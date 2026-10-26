@@ -25,7 +25,12 @@ import { translateOutputKey } from './output-format'
  * @returns the result to render — unchanged when the analysis produced no
  *   case variables, otherwise carrying one extra note (or warning on failure).
  */
-export async function applyCaseVars(result: AnalysisResult, t: TFunction): Promise<AnalysisResult> {
+export async function applyCaseVars(
+  result: AnalysisResult,
+  t: TFunction,
+  /** Dataset the analysis ran on; the columns only make sense there. */
+  jobDatasetId?: string
+): Promise<AnalysisResult> {
   const caseVars = result.caseVars
   if (caseVars.length === 0) return result
 
@@ -33,6 +38,12 @@ export async function applyCaseVars(result: AnalysisResult, t: TFunction): Promi
   const datasetId = ds.datasetId
   if (datasetId === null || datasetId === '') {
     return { ...result, warnings: [...result.warnings, 'output.newVars.noDataset'] }
+  }
+
+  // The user may have switched datasets while the job ran; row positions of
+  // another dataset must never receive these values.
+  if (jobDatasetId !== undefined && jobDatasetId !== datasetId) {
+    return { ...result, warnings: [...result.warnings, 'output.newVars.datasetChanged'] }
   }
 
   // R sends the label as an i18n key (§6 — R never emits user-visible text).

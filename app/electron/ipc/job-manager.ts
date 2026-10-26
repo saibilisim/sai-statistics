@@ -227,6 +227,9 @@ async function processJob(job: Job): Promise<void> {
       jobId: job.jobId,
       analysisId: job.analysisId,
       result: parsed.data,
+      ...(typeof job.params['datasetId'] === 'string'
+        ? { datasetId: job.params['datasetId'] }
+        : {}),
       ...(job.source ? { source: job.source } : {}),
       ...(job.summary ? { summary: job.summary } : {}),
       ...(job.syntax ? { syntax: job.syntax } : {})
@@ -332,5 +335,21 @@ export function cancelJob(jobId: string): void {
   }
   if (!queuedJob && runningJob?.jobId !== jobId) {
     log.warn(`[job-manager] cancelJob: job ${jobId} not found`)
+  }
+}
+
+/**
+ * App shutdown: abort the running analysis (kills its Rscript) and drop the
+ * queue. The running job's cleanup is fired now — the process is about to exit,
+ * so the async `finally` in processJob may never get to run it.
+ */
+export function cancelAllJobs(): void {
+  for (const job of queue) job.cancelled = true
+  if (runningJob) {
+    runningJob.cancelled = true
+    runningAbortController?.abort()
+    const cleanup = runningJob.onFinally
+    runningJob.onFinally = undefined
+    cleanup?.()
   }
 }

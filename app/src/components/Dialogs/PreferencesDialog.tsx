@@ -929,6 +929,19 @@ export function PreferencesDialog({ onClose, initialCategory }: Props) {
                 <label className={cx(dataStyles.radioRow, styles.row)}>
                   <input
                     type="checkbox"
+                    checked={settings.update.autoCheck}
+                    onChange={e => {
+                      setSetting('update', { autoCheck: e.target.checked })
+                    }}
+                  />
+                  {t('dialogs:preferences.updateAutoCheck')}
+                </label>
+                <p className={cx(dataStyles.emptyNote, styles.row)}>
+                  {t('dialogs:preferences.updateAutoCheckHint')}
+                </p>
+                <label className={cx(dataStyles.radioRow, styles.row)}>
+                  <input
+                    type="checkbox"
                     checked={
                       updateInfo.latestVersion !== null &&
                       settings.update.dismissedVersion === updateInfo.latestVersion

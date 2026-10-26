@@ -16,7 +16,7 @@ import {
 } from '../../../shared/variable-name'
 import { VariableSchema, type Variable } from '../../../shared/data-types'
 import log from 'electron-log'
-import { handleValidated } from '../security'
+import { handleSerialized } from './serialized-handler'
 import { getDbConnection, getDatasetOrThrow, loadDatasetIntoDb, loadedDatasets } from './state'
 
 // 10b. data:aggregate (SPSS Data > Aggregate) — break-variable groups +
@@ -67,7 +67,7 @@ async function dropDataset(id: string): Promise<void> {
 }
 
 export function registerRestructureHandlers(): void {
-  handleValidated(
+  handleSerialized(
     IPC.DATA_AGGREGATE,
     AggregateRequestSchema,
     async (req): Promise<FileOpenResult> => {
@@ -160,7 +160,7 @@ export function registerRestructureHandlers(): void {
     }
   )
 
-  handleValidated(
+  handleSerialized(
     IPC.DATA_TRANSPOSE,
     TransposeRequestSchema,
     async (req): Promise<FileOpenResult> => {
@@ -289,7 +289,7 @@ export function registerRestructureHandlers(): void {
     }
   )
 
-  handleValidated(
+  handleSerialized(
     IPC.DATA_MERGE_ADD_CASES,
     MergeAddCasesRequestSchema,
     async (req): Promise<FileOpenResult> => {
@@ -361,7 +361,7 @@ export function registerRestructureHandlers(): void {
     }
   )
 
-  handleValidated(
+  handleSerialized(
     IPC.DATA_MERGE_ADD_VARIABLES,
     MergeAddVariablesRequestSchema,
     async (req): Promise<FileOpenResult> => {
@@ -453,7 +453,7 @@ export function registerRestructureHandlers(): void {
   // unordered ROW_NUMBER() OVER() downstream (it assigns __row_idx in
   // physical/insertion order, so ordering it here is what makes the final
   // dataset's row order correct).
-  handleValidated(
+  handleSerialized(
     IPC.DATA_RESTRUCTURE_WIDE_TO_LONG,
     RestructureWideToLongRequestSchema,
     async (req): Promise<FileOpenResult> => {

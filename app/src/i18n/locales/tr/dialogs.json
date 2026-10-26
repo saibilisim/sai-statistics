@@ -68,6 +68,8 @@
     "updateActionOpenPage": "İndirme Sayfasını Aç",
     "updateDontShowAgain": "Bu sürüm için bir daha gösterme",
     "updateDontShowAgainHint": "İşaretlerseniz bu sürüm için StatusBar bildirimi görünmez; yeni bir sürüm çıktığında tekrar gösterilir.",
+    "updateAutoCheck": "Güncellemeleri otomatik denetle",
+    "updateAutoCheckHint": "Kapalıyken SAI Statistics açılışta sürüm sorgusu göndermez ve durum çubuğunda güncelleme bildirimi görünmez. Değişiklik bir sonraki açılıştan itibaren geçerli olur.",
     "updateManagedByFlathub": "Bu kurulum Flathub üzerinden güncellenir. Yeni sürümler yazılım merkeziniz ya da \"flatpak update\" ile gelir.",
     "categories": {
       "general": "Genel",

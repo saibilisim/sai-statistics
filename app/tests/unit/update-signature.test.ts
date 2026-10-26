@@ -89,3 +89,15 @@ describe.skipIf(!runReal)('verifyInstallerSignature (Windows, real PowerShell)',
     expect(await verifyInstallerSignature([UPDATE_PUBLISHER_CN], unsigned)).toMatch(/not valid/)
   }, 60_000)
 })
+
+describe('commonName — quoted attribute values', () => {
+  it('does not take a CN= that sits inside a quoted value', () => {
+    const forged = 'OU="x, CN=SAİ BİLİŞİM ANONİM ŞİRKETİ, y", CN=Attacker Ltd, C=XX'
+    expect(commonName(forged)).toBe('Attacker Ltd')
+    expect(publisherMatches(forged, [UPDATE_PUBLISHER_CN])).toBe(false)
+  })
+
+  it('still reads escaped quotes inside a quoted CN', () => {
+    expect(commonName('CN="ACME ""Best"" Ltd, Inc.", O=x')).toBe('ACME "Best" Ltd, Inc.')
+  })
+})

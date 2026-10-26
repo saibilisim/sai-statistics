@@ -108,6 +108,7 @@
     "empty": "0 ligne",
     "numericInvalid": "Impossible de saisir du texte dans une colonne numérique — la cellule a repris sa valeur précédente.",
     "numericInvalidCount": "{{count}} cellule(s) ignorée(s) car non numérique(s).",
+    "pastePersistFailed": "Les valeurs collées n'ont pas pu être enregistrées ; les cellules ont été restaurées.",
     "pasteGrowFailed": "Impossible d'ajouter les lignes/colonnes nécessaires pour le collage — le collage a été annulé.",
     "editLockedWhileLoading": "Les données sont encore en cours de chargement — l'édition sera disponible une fois le chargement terminé.",
     "cannotDeleteLastColumn": "Impossible de supprimer la dernière colonne — le jeu de données doit contenir au moins une variable.",
@@ -389,6 +390,7 @@
     "closeUnsavedMessage": "Les modifications non enregistrées de ce script seront perdues. Le fermer quand même ?"
   },
   "output": {
+    "documentTitle": "SAI Statistics — Résultats",
     "navigator": "Sommaire",
     "resizeNavigator": "Redimensionner le sommaire",
     "empty": "Aucun résultat pour l'instant",

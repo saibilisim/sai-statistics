@@ -108,6 +108,7 @@
     "empty": "0 filas",
     "numericInvalid": "No se puede introducir texto en una columna numérica; la celda se revirtió a su valor anterior.",
     "numericInvalidCount": "Se omitieron {{count}} celda(s) porque no son numéricas.",
+    "pastePersistFailed": "No se pudieron guardar los valores pegados; se restauraron las celdas.",
     "pasteGrowFailed": "No se pudieron añadir las filas/columnas necesarias para pegar — se canceló el pegado.",
     "editLockedWhileLoading": "Los datos aún se están cargando — la edición estará disponible cuando finalice la carga.",
     "cannotDeleteLastColumn": "No se puede eliminar la última columna — el conjunto de datos debe tener al menos una variable.",
@@ -389,6 +390,7 @@
     "closeUnsavedMessage": "Se perderán los cambios no guardados de este script. ¿Cerrarlo de todos modos?"
   },
   "output": {
+    "documentTitle": "SAI Statistics — Resultados",
     "navigator": "Contenido",
     "resizeNavigator": "Cambiar el tamaño del panel de contenido",
     "empty": "Aún no hay resultados",
