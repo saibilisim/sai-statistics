@@ -55,6 +55,6 @@ Next, by hand:
   # then open the PR on GitHub (or: gh pr create) with
   #   base repository: flathub/flathub   base branch: new-pr   (NOT master)
   #   title: Add $APP_ID
-  # Use Flathub's PR template; a draft of the answers is in tmp/flathub-submission/PR-BODY-DRAFT.md
-  # (video, development history, AI-disclosure and the "no AI-generated PR" box are yours to fill).
+  # Fill in Flathub's PR template yourself (video, development history, AI-disclosure and
+  # the "no AI-generated PR" box).
 EOF

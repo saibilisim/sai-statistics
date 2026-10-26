@@ -70,6 +70,6 @@ modules:
           - rm -rf opt sai-statistics.deb
       - type: extra-data
         filename: sai-statistics.deb
-        url: https://api.saistatistics.com/downloads/linux/sai-statistics_0.2.29_amd64.deb
-        sha256: 'edacf2ee4dce0248bcc967e5baba26a5d3fbc6008884e6b94f74f8d91abcaa03'
-        size: 350261968
+        url: https://api.saistatistics.com/downloads/linux/sai-statistics_0.2.38_amd64.deb
+        sha256: '679a8291a70025ecfc2e4db5e8d34574ef63e94f94fef44912e24e7676c796f8'
+        size: 350559352
