@@ -10,10 +10,8 @@
   <project_license>AGPL-3.0-only</project_license>
   <description>
     <p>
-      SAI Statistics is a cross-platform desktop application that makes statistical
-      analysis simple and accessible. Import your data, define variables, run
-      analyses powered by R, and explore the results as clear tables and
-      interactive charts, all in one place.
+    SAI Statistics is an open source, cross-platform desktop application that makes statistical analysis simple and accessible. 
+    Import your data, define variables, run analyses powered by R, and explore the results as clear tables and interactive charts, all in one place.
     </p>
     <p>
       Everything runs on your computer: the R engine is bundled with the application.
@@ -42,6 +40,6 @@
   </screenshots>
   <content_rating type="oars-1.1" />
   <releases>
-    <release version="0.2.38" date="2026-10-25" />
+    <release version="0.2.38" date="2026-10-27" />
   </releases>
 </component>
