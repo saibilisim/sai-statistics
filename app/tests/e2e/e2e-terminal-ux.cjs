@@ -169,7 +169,9 @@ async function main() {
   // ── Splitter: keyboard resize grows the editor ──
   const wrapH = () => win.$eval('[class*="editorWrap"]', el => el.getBoundingClientRect().height)
   const h0 = await wrapH()
-  await win.locator('[role="separator"]').first().focus()
+  // The editor/console splitter — not the vertical variable-panel WidthHandle,
+  // which is also a role="separator" and comes first in the DOM.
+  await win.locator('[role="separator"][aria-orientation="horizontal"]').first().focus()
   await win.keyboard.press('ArrowDown')
   await win.keyboard.press('ArrowDown')
   const h1 = await wrapH()
