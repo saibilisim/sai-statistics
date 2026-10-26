@@ -1,3 +1,15 @@
+# Flatpak manifest for the self-contained bundle published on the vendor's site
+# (the whole application is inside the .flatpak file — no download at install time).
+#
+# The Flathub submission (flatpak/flathub/) is the same application and the same
+# permissions, but it repackages the official .deb through `extra-data`.
+# Desktop file, MetaInfo and icon are shared with flatpak/flathub/ — edit them there.
+#
+# electron-builder has no Flatpak target, so this repackages the ALREADY-BUILT
+# `dist/linux-unpacked/` (run `pnpm dist:linux` first):
+#   pnpm dist:flatpak                # builds + installs locally for a smoke test
+#   pnpm dist:flatpak:bundle         # writes dist/sai-statistics-<ver>-x86_64.flatpak
+
 app-id: com.saibilisim.saistatistics
 runtime: org.freedesktop.Platform
 runtime-version: '26.08'
