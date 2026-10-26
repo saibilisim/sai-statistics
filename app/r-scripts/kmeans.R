@@ -45,6 +45,7 @@ tryCatch({
     km <- kmeans(mat, centers = k, nstart = 10, iter.max = 50, algorithm = "Lloyd")
   }
 
+  km_warn <- if (identical(as.integer(km$ifault), 2L)) "output.kmeans.notConverged" else character(0)
   ctr_cols <- c("output.col.variable", paste0("output.kmeans.clusterHdr:", seq_len(k)))
   ctr_rows <- lapply(seq_along(vars), function(i)
     c(list(nm[i]), lapply(seq_len(k), function(cl) round(km$centers[cl, i], 3))))
@@ -79,7 +80,7 @@ tryCatch({
     }
   }
 
-  sai_output(caseVars = case_vars, tables = list(
+  sai_output(caseVars = case_vars, warnings = km_warn, tables = list(
     list(titleKey = "output.kmeans.centersTitle",
          columns = as.list(ctr_cols), rows = ctr_rows, footnoteKey = NULL),
     list(titleKey = "output.kmeans.sizesTitle",

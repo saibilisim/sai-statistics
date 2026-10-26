@@ -102,6 +102,10 @@ glm_univariate_core <- function(df, params) {
 
   SSE    <- deviance(full)
   dfres  <- df.residual(full)
+  # A frequency weight (Weight Cases) stands for sum(w) real cases, so the error
+  # df is sum(w) - rank, not rows - rank (the row count made MSE ~sum(w)/n times
+  # too large). A WLS weight is a precision weight: row-based df stays correct.
+  if (is.null(wls_w) && !is.null(freq_w)) dfres <- sum(w) - full$rank
   MSE    <- SSE / dfres
   wsum   <- function(v) sum((if (is.null(w)) rep(1, length(v)) else w) * v)
   ybar   <- wtd_mean(y, w)

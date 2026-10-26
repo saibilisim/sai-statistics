@@ -103,7 +103,7 @@ tryCatch({
 
   for (v in vars) {
     nm <- if (!is.null(var_names[[v]])) var_names[[v]] else v
-    xv <- suppressWarnings(as.numeric(df[[v]]))
+    xv <- suppressWarnings(as.numeric(apply_user_missing(df[[v]], v, params)))
     keep <- !is.na(xv) & !is.na(gall) & gall != "NA" & (gall == g1 | gall == g2)
     x <- xv[keep]; g <- gall[keep]
     n1 <- sum(g == g1); n2 <- sum(g == g2)

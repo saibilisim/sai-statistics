@@ -1477,7 +1477,8 @@ sai_bootstrap <- function(df, statistic, params, weight = NULL) {
   ci_level  <- if (!is.null(opt$ciLevel)) as.numeric(opt$ciLevel) / 100 else 0.95
   ci_type   <- if (!is.null(opt$ciType) && identical(opt$ciType, "bca")) "bca" else "perc"
 
-  if (!is.null(opt$seed)) set.seed(as.integer(opt$seed))
+  # Fixed default seed (SPSS's own default, as sai_bayes_seed) → reproducible runs.
+  set.seed(sai_default_seed(opt$seed))
 
   strata <- NULL
   strata_col <- opt$stratify
@@ -1545,7 +1546,7 @@ sai_monte_carlo_chisq <- function(tab, params) {
   .sai_pmethod_requested <<- TRUE
 
   B <- if (!is.null(opt$samples)) as.integer(opt$samples) else 10000L
-  if (!is.null(opt$seed)) set.seed(as.integer(opt$seed))
+  set.seed(sai_default_seed(opt$seed))
 
   p <- tryCatch(
     suppressWarnings(stats::chisq.test(tab, correct = FALSE, simulate.p.value = TRUE, B = B))$p.value,
@@ -1583,7 +1584,7 @@ sai_coin_pvalue <- function(builder, params) {
   if (!requireNamespace("coin", quietly = TRUE)) return(NULL)
 
   B    <- if (!is.null(opt$samples)) as.integer(opt$samples) else 10000L
-  seed <- if (!is.null(opt$seed)) as.integer(opt$seed) else NULL
+  seed <- sai_default_seed(opt$seed)
 
   p <- tryCatch({
     if (!is.null(seed)) set.seed(seed)
@@ -1625,6 +1626,23 @@ sai_coin_pvalue <- function(builder, params) {
 #' loop over the result uniformly.
 #' @param df     data frame (already loaded via load_data())
 #' @param params parsed params list (reads params$splitVariable)
+#' The seed a resampling procedure uses: the user's when given, else SPSS's
+#' default 2000000, so the same data always gives the same Monte Carlo /
+#' bootstrap result (the seed field in the dialogs stays an override).
+sai_default_seed <- function(seed) {
+  s <- suppressWarnings(as.integer(seed))
+  if (length(s) != 1L || is.na(s)) 2000000L else s
+}
+
+#' Distinct values in a display order that respects numeric codes: "1", "2",
+#' "10" instead of the lexical "1", "10", "2". Falls back to plain sorting as
+#' soon as one value is not a number.
+sai_sorted_levels <- function(vals) {
+  u <- unique(as.character(vals[!is.na(vals)]))
+  num <- suppressWarnings(as.numeric(u))
+  if (length(u) > 0 && !anyNA(num)) u[order(num)] else sort(u)
+}
+
 #' @return list of list(label = <character or NULL>, df = <data.frame>)
 get_split_groups <- function(df, params) {
   scol <- params$splitVariable
@@ -1634,7 +1652,7 @@ get_split_groups <- function(df, params) {
   .sai_split_applied <<- TRUE
   vals <- as.character(df[[scol]])
   keep <- !is.na(vals)
-  lvls <- sort(unique(vals[keep]))
+  lvls <- sai_sorted_levels(vals[keep])
   lapply(lvls, function(lvl) list(label = lvl, df = df[keep & vals == lvl, , drop = FALSE]))
 }
 

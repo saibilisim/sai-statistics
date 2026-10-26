@@ -24,7 +24,7 @@ tryCatch({
   if (length(vars) < 2) sai_error("Friedman needs at least two variables")
   nm <- resolve_var_names(vars, var_names)
 
-  mat <- sapply(vars, function(c) suppressWarnings(as.numeric(df[[c]])))
+  mat <- sapply(vars, function(c) suppressWarnings(as.numeric(apply_user_missing(df[[c]], c, params))))
   mat <- mat[stats::complete.cases(mat), , drop = FALSE]
   n <- nrow(mat); k <- ncol(mat)
   if (n < 2) sai_error("Not enough complete cases")

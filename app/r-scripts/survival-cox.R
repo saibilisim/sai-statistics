@@ -209,7 +209,12 @@ tryCatch({
 
   all_ids <- vapply(term_meta, function(m) m$id, character(1))
   meta_by_id <- setNames(term_meta, all_ids)
-  full <- fit_terms(all_ids)
+  # coxph signals a diverging coefficient only as a warning; carry it to the output.
+  cox_diverged <- FALSE
+  full <- withCallingHandlers(fit_terms(all_ids), warning = function(w) {
+    if (grepl("infinite|converge", conditionMessage(w), ignore.case = TRUE)) cox_diverged <<- TRUE
+    invokeRestart("muffleWarning")
+  })
   if (is.null(full)) sai_error("The Cox model did not converge")
   ll_null <- full$loglik[1]
 
@@ -247,7 +252,7 @@ tryCatch({
 
   progress(40L, "progress.computing")
   notes <- character(0)
-  warnings <- character(0)
+  warnings <- if (cox_diverged) "output.cox.coefInfinite" else character(0)
   steps <- list()
   step_fits <- list()
 

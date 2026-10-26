@@ -65,7 +65,11 @@ tryCatch({
   dat <- dat[stats::complete.cases(dat), , drop = FALSE]
 
   # Encode the dependent as 0/1 (lower category = 0, higher category = 1).
-  lev <- sort(unique(as.character(dat$.raw)))
+  # Numeric codes sort numerically ("2" < "10"); sorting the strings made 10 the
+  # reference and 2 the event for 2/10 codings, reversing every B and Exp(B).
+  lev_chr <- unique(as.character(dat$.raw))
+  lev_num <- suppressWarnings(as.numeric(lev_chr))
+  lev <- if (!anyNA(lev_num)) lev_chr[order(lev_num)] else sort(lev_chr)
   if (length(lev) != 2) sai_error("Dependent variable must have exactly two categories")
   dat$.y <- as.integer(as.character(dat$.raw) == lev[2])
   n <- nrow(dat)
@@ -84,6 +88,8 @@ tryCatch({
   warnings <- character(0)
   notes    <- character(0)
   if (!isTRUE(fit$converged)) warnings <- c(warnings, "output.logistic.notConverged")
+  fitted_p <- stats::fitted(fit)
+  if (any(fitted_p < 1e-8 | fitted_p > 1 - 1e-8)) warnings <- c(warnings, "output.logistic.separation")
 
   dev0 <- fit$null.deviance
   dev1 <- fit$deviance

@@ -203,9 +203,9 @@ tryCatch({
       if (identical(rotation, "varimax") && !is.null(rotated("rot_load"))) {
         score_load <- rotated("rot_load")
       } else if (identical(rotation, "oblimin") && !is.null(rotated("ob"))) {
-        score_load <- unclass(rotated("ob")$loadings)
+        score_load <- unclass(rotated("ob")$loadings) %*% rotated("ob")$Phi
       } else if (identical(rotation, "promax") && !is.null(rotated("pm"))) {
-        score_load <- unclass(rotated("pm")$loadings)
+        score_load <- unclass(rotated("pm")$loadings) %*% rotated("pm")$Phi
       }
     }
     Z <- scale(mat)

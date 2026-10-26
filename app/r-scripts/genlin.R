@@ -56,7 +56,11 @@ tryCatch({
     list("output.col.aic", round(AIC(fit), 3), NULL),
     list("output.col.bic", round(BIC(fit), 3), NULL))
 
-  lrchi <- null$deviance - fit$deviance; dfm <- length(preds)
+  # Likelihood-ratio chi-square = 2 * (logLik_full - logLik_null). The deviance
+  # difference is only that for a fixed-dispersion family (Poisson): for
+  # normal/gamma it is in the units of the response, and for negbin the two
+  # fits estimate different thetas.
+  lrchi <- max(0, 2 * (as.numeric(logLik(fit)) - as.numeric(logLik(null)))); dfm <- length(preds)
   omni_rows <- list(list(round(lrchi, 3), as.integer(dfm),
                          round(pchisq(lrchi, dfm, lower.tail = FALSE), 6)))
 

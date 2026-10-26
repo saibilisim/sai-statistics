@@ -73,8 +73,10 @@ tryCatch({
       r_col <- apply_user_missing(df[[r_id]], r_id, params)
       c_col <- apply_user_missing(df[[c_id]], c_id, params)
       keep <- !is.na(r_col) & !is.na(c_col)
-      rv <- as.character(r_col)[keep]
-      cv <- as.character(c_col)[keep]
+      # Factors with numeric-aware levels: table() would otherwise order the
+      # codes lexically ("1", "10", "2").
+      rv <- factor(as.character(r_col)[keep], levels = sai_sorted_levels(r_col[keep]))
+      cv <- factor(as.character(c_col)[keep], levels = sai_sorted_levels(c_col[keep]))
       wv <- if (is.null(w)) NULL else w[keep]
 
       # Case Processing Summary row for this pair: a case is Valid when it is
@@ -295,10 +297,12 @@ tryCatch({
         if (discrete_counts) {
           pf <- tryCatch(
             fisher.test(tab, workspace = 2e7)$p.value,
-            error = function(e) tryCatch(
-              fisher.test(tab, simulate.p.value = TRUE, B = 20000)$p.value,
-              error = function(e2) NA_real_
-            )
+            error = function(e) tryCatch({
+              # Reproducible: a fixed seed, and the user is told it is a simulation.
+              set.seed(20260101)
+              warn_keys <<- c(warn_keys, "output.crosstabs.warnFisherMonteCarlo")
+              fisher.test(tab, simulate.p.value = TRUE, B = 20000)$p.value
+            }, error = function(e2) NA_real_)
           )
           if (!is.na(pf)) {
             # Fisher's p is EXACT, not asymptotic, so it belongs in the Exact

@@ -91,7 +91,8 @@ tryCatch({
   }
   all_cols <- rep(TRUE, ncol(X))
   E <- resid_sscp(all_cols)
-  dfres <- n - qr(X)$rank
+  # Frequency weights stand for sum(w) cases: error df is sum(w) - rank.
+  dfres <- (if (is.null(w)) n else sum(w)) - qr(X)$rank
   if (dfres < p) sai_error("Not enough error degrees of freedom for the multivariate tests")
 
   # Hypothesis SSCP per term, by sum-of-squares type (mirrors the core).

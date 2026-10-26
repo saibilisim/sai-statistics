@@ -55,6 +55,8 @@ tryCatch({
   # path.rpart()'s split-rule text below reads naturally (e.g.
   # "PetalLength< 2.45") instead of an opaque internal name.
   pred_names <- resolve_var_names(indeps, var_names)
+  # Names are pasted into a model formula below: allow plain identifiers only.
+  if (!all(grepl("^[A-Za-z_][A-Za-z0-9_]*$", pred_names))) sai_error("Invalid predictor variable name")
   dat <- data.frame(.g = factor(as.character(df[[gvar]])))
   for (i in seq_along(indeps)) dat[[pred_names[i]]] <- suppressWarnings(as.numeric(df[[indeps[i]]]))
   # Carried through the listwise deletion for NV1 (roadmap ★11). The rpart

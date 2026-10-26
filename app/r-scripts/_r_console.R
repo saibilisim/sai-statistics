@@ -63,7 +63,11 @@ dir.create(.sai_plotdir, showWarnings = FALSE, recursive = TRUE)
   file.path(.sai_plotdir, sprintf("%s_%d.%s", prefix, .sai_plotseq, ext))
 }
 
+# Side-channel markers carry a per-session secret ("__SAI<nonce>_ENV__"), so
+# text a dataset prints ("__SAI_WD__{...}") can never pass for a control line.
+.sai_nonce <- Sys.getenv("SAI_R_MARKER_NONCE")
 .sai_emit <- function(marker, value) {
+  if (nzchar(.sai_nonce)) marker <- sub("^__SAI_", paste0("__SAI", .sai_nonce, "_"), marker)
   cat(marker, value, "\n", sep = ""); flush(stdout())
 }
 

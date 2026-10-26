@@ -552,8 +552,17 @@ tryCatch({
             if (is.null(wv)) stats::aov(x ~ g_fac) else stats::aov(x ~ g_fac, weights = wv),
             error = function(e) NULL
           )
+          # Frequency weights stand for sum(wv) cases: the error df is
+          # sum(wv) - k and the aov covariance (RSS / (rows - k)) is rescaled
+          # to match, instead of using the row count.
+          glht_args <- list(fit_d, linfct = multcomp::mcp(g_fac = "Dunnett"))
+          if (!is.null(wv)) {
+            k_g <- nlevels(g_fac); df_w <- sum(wv) - k_g; ratio_w <- (length(x) - k_g) / df_w
+            glht_args$vcov. <- function(m) stats::vcov(m) * ratio_w
+            glht_args$df <- df_w
+          }
           mc <- if (!is.null(fit_d)) tryCatch(
-            multcomp::glht(fit_d, linfct = multcomp::mcp(g_fac = "Dunnett")),
+            do.call(multcomp::glht, glht_args),
             error = function(e) NULL
           ) else NULL
           if (!is.null(mc)) {

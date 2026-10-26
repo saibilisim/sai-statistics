@@ -564,7 +564,7 @@ tryCatch({
     fitted_vals <- fitted(fit)
     resid_vals  <- residuals(fit)
     cw_rows <- lapply(ord, function(k) list(
-      as.integer(case_idx[k]), round(std_resid[k], 3), round(dat$.y[k], 6),
+      as.integer(case_idx[k]) + 1L, round(std_resid[k], 3), round(dat$.y[k], 6),
       round(fitted_vals[k], 6), round(resid_vals[k], 6)))
     tables <- c(tables, list(list(
       titleKey    = "output.regression.casewiseTitle",

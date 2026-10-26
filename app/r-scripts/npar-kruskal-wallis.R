@@ -113,7 +113,7 @@ tryCatch({
   any_computed <- FALSE
   for (v in vars) {
     nm <- if (!is.null(var_names[[v]])) var_names[[v]] else v
-    xv <- suppressWarnings(as.numeric(df[[v]]))
+    xv <- suppressWarnings(as.numeric(apply_user_missing(df[[v]], v, params)))
     keep <- !is.na(xv) & !is.na(fall) & fall != "NA"
     x <- xv[keep]; g <- factor(fall[keep])
     if (nlevels(g) < 2 || length(x) <= nlevels(g)) next
@@ -160,7 +160,9 @@ tryCatch({
         pw_rows <- list()
         for (i in seq_len(k - 1)) {
           for (j in (i + 1):k) {
-            se <- sqrt((N * (N + 1) / 12) * (1 / ni[lvls[i]] + 1 / ni[lvls[j]]))
+            # Tie-corrected variance of a rank sum (same correction as H above).
+            se <- sqrt((N * (N + 1) / 12 - sum(tct^3 - tct) / (12 * (N - 1))) *
+                         (1 / ni[lvls[i]] + 1 / ni[lvls[j]]))
             z <- (mean_r[lvls[i]] - mean_r[lvls[j]]) / se
             p_raw <- 2 * pnorm(-abs(z))
             p_adj <- min(1, p_raw * n_comparisons)

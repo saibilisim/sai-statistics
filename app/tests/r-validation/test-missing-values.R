@@ -95,7 +95,25 @@ test_that("anova-oneway: discrete missing on the dependent variable is excluded"
 
 # ── Honesty guarantee: a script outside the wired scope must not silently
 # ignore a missing-value spec — sai_output() should attach the auto-warning.
-test_that("npar-mann-whitney (not wired for missing values) warns that missing wasn't applied", {
+test_that("kmeans (not wired for missing values) warns that missing wasn't applied", {
+  set.seed(21)
+  df <- data.frame(
+    x = c(rnorm(10, 0, 0.3), rnorm(10, 5, 0.3), 999),
+    y = c(rnorm(10, 0, 0.3), rnorm(10, 5, 0.3), 1)
+  )
+  fixture <- write_fixture(df, list(
+    variables = list("x", "y"), varNames = list(x = "X", y = "Y"), clusters = 2,
+    missingValues = list(x = list(type = "discrete", discrete = list(999)))
+  ))
+  result <- run_analysis_script("kmeans.R", fixture)
+  expect_true(isTRUE(result$success), "result$success")
+  expect_true("output.warn.missingNotApplied" %in% unlist(result$warnings),
+              "expected the auto 'missing not applied' warning")
+})
+
+# Nonparametric tests honour user-missing codes (audit 2026-10): 999 must not be
+# ranked as the largest observation.
+test_that("npar-mann-whitney applies user-missing values", {
   df <- data.frame(
     x   = c(1, 2, 3, 999, 5, 6, 7, 8),
     grp = c(rep("A", 4), rep("B", 4))
@@ -107,8 +125,16 @@ test_that("npar-mann-whitney (not wired for missing values) warns that missing w
   ))
   result <- run_analysis_script("npar-mann-whitney.R", fixture)
   expect_true(isTRUE(result$success), "result$success")
-  expect_true("output.warn.missingNotApplied" %in% unlist(result$warnings),
-              "expected the auto 'missing not applied' warning")
+  expect_true(!("output.warn.missingNotApplied" %in% unlist(result$warnings)),
+              "no 'missing not applied' warning any more")
+  ref <- wilcox.test(c(1, 2, 3), c(5, 6, 7, 8), exact = FALSE, correct = FALSE)
+  tests <- Filter(function(tb) grepl("test|Test", tb$titleKey), result$tables)
+  found <- FALSE
+  for (tb in tests) for (row in tb$rows) {
+    vals <- suppressWarnings(as.numeric(unlist(row)))
+    if (any(abs(vals - ref$statistic) < 1e-6, na.rm = TRUE)) found <- TRUE
+  }
+  expect_true(found, "U statistic computed without the 999 case")
 })
 
 # ── Sanity: no missingValues spec produces the original unrecoded output ────

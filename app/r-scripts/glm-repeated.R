@@ -89,7 +89,8 @@ tryCatch({
   asg <- attr(X, "assign"); tl <- attr(tt, "term.labels")
   rankX <- qr(X)$rank
   if (rankX < ncol(X)) sai_error("The between-subjects design has empty cells")
-  dfe <- n - rankX
+  # Frequency weights stand for sum(w) cases: error df is sum(w) - rank.
+  dfe <- (if (is.null(w)) n else sum(w)) - rankX
   p <- k - 1
   if (dfe < 1) sai_error("Not enough complete cases")
 

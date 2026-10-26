@@ -38,7 +38,8 @@ tryCatch({
   for (i in seq_len(npairs)) {
     a <- v1[i]; b <- v2[i]
     pair <- paste0(nm_of(b), " - ", nm_of(a))   # SPSS: var2 - var1
-    xa <- suppressWarnings(as.numeric(df[[a]])); xb <- suppressWarnings(as.numeric(df[[b]]))
+    xa <- suppressWarnings(as.numeric(apply_user_missing(df[[a]], a, params)))
+    xb <- suppressWarnings(as.numeric(apply_user_missing(df[[b]], b, params)))
     ok <- !is.na(xa) & !is.na(xb)
     d  <- xb[ok] - xa[ok]
     # Subtracting two decimal values in binary floating point turns genuine

@@ -149,7 +149,9 @@ expect_genlin_common <- function(result, ref_fit, ref_null, n_preds) {
   expect_equal(cell_num(gof, 5, 2), BIC(ref_fit), tolerance = 1e-3, label = "BIC")
 
   omni <- find_table(result, "output.genlin.omniTitle")
-  lrchi <- ref_null$deviance - ref_fit$deviance
+  # Likelihood-ratio chi-square = 2 * (logLik full - logLik null). The deviance
+  # difference equals it only for fixed-dispersion families (Poisson).
+  lrchi <- 2 * (as.numeric(logLik(ref_fit)) - as.numeric(logLik(ref_null)))
   expect_equal(cell_num(omni, 1, 1), lrchi, tolerance = 1e-3, label = "LR chi-square")
   expect_equal(cell_num(omni, 1, 2), n_preds, tolerance = 1e-6, label = "omnibus df")
   expect_p(cell_num(omni, 1, 3), pchisq(lrchi, n_preds, lower.tail = FALSE), "omnibus sig")

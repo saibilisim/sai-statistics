@@ -32,6 +32,7 @@ tryCatch({
   nm <- resolve_var_names(vars, var_names)
 
   mat <- sapply(vars, function(c) suppressWarnings(as.numeric(apply_user_missing(df[[c]], c, params))))
+  n_total <- nrow(mat)
   mat <- mat[stats::complete.cases(mat), , drop = FALSE]
   n <- nrow(mat); k <- ncol(mat)
   if (n < 2) sai_error("Not enough complete cases")
@@ -144,8 +145,21 @@ tryCatch({
     character(0)
   }
 
+  # Case Processing Summary: alpha is computed on the listwise-complete cases
+  # only, so say how many that is out of how many.
+  cps_pct <- function(x) if (n_total > 0) round(x / n_total * 100, 1) else 0
+  cps_table <- list(
+    titleKey = "output.caseSummaries.cpsTitle",
+    columns = list("output.caseSummaries.includedN", "output.caseSummaries.includedPct",
+                   "output.caseSummaries.excludedN", "output.caseSummaries.excludedPct",
+                   "output.caseSummaries.totalN", "output.caseSummaries.totalPct"),
+    rows = list(list(as.integer(n), cps_pct(n), as.integer(n_total - n), cps_pct(n_total - n),
+                     as.integer(n_total), cps_pct(n_total))),
+    footnoteKey = NULL)
+
   progress(100L, "progress.done")
   sai_output(warnings = warn_keys, tables = c(
+    list(cps_table),
     if (is.null(split_table)) list() else list(split_table),
     list(
     list(titleKey = "output.reliability.statsTitle",
