@@ -6,7 +6,7 @@
 # There is NO logic here: installing prerequisites, vendoring the R runtime,
 # the build and the electron-builder call all live in build-installer.sh
 # (which already supports a Windows host — MINGW/MSYS detection, win-x64
-# Node, win-64 micromamba).
+# Node; the R runtime comes from CRAN).
 #
 # Note: the menu's Linux targets (deb/rpm/AppImage/Flatpak) only build on
 # Linux; on Windows the meaningful choice is 5 (Windows .exe). If all you

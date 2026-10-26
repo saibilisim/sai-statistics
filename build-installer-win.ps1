@@ -64,40 +64,14 @@ if (-not (Test-Path $PnpmCmd)) {
     Write-Host "    Installing pnpm (project-local)..."
     # Install pnpm under .tools/pnpm with npm
     $NpmCmd = Join-Path $NodeDir "npm.cmd"
-    & $NpmCmd install -g pnpm --prefix $PnpmDir
+    & $NpmCmd install -g pnpm@12.15.0 --prefix $PnpmDir
 }
 
 # Put pnpm on PATH
 $env:PATH = "$PnpmDir;$env:PATH"
 Write-Host "    pnpm ready: $(pnpm -v)"
 
-# 3. micromamba (for building the R runtime)
-$MicromambaExe = Join-Path $BinDir "micromamba.exe"
-
-if (-not (Test-Path $MicromambaExe)) {
-    Write-Host "    Downloading micromamba (for building the R runtime)..."
-    $MambaUrl = "https://micro.mamba.pm/api/micromamba/win-64/latest"
-    $MambaTar = Join-Path $ToolsDir "micromamba.tar.bz2"
-
-    Invoke-WebRequest -Uri $MambaUrl -OutFile $MambaTar
-
-    # tar.exe ships with Windows 10/11
-    if (Get-Command tar -ErrorAction SilentlyContinue) {
-        & tar -xf $MambaTar -C $ToolsDir
-        if (Test-Path (Join-Path $ToolsDir "Library\bin\micromamba.exe")) {
-            Move-Item -Path (Join-Path $ToolsDir "Library\bin\micromamba.exe") -Destination $MicromambaExe -Force
-            Remove-Item -Path (Join-Path $ToolsDir "Library") -Recurse -Force
-        }
-    } else {
-        Write-Error "No 'tar' command found on this system. Check your Windows updates or install tar."
-        exit 1
-    }
-    Remove-Item -Path $MambaTar -Force
-}
-
-$env:CONDA_BIN = $MicromambaExe
-$env:CONDA_PKGS_DIRS = "C:\m-pkgs"
-Write-Host "    micromamba ready: $MicromambaExe"
+# (No micromamba: the Windows R runtime comes from CRAN, see vendor-r-runtime-win.ps1.)
 
 # ─── Install project dependencies ───
 Write-Host "==> 2/5 Running pnpm install..."

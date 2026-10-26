@@ -20,6 +20,10 @@ defaults:
   run:
     working-directory: app
 
+# Least privilege: nothing here writes to the repository.
+permissions:
+  contents: read
+
 jobs:
   # The pre-commit hook's checks, again on the server: a commit made with
   # --no-verify, or from a clone where the hook was never enabled, is caught
@@ -31,7 +35,7 @@ jobs:
       run:
         working-directory: .
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0 # gitleaks scans the whole history
 
@@ -56,19 +60,19 @@ jobs:
     name: Typecheck, lint, unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Read Node version
         id: node-version
         run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ steps.node-version.outputs.version }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
-          version: latest
+          version: 12.15.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -90,9 +94,9 @@ jobs:
     if: github.event_name != 'push' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
         id: setup-r
         with:
           use-public-rspm: true
@@ -108,7 +112,7 @@ jobs:
           echo "SAI_R_REPO=${snapshot/\/cran\//\/cran\/__linux__\/$(lsb_release -cs)\/}" >> "$GITHUB_ENV"
 
       - name: Cache R packages
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: r-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ hashFiles('app/shared/r-packages.json') }}
@@ -127,24 +131,24 @@ jobs:
     # scripts still fails there (see the run log) and is being worked through.
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Read Node version
         id: node-version
         run: echo "version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ steps.node-version.outputs.version }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
-          version: latest
+          version: 12.15.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
         id: setup-r
         with:
           use-public-rspm: true
@@ -155,7 +159,7 @@ jobs:
           echo "SAI_R_REPO=${snapshot/\/cran\//\/cran\/__linux__\/$(lsb_release -cs)\/}" >> "$GITHUB_ENV"
 
       - name: Cache R packages
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: r-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ hashFiles('app/shared/r-packages.json') }}

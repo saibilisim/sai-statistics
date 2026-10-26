@@ -115,9 +115,11 @@ ensure_pnpm() {
   command -v pnpm >/dev/null 2>&1 && return 0
   say "Installing pnpm (via corepack, project-local)"
   corepack enable >/dev/null 2>&1 || true
-  corepack prepare pnpm@latest --activate || fail "Could not install pnpm (corepack)."
+  corepack prepare pnpm@12.15.0 --activate || fail "Could not install pnpm (corepack)."
   command -v pnpm >/dev/null 2>&1 || fail "Could not install pnpm."
 }
+
+MICROMAMBA_VERSION=2.9.0-0
 
 ensure_conda() {
   local c
@@ -125,30 +127,42 @@ ensure_conda() {
     if command -v "$c" >/dev/null 2>&1; then export CONDA_BIN="$c"; return 0; fi
   done
 
-  if [ ! -x "$TOOLS_DIR/bin/micromamba" ] && [ ! -f "$TOOLS_DIR/bin/micromamba.exe" ]; then
-    say "Downloading micromamba (for building the R runtime, project-local: .tools/)"
-    local mplat
+  if [ ! -x "$TOOLS_DIR/bin/micromamba" ]; then
+    say "Downloading micromamba $MICROMAMBA_VERSION (for building the R runtime, project-local: .tools/)"
+    local mplat msha
+    # Pinned release + SHA-256 of its .tar.bz2 (verified against GitHub's asset
+    # digests). Bump both together. Windows no longer builds its R runtime with
+    # conda (vendor-r-runtime-win.ps1 uses CRAN), so there is no win-64 entry.
     case "$OS" in
-      Linux)  case "$(uname -m)" in aarch64|arm64) mplat=linux-aarch64 ;; *) mplat=linux-64 ;; esac ;;
-      Darwin) case "$(uname -m)" in arm64) mplat=osx-arm64 ;; *) mplat=osx-64 ;; esac ;;
-      MINGW*|MSYS*|CYGWIN*) mplat=win-64 ;;
-      *) fail "Unsupported operating system: $OS" ;;
+      Linux)
+        case "$(uname -m)" in
+          aarch64|arm64) mplat=linux-aarch64; msha=e705ffeed90ce0659eb546e4b1e1028c9eaf0bc9cc854867b19ac5ce0ba5852f ;;
+          *)             mplat=linux-64;      msha=8761c382127e6363bd9e0a2451aa3ef90d071a79133f736e2f759a3bf13040dd ;;
+        esac ;;
+      Darwin)
+        case "$(uname -m)" in
+          arm64) mplat=osx-arm64; msha=500f5074feb8d02c4296ef9921c3650ed2874171805a9fbb8fbb53896433646b ;;
+          *)     mplat=osx-64;    msha=0426ecdc41636d369f57b8fe6acbf4385a69eca45b56d9ee7d3a840a9965d44f ;;
+        esac ;;
+      *) fail "Unsupported operating system for micromamba: $OS" ;;
     esac
-    curl -fsSL -o "$TOOLS_DIR/micromamba.tar.bz2" "https://micro.mamba.pm/api/micromamba/$mplat/latest"
-    tar -xjf "$TOOLS_DIR/micromamba.tar.bz2" -C "$TOOLS_DIR"
-    # Unix: bin/micromamba · Windows: Library/bin/micromamba.exe
-    if [ -f "$TOOLS_DIR/Library/bin/micromamba.exe" ]; then
-      mv "$TOOLS_DIR/Library/bin/micromamba.exe" "$TOOLS_DIR/bin/"
-      rm -rf "$TOOLS_DIR/Library"
+    curl -fsSL -o "$TOOLS_DIR/micromamba.tar.bz2" \
+      "https://github.com/mamba-org/micromamba-releases/releases/download/$MICROMAMBA_VERSION/micromamba-$mplat.tar.bz2"
+    local got
+    if command -v sha256sum >/dev/null 2>&1; then
+      got="$(sha256sum "$TOOLS_DIR/micromamba.tar.bz2" | cut -d' ' -f1)"
+    else
+      got="$(shasum -a 256 "$TOOLS_DIR/micromamba.tar.bz2" | cut -d' ' -f1)"
     fi
+    if [ "$got" != "$msha" ]; then
+      rm -f "$TOOLS_DIR/micromamba.tar.bz2"
+      fail "micromamba checksum mismatch (expected $msha, got $got)."
+    fi
+    tar -xjf "$TOOLS_DIR/micromamba.tar.bz2" -C "$TOOLS_DIR"
     rm -f "$TOOLS_DIR/micromamba.tar.bz2"
   fi
 
   export CONDA_BIN="$TOOLS_DIR/bin/micromamba"
-  if [ "$IS_WINDOWS" = true ]; then
-    # The PowerShell vendor script wants a Windows-style path
-    CONDA_BIN="$(cygpath -w "$TOOLS_DIR/bin/micromamba.exe" 2>/dev/null || echo "$TOOLS_DIR/bin/micromamba.exe")"
-  fi
   echo "    micromamba ready ($CONDA_BIN)."
 }
 
@@ -265,13 +279,13 @@ case "$CHOICE" in
     if runtime_ready resources/r-runtime-win; then
       if [ "$IS_WINDOWS" = true ]; then
         if ask_rebuild resources/r-runtime-win; then
-          ensure_conda && powershell -ExecutionPolicy Bypass -File scripts/vendor-r-runtime-win.ps1
+          powershell -ExecutionPolicy Bypass -File scripts/vendor-r-runtime-win.ps1
         fi
       else
         echo "    resources/r-runtime-win exists — it will be embedded in the package."
       fi
     elif [ "$IS_WINDOWS" = true ]; then
-      ensure_conda && powershell -ExecutionPolicy Bypass -File scripts/vendor-r-runtime-win.ps1
+      powershell -ExecutionPolicy Bypass -File scripts/vendor-r-runtime-win.ps1
     else
       echo "    WARNING: no Windows R runtime (resources/r-runtime-win is empty)."
       echo "    The R embedded in the Windows package can only be produced on a Windows machine:"

@@ -1,0 +1,8 @@
+# Keeps the SHA-pinned GitHub Actions in .github/workflows current: Dependabot
+# opens a PR when a pinned action has a newer release, so pins don't go stale.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
