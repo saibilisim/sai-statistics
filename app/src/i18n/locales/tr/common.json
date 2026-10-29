@@ -715,7 +715,7 @@
     "credit": {
       "balance": "Bakiye: {{amount}} SAI Token",
       "balanceAmount": "{{amount}} SAI Token",
-      "buyPack": "${{amount}} — {{tokens}} SAI Token satın al",
+      "buyPack": "{{price}} — {{tokens}} SAI Token satın al",
       "buyMore": "Daha fazla kredi al",
       "opening": "Tarayıcı açılıyor…",
       "checkoutError": "Ödeme sayfası açılamadı, lütfen tekrar deneyin",

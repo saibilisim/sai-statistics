@@ -502,8 +502,8 @@ export function registerAiBridgeHandlers(): void {
     }
   })
 
-  // ai:account:packs — kredi paketlerini listeler ($10/$20/$50, server/src/
-  // routes/billing.ts CREDIT_PACKS). Oturum yoksa boş liste (panel zaten
+  // ai:account:packs — kredi paketlerini listeler (server/src/billing/
+  // catalog.ts CREDIT_PACKS; TR'de TL fiyatla). Oturum yoksa boş liste (panel zaten
   // giriş kartını gösteriyor olur, bu kanal ayrıca hata üretmez).
   ipcMain.handle(IPC.AI_ACCOUNT_PACKS, async (event): Promise<AiCreditPack[]> => {
     validateSender(event)
@@ -522,7 +522,7 @@ export function registerAiBridgeHandlers(): void {
     }
   })
 
-  // ai:account:checkout — Lemon Squeezy checkout URL'i alır ve Main içinde
+  // ai:account:checkout — ödeme sayfası URL'ini (Lemon Squeezy / PayTR) alır ve Main içinde
   // shell.openExternal ile varsayılan tarayıcıda açar (ödeme sayfası hiçbir
   // zaman Electron içinde render edilmez, main.ts'teki setWindowOpenHandler/
   // will-navigate kısıtlamalarıyla aynı desen).

@@ -715,7 +715,7 @@
     "credit": {
       "balance": "Saldo: {{amount}} SAI Token",
       "balanceAmount": "{{amount}} SAI Token",
-      "buyPack": "Acquista ${{amount}} — {{tokens}} SAI Token",
+      "buyPack": "Acquista {{price}} — {{tokens}} SAI Token",
       "buyMore": "Acquista altro credito",
       "opening": "Apertura del browser…",
       "checkoutError": "Impossibile aprire la pagina di pagamento, riprova",

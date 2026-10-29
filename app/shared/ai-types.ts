@@ -294,6 +294,10 @@ export type AiAccountResendVerification = z.infer<typeof AiAccountResendVerifica
 export const AiCreditPackSchema = z.object({
   variantId: z.string(),
   usd: z.number(),
+  // Tahsil edilecek tutar ve para birimi (2026-10-29): Türkiye kanalında
+  // PayTR ile TL. Eski sunucu yanıtında yoksa usd/USD kullanılır.
+  currency: z.enum(['USD', 'TRY']).optional(),
+  price: z.number().optional(),
   // Kaç SAI Token yükleneceği — üst paketlerde hediye kredi yüzünden usd*100
   // ile birebir örtüşmez (örn. $20 pakette 2400 token = $24 değerinde bakiye).
   credits: z.number()

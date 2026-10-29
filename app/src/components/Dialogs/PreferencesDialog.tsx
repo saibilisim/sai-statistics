@@ -27,6 +27,7 @@ import { useUpdateInfo } from '../../lib/use-update-info'
 import { AccountManagement, AccountDangerZone } from './AccountManagement'
 
 import type { AiSetupInfo, AiAccountStatus, AiCreditPack } from '@shared/ai-types'
+import { formatPackPrice } from '../../lib/format-pack-price'
 import dataStyles from './DataDialogs.module.css'
 import styles from './PreferencesDialog.module.css'
 
@@ -708,7 +709,7 @@ export function PreferencesDialog({ onClose, initialCategory }: Props) {
                                 {pendingCheckoutVariant === pack.variantId
                                   ? ta('ai.credit.opening')
                                   : ta('ai.credit.buyPack', {
-                                      amount: pack.usd,
+                                      price: formatPackPrice(pack, i18n.language),
                                       tokens: pack.credits.toLocaleString()
                                     })}
                               </button>
