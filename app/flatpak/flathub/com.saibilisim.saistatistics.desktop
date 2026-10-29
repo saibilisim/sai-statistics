@@ -5,6 +5,6 @@ Exec=sai-statistics %F
 Icon=com.saibilisim.saistatistics
 Terminal=false
 Type=Application
-Categories=Science;Math;Education;
+Categories=Science;Math;
 Keywords=statistics;analysis;R;data;
 StartupWMClass=sai-statistics

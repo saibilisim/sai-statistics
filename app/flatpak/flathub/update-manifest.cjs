@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2026 SAI Bilişim
 // SPDX-License-Identifier: AGPL-3.0-only
-// Fills the extra-data url / sha256 / size (and the MetaInfo release) of the Flathub
-// manifest from a published .deb.
+// Fills the source url and sha256 of the Flathub manifest from a published .deb.
 //   node flatpak/flathub/update-manifest.cjs <path-to.deb> <public-https-url>
 const fs = require('node:fs')
 const path = require('node:path')
@@ -19,7 +18,6 @@ const file = path.join(__dirname, 'com.saibilisim.saistatistics.yml')
 let yml = fs.readFileSync(file, 'utf8')
 yml = yml
   .replace(/url: https?:\/\/\S+\.deb/, `url: ${url}`)
-  .replace(/sha256: '[0-9a-f]{64}'/, `sha256: '${sha}'`)
-  .replace(/size: \d+/, `size: ${data.length}`)
+  .replace(/sha256: '?([0-9a-f]{64})'?/, `sha256: '${sha}'`)
 fs.writeFileSync(file, yml)
 console.log(`url=${url}\nsha256=${sha}\nsize=${data.length}`)

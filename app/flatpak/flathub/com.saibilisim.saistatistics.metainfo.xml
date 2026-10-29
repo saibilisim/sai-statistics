@@ -19,7 +19,10 @@
     </p>
   </description>
   <launchable type="desktop-id">com.saibilisim.saistatistics.desktop</launchable>
-  <url type="homepage">https://saibilisim.com</url>
+  <url type="homepage">https://saistatistics.com</url>
+  <url type="bugtracker">https://github.com/saibilisim/sai-statistics/issues</url>
+  <url type="vcs-browser">https://github.com/saibilisim/sai-statistics</url>
+  <url type="contribute">https://github.com/saibilisim/sai-statistics</url>
   <categories>
     <category>Science</category>
     <category>Math</category>
@@ -40,6 +43,10 @@
   </screenshots>
   <content_rating type="oars-1.1" />
   <releases>
-    <release version="0.2.38" date="2026-10-27" />
+    <release version="0.2.38" date="2026-10-27">
+      <description>
+        <p>Open source release under AGPL-3.0 with cross-platform statistical analysis, bundled R engine, and modern UI.</p>
+      </description>
+    </release>
   </releases>
 </component>

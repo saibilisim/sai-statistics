@@ -1,18 +1,3 @@
-# Flathub submission manifest — SAI Statistics (com.saibilisim.saistatistics).
-#
-# The application is NOT built from source on Flathub: it repackages the
-# official .deb (with its bundled R runtime) through the `extra-data` source
-# type — the user's Flatpak downloads the .deb from the vendor and unpacks it
-# with `apply_extra`. The PR therefore contains only this manifest, the .desktop
-# file, the MetaInfo, the icon and the launcher. This route was chosen while the
-# app was closed-source; now that it is AGPL-licensed (redistributable), Flathub
-# may ask for a regular `file` source or a build from source instead.
-#
-# Fill url / sha256 / size from the .deb actually published (they change every
-# release):  node flatpak/flathub/update-manifest.cjs <deb> <public-url>
-#
-# Local test (serves the .deb over http):  see flatpak/flathub/README.md
-
 app-id: com.saibilisim.saistatistics
 runtime: org.freedesktop.Platform
 runtime-version: '26.08'
@@ -27,7 +12,7 @@ finish-args:
   - --socket=wayland
   - --socket=fallback-x11
   - --device=dri
-  # AI assistant (SAI account) and sample-data/update-info requests.
+  # AI assistant (SAI account) requests.
   - --share=network
   # Data files are chosen through the file-chooser portal (GTK_USE_PORTAL in the
   # launcher); these cover the usual places a dataset lives without --filesystem=host.
@@ -44,13 +29,20 @@ modules:
   - name: sai-statistics
     buildsystem: simple
     build-commands:
+      - bsdtar -Oxf sai-statistics.deb 'data.tar*' | bsdtar -xf - ./opt
+      - mkdir -p /app/sai-statistics
+      - cp -r "opt/SAI Statistics/." /app/sai-statistics/
+      - rm -rf opt sai-statistics.deb
       - install -Dm755 sai-statistics.sh /app/bin/sai-statistics
       - install -Dm644 com.saibilisim.saistatistics.desktop -t /app/share/applications
       - install -Dm644 com.saibilisim.saistatistics.metainfo.xml -t /app/share/metainfo
       - install -Dm644 icon-512.png /app/share/icons/hicolor/512x512/apps/com.saibilisim.saistatistics.png
-      # Unpacked at install time into /app/extra by apply_extra below.
-      - install -Dm755 apply_extra -t /app/bin
+
     sources:
+      - type: file
+        url: https://api.saistatistics.com/downloads/linux/sai-statistics_0.2.38_amd64.deb
+        sha256: '679a8291a70025ecfc2e4db5e8d34574ef63e94f94fef44912e24e7676c796f8'
+        dest-filename: sai-statistics.deb
       - type: file
         path: sai-statistics.sh
       - type: file
@@ -59,17 +51,4 @@ modules:
         path: com.saibilisim.saistatistics.metainfo.xml
       - type: file
         path: icon-512.png
-      - type: script
-        dest-filename: apply_extra
-        commands:
-          - set -e
-          # The .deb ships the app under "opt/SAI Statistics"; keep only that tree
-          # (desktop/menu entries are provided by this manifest instead).
-          - bsdtar -Oxf sai-statistics.deb 'data.tar*' | bsdtar -xf - ./opt
-          - mv "opt/SAI Statistics" sai-statistics
-          - rm -rf opt sai-statistics.deb
-      - type: extra-data
-        filename: sai-statistics.deb
-        url: https://api.saistatistics.com/downloads/linux/sai-statistics_0.2.38_amd64.deb
-        sha256: '679a8291a70025ecfc2e4db5e8d34574ef63e94f94fef44912e24e7676c796f8'
-        size: 350559352
+  
