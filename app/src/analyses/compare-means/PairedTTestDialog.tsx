@@ -116,9 +116,9 @@ export function PairedTTestDialog({ onClose, bayesian = false }: Props) {
     const v1 = (a['var1'] ?? []).map(v => v.name)
     const v2 = (a['var2'] ?? []).map(v => v.name)
     if (v1.length === 0 || v1.length !== v2.length) return null
-    const lines = ['# SAI Statistics — Paired-Samples T Test']
+    const lines: string[] = []
     v1.forEach((a1, i) => {
-      lines.push(`print(t.test(df[["${a1}"]], df[["${v2[i] ?? ''}"]], paired = TRUE))`)
+      lines.push(`print(t.test(data[["${a1}"]], data[["${v2[i] ?? ''}"]], paired = TRUE))`)
     })
     return lines.join('\n')
   }

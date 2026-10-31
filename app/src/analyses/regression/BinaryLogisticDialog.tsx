@@ -284,8 +284,7 @@ export function BinaryLogisticDialog({ onClose }: Props) {
     if (!dep || covs.length === 0) return null
     const rhs = covs.map(c => `\`${c}\``).join(' + ')
     return [
-      '# SAI Statistics — Binary Logistic Regression',
-      `fit <- glm(\`${dep}\` ~ ${opts.includeConstant ? rhs : `0 + ${rhs}`}, data = df, family = binomial(), control = glm.control(maxit = ${String(opts.maxIterations)}))`,
+      `fit <- glm(\`${dep}\` ~ ${opts.includeConstant ? rhs : `0 + ${rhs}`}, data = data, family = binomial(), control = glm.control(maxit = ${String(opts.maxIterations)}))`,
       'print(summary(fit))'
     ].join('\n')
   }

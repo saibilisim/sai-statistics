@@ -282,14 +282,14 @@ export function ExploreDialog({ onClose }: Props) {
     const factors = (assignments['factor'] ?? []).map(v => v.name)
     const labelBy = assignments['labelBy']?.[0]?.name
     const depStr = deps.map(v => `"${v}"`).join(', ')
-    const lines = ['# SAI Statistics — Explore', `explore_vars <- c(${depStr})`, '']
+    const lines = [`explore_vars <- c(${depStr})`, '']
     if (factors.length > 0) {
-      lines.push(`# grouped by: ${factors.join(', ')}`)
+      lines.push(`# ${t('analysis:explore.factorField')} ${factors.join(', ')}`)
     }
     if (labelBy) {
-      lines.push(`# label cases by: ${labelBy}`)
+      lines.push(`# ${t('analysis:explore.labelByField')} ${labelBy}`)
     }
-    lines.push('for (v in explore_vars) {', '  print(summary(df[[v]]))', '}')
+    lines.push('for (v in explore_vars) {', '  print(summary(data[[v]]))', '}')
     return lines.join('\n')
   }
 

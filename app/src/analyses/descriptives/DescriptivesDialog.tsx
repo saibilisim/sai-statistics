@@ -264,10 +264,9 @@ export function DescriptivesDialog({ onClose }: Props) {
     if (vars.length === 0) return null
     const varStr = vars.map(v => `"${v}"`).join(', ')
     return [
-      '# SAI Statistics — Descriptive Statistics',
       `descriptives_vars <- c(${varStr})`,
       '',
-      'result <- psych::describe(df[, descriptives_vars])',
+      'result <- psych::describe(data[, descriptives_vars])',
       'print(result)'
     ].join('\n')
   }

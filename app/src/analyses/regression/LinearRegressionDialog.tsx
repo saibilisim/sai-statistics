@@ -596,8 +596,7 @@ export function LinearRegressionDialog({ onClose, bayesian = false }: Props) {
     if (!dep || preds.length === 0) return null
     const rhs = preds.map(p => `\`${p}\``).join(' + ')
     return [
-      '# SAI Statistics — Linear Regression',
-      `fit <- lm(\`${dep}\` ~ ${opts.includeConstant ? rhs : `0 + ${rhs}`}, data = df)`,
+      `fit <- lm(\`${dep}\` ~ ${opts.includeConstant ? rhs : `0 + ${rhs}`}, data = data)`,
       'print(summary(fit))'
     ].join('\n')
   }

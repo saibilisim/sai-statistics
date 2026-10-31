@@ -699,7 +699,11 @@ export function AnalysisDialogShell({
   }
 
   const openSub = openSubDialog ? (sideButtons ?? []).find(b => b.key === openSubDialog) : null
-  const pasteRCode = showPasteR && generateRCode ? generateRCode(assignments) : null
+  // The header comment is written here, in the UI language, from the dialog's
+  // own title — each generator returns only its code.
+  const rCodeBody = showPasteR && generateRCode ? generateRCode(assignments) : null
+  const pasteRCode =
+    rCodeBody === null ? null : `# SAI Statistics — ${String(t(titleKey as never))}\n${rCodeBody}`
 
   const dialogRef = useRef<HTMLDivElement>(null)
   useDialogKeyboard({

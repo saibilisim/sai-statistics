@@ -187,9 +187,8 @@ export function BivariateCorrelationDialog({ onClose, bayesian = false }: Props)
     if (vars.length < 2) return null
     const ms = (['pearson', 'spearman', 'kendall'] as const).filter(m => methods[m])
     return [
-      '# SAI Statistics — Bivariate Correlations',
       `vars <- c(${vars.map(v => `"${v}"`).join(', ')})`,
-      ...ms.map(m => `print(cor(df[vars], method = "${m}", use = "pairwise.complete.obs"))`)
+      ...ms.map(m => `print(cor(data[vars], method = "${m}", use = "pairwise.complete.obs"))`)
     ].join('\n')
   }
 

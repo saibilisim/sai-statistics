@@ -457,9 +457,8 @@ export function OneWayAnovaDialog({ onClose, bayesian = false }: Props) {
     const f = (a['factor'] ?? [])[0]?.name
     if (deps.length === 0 || !f) return null
     return [
-      '# SAI Statistics — One-Way ANOVA',
       `for (v in c(${deps.map(v => `"${v}"`).join(', ')})) {`,
-      `  print(summary(aov(df[[v]] ~ factor(df[["${f}"]]))))`,
+      `  print(summary(aov(data[[v]] ~ factor(data[["${f}"]]))))`,
       '}'
     ].join('\n')
   }

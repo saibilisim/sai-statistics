@@ -488,12 +488,11 @@ export function FrequenciesDialog({ onClose }: Props) {
     if (vars.length === 0) return null
     const varStr = vars.map(v => `"${v}"`).join(', ')
     return [
-      '# SAI Statistics — Frequency Tables',
       `freq_vars <- c(${varStr})`,
       '',
       'for (v in freq_vars) {',
       '  cat("\\nFrequency table for:", v, "\\n")',
-      '  print(table(df[[v]], useNA = "always"))',
+      '  print(table(data[[v]], useNA = "always"))',
       '}'
     ].join('\n')
   }

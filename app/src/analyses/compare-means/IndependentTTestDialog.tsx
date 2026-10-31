@@ -114,11 +114,10 @@ export function IndependentTTestDialog({ onClose, bayesian = false }: Props) {
     const g = (a['group'] ?? [])[0]?.name
     if (vars.length === 0 || !g) return null
     return [
-      '# SAI Statistics — Independent-Samples T Test',
-      `g <- df[["${g}"]]`,
+      `g <- data[["${g}"]]`,
       `keep <- g %in% c("${group1}", "${group2}")`,
       `for (v in c(${vars.map(v => `"${v}"`).join(', ')})) {`,
-      '  print(t.test(df[[v]][keep] ~ g[keep]))',
+      '  print(t.test(data[[v]][keep] ~ g[keep]))',
       '}'
     ].join('\n')
   }

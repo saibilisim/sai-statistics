@@ -348,11 +348,10 @@ export function CrosstabsDialog({ onClose }: Props) {
     const cols = (assignments['cols'] ?? []).map(v => v.name)
     if (rows.length === 0 || cols.length === 0) return null
     return [
-      '# SAI Statistics — Crosstabs',
       `for (r in c(${rows.map(v => `"${v}"`).join(', ')})) {`,
       `  for (cc in c(${cols.map(v => `"${v}"`).join(', ')})) {`,
-      '    print(table(df[[r]], df[[cc]]))',
-      '    print(chisq.test(table(df[[r]], df[[cc]])))',
+      '    print(table(data[[r]], data[[cc]]))',
+      '    print(chisq.test(table(data[[r]], data[[cc]])))',
       '  }',
       '}'
     ].join('\n')

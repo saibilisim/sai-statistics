@@ -66,11 +66,13 @@ export function PartialCorrelationDialog({ onClose }: Props) {
     const vars = (a['variables'] ?? []).map(v => v.name)
     const ctrls = (a['controls'] ?? []).map(v => v.name)
     if (vars.length < 2 || ctrls.length === 0) return null
+    const quote = (names: string[]) => names.map(v => `"${v}"`).join(', ')
     return [
-      '# SAI Statistics — Partial Correlations',
-      `# variables: ${vars.join(', ')}`,
-      `# controlling for: ${ctrls.join(', ')}`,
-      '# (residualize each variable on the controls, then correlate residuals)'
+      `vars <- c(${quote(vars)})`,
+      `ctrls <- c(${quote(ctrls)})`,
+      'd <- na.omit(data[, c(vars, ctrls)])',
+      'res <- sapply(vars, function(v) resid(lm(d[[v]] ~ ., data = d[ctrls])))',
+      'print(cor(res))'
     ].join('\n')
   }
 

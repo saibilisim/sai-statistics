@@ -103,9 +103,8 @@ export function OneSampleTTestDialog({ onClose, bayesian = false }: Props) {
     if (vars.length === 0) return null
     const mu = Number(testValue) || 0
     return [
-      '# SAI Statistics — One-Sample T Test',
       `for (v in c(${vars.map(v => `"${v}"`).join(', ')})) {`,
-      `  print(t.test(df[[v]], mu = ${String(mu)}))`,
+      `  print(t.test(data[[v]], mu = ${String(mu)}))`,
       '}'
     ].join('\n')
   }
