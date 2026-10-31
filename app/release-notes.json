@@ -2,6 +2,60 @@
   "$comment": "Son kullanıcıya dönük sürüm notları — tek kaynak. Kurallar: app/scripts/check-release-notes.cjs başı ve CLAUDE.md §10.",
   "releases": [
     {
+      "version": "0.2.39",
+      "date": "2026-11-01",
+      "notes": {
+        "tr": [
+          "Sözdizimi sekmesinin adı artık Kod, içindeki R Terminal modunun adı da R Konsolu: burası bir sistem komut satırı değil, uygulamanın içindeki R oturumu.",
+          "R Kodunu Yapıştır ile alınan kod R Konsolu'nda doğrudan çalışıyor ve başlığı arayüz dilinde yazılıyor; Kısmi Korelasyonlar da artık çalıştırılabilir kod veriyor. R'ın hata mesajları uygulamanın dilinde.",
+          "AI asistanı oturumunuzu artık kendiliğinden kapatmıyor. Yorumla, tabloları arayüz dilindeki başlıklarıyla gönderiyor; model kutusu ve onay penceresi de gerçekten kullanılan modeli adıyla gösteriyor.",
+          "Kod sekmesindeki değişken listesi, R Konsolu'nun sağ paneli ve Çıktılar gezgini kenarından sürüklenerek genişletilebiliyor; seçtiğiniz genişlik hatırlanıyor.",
+          "İstatistik sonuçları denetlendi: ağırlıklı analizlerde serbestlik derecesi, Dunn testinde bağ düzeltmesi, eğik döndürmede faktör puanları ve parametrik olmayan testlerde kullanıcı tanımlı kayıp değerler düzeltildi.",
+          "Proje dosyaları kayıt sırasında kesintiye karşı korunuyor, dışa aktarılan tablolarda formül gibi başlayan hücreler etkisizleştiriliyor ve güncelleme denetimi Tercihler'den kapatılabiliyor."
+        ],
+        "en": [
+          "The Syntax tab is now called Code, and its R Terminal mode is now R Console: it is the app's own R session, not a system command prompt.",
+          "Code from Paste R now runs as-is in the R Console, with its header in your interface language, and Partial Correlations now pastes runnable code. R's error messages follow the app language.",
+          "The AI assistant no longer signs you out on its own. Interpret sends tables with their titles in your interface language, and the model selector and consent window show the model actually used, by name.",
+          "The variable list in the Code tab, the R Console side panel and the Output navigator can be widened by dragging their edge, and the width you choose is remembered.",
+          "Statistical results were audited: degrees of freedom in weighted analyses, the tie correction in Dunn's test, factor scores for oblique rotations and user-missing values in nonparametric tests are now correct.",
+          "Project files are protected against interruptions while saving, cells that look like formulas are neutralised in exported tables, and update checks can be turned off in Preferences."
+        ],
+        "es": [
+          "La pestaña Sintaxis ahora se llama Código y su modo Terminal R ahora es Consola R: es la sesión de R de la aplicación, no una línea de comandos del sistema.",
+          "El código de Pegar código R se ejecuta tal cual en la Consola R, con el encabezado en el idioma de la interfaz, y Correlaciones parciales ahora pega código ejecutable. Los errores de R siguen el idioma de la aplicación.",
+          "El asistente de IA ya no cierra tu sesión por sí solo. Interpretar envía las tablas con sus títulos en el idioma de la interfaz, y el selector de modelo y la ventana de consentimiento muestran el modelo realmente usado.",
+          "La lista de variables de la pestaña Código, el panel lateral de la Consola R y el navegador de Resultados se ensanchan arrastrando su borde, y se recuerda el ancho elegido.",
+          "Se auditaron los resultados estadísticos: ahora son correctos los grados de libertad ponderados, la corrección por empates de Dunn, las puntuaciones factoriales oblicuas y los valores perdidos del usuario en pruebas no paramétricas.",
+          "Los archivos de proyecto están protegidos frente a interrupciones al guardar, las celdas que parecen fórmulas se neutralizan al exportar y la comprobación de actualizaciones se puede desactivar en Preferencias."
+        ],
+        "fr": [
+          "L'onglet Syntaxe s'appelle désormais Code, et son mode Terminal R devient Console R : c'est la session R de l'application, pas une invite de commandes du système.",
+          "Le code de Coller le code R s'exécute tel quel dans la Console R, avec un en-tête dans la langue de l'interface, et Corrélations partielles colle du code exécutable. Les erreurs de R suivent la langue de l'application.",
+          "L'assistant IA ne vous déconnecte plus de lui-même. Interpréter envoie les tableaux avec leurs titres dans la langue de l'interface, et le sélecteur de modèle et la fenêtre de consentement affichent le modèle réellement utilisé.",
+          "La liste des variables de l'onglet Code, le panneau latéral de la Console R et le navigateur des Résultats s'élargissent en faisant glisser leur bord, et la largeur choisie est mémorisée.",
+          "Les résultats statistiques ont été audités : degrés de liberté pondérés, correction des ex aequo de Dunn, scores factoriels obliques et valeurs manquantes utilisateur des tests non paramétriques sont désormais corrects.",
+          "Les fichiers de projet sont protégés contre les interruptions à l'enregistrement, les cellules ressemblant à des formules sont neutralisées à l'export et la vérification des mises à jour se désactive dans les Préférences."
+        ],
+        "pt": [
+          "A aba Sintaxe agora se chama Código, e o seu modo Terminal R agora é Console R: é a sessão R do próprio aplicativo, não um prompt de comando do sistema.",
+          "O código de Colar Código R é executado como está no Console R, com o cabeçalho no idioma da interface, e Correlações Parciais agora cola código executável. Os erros do R seguem o idioma do aplicativo.",
+          "O assistente de IA não encerra mais a sua sessão sozinho. Interpretar envia as tabelas com títulos no idioma da interface, e o seletor de modelo e a janela de consentimento mostram pelo nome o modelo realmente usado.",
+          "A lista de variáveis da aba Código, o painel lateral do Console R e o navegador de Resultados podem ser alargados arrastando a borda, e a largura escolhida é lembrada.",
+          "Os resultados estatísticos foram auditados: graus de liberdade ponderados, correção de empates no teste de Dunn, escores fatoriais em rotações oblíquas e valores ausentes do usuário em testes não paramétricos agora estão corretos.",
+          "Os arquivos de projeto ficam protegidos contra interrupções ao salvar, células que parecem fórmulas são neutralizadas ao exportar e a verificação de atualizações pode ser desativada em Preferências."
+        ],
+        "it": [
+          "La scheda Sintassi ora si chiama Codice e la sua modalità Terminale R ora è Console R: è la sessione R dell'app, non un prompt dei comandi del sistema.",
+          "Il codice di Incolla R viene eseguito così com'è nella Console R, con l'intestazione nella lingua dell'interfaccia, e Correlazioni parziali ora incolla codice eseguibile. Gli errori di R seguono la lingua dell'app.",
+          "L'assistente IA non ti disconnette più da solo. Interpreta invia le tabelle con i titoli nella lingua dell'interfaccia, e il selettore del modello e la finestra di consenso mostrano per nome il modello effettivamente usato.",
+          "L'elenco delle variabili nella scheda Codice, il pannello laterale della Console R e il navigatore dell'Output si allargano trascinandone il bordo, e la larghezza scelta viene ricordata.",
+          "I risultati statistici sono stati verificati: ora sono corretti i gradi di libertà ponderati, la correzione per i ranghi uguali di Dunn, i punteggi fattoriali obliqui e i valori mancanti utente nei test non parametrici.",
+          "I file di progetto sono protetti dalle interruzioni durante il salvataggio, le celle che sembrano formule vengono neutralizzate all'esportazione e il controllo degli aggiornamenti si disattiva nelle Preferenze."
+        ]
+      }
+    },
+    {
       "version": "0.2.38",
       "date": "2026-10-25",
       "notes": {

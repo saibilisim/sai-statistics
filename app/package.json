@@ -1,6 +1,6 @@
 {
   "name": "sai-statistics",
-  "version": "0.2.38",
+  "version": "0.2.39",
   "description": "Cross-platform desktop statistics application built on the R engine",
   "main": "out/main/main.cjs",
   "type": "module",
