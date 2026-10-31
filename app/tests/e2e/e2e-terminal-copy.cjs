@@ -165,7 +165,7 @@ async function main() {
     r.E1_selAll[1] === r.E1_selAll[2]
 
   // ── R console ─────────────────────────────────────────────────────────────
-  await win.locator('[role="tab"]', { hasText: /^R Terminal$/ }).click()
+  await win.locator('[role="tab"]', { hasText: /^R (Console|Konsolu)$/ }).click()
   const waitIdle = async ms => {
     const end = Date.now() + ms
     while (Date.now() < end) {

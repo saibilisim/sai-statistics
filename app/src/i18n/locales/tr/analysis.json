@@ -2768,10 +2768,10 @@
     "title": "Bayesçi Pearson Korelasyonu"
   },
   "terminal": {
-    "title": "Sözdizimi / Terminal",
+    "title": "Sözdizimi / R Konsolu",
     "mode": {
       "spss": "SPSS Sözdizimi",
-      "r": "R Terminal"
+      "r": "R Konsolu"
     },
     "run": "Çalıştır (Ctrl+Enter)",
     "running": "Çalışıyor…",

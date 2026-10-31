@@ -179,7 +179,7 @@ async function main() {
   await win.screenshot({ path: path.join(appDir, 'tmp', 'term-ux-spss.png') })
 
   // ── R mode ──
-  await win.locator('[role="tab"]', { hasText: /^R Terminal$/ }).click()
+  await win.locator('[role="tab"]', { hasText: /^R (Console|Konsolu)$/ }).click()
   const waitStatus = async (want, ms) => {
     const end = Date.now() + ms
     while (Date.now() < end) {

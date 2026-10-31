@@ -67,7 +67,7 @@
     "variableView": "Değişken Görünümü",
     "outputView": "Çıktılar",
     "normalityView": "Normallik",
-    "terminalView": "Sözdizimi"
+    "terminalView": "Kod"
   },
   "status": {
     "ready": "Hazır",

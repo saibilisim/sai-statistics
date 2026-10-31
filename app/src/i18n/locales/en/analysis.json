@@ -2768,10 +2768,10 @@
     "title": "Bayesian Pearson Correlation"
   },
   "terminal": {
-    "title": "Syntax / Terminal",
+    "title": "Syntax / R Console",
     "mode": {
       "spss": "SPSS Syntax",
-      "r": "R Terminal"
+      "r": "R Console"
     },
     "run": "Run (Ctrl+Enter)",
     "running": "Running…",

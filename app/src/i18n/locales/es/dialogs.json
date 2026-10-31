@@ -45,7 +45,7 @@
     "rSection": "Consola R",
     "timeoutSeconds": "Tiempo de Espera de R (segundos)",
     "consoleEnabled": "Activar la consola R",
-    "consoleEnabledHint": "Si está desactivada, el modo de consola R de la pestaña Sintaxis/Terminal no se puede iniciar. El modo de sintaxis SPSS y los análisis basados en menú no se ven afectados.",
+    "consoleEnabledHint": "Si está desactivada, el modo Consola R de la pestaña Código no se puede iniciar. El modo de sintaxis SPSS y los análisis basados en menú no se ven afectados.",
     "dataImportSection": "Importación de Datos",
     "categoricalMaxDistinct": "Umbral Nominal (Valores Distintos)",
     "categoricalMaxDistinctHint": "Una columna de enteros con menos valores distintos que este número se importa como Nominal en lugar de Escala. 0 = comportamiento anterior (todo Escala).",

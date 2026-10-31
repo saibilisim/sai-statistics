@@ -67,7 +67,7 @@
     "variableView": "Variable View",
     "outputView": "Output",
     "normalityView": "Normality",
-    "terminalView": "Syntax"
+    "terminalView": "Code"
   },
   "status": {
     "ready": "Ready",

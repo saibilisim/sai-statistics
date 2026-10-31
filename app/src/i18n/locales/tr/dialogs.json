@@ -45,7 +45,7 @@
     "rSection": "R Konsolu",
     "timeoutSeconds": "R Zaman Aşımı (saniye)",
     "consoleEnabled": "R konsolunu etkinleştir",
-    "consoleEnabledHint": "Kapatılırsa Syntax/Terminal sekmesindeki R konsolu modu başlatılamaz. SPSS Syntax modu ve menü tabanlı analizler bundan etkilenmez.",
+    "consoleEnabledHint": "Kapatılırsa Kod sekmesindeki R Konsolu modu başlatılamaz. SPSS Sözdizimi modu ve menü tabanlı analizler bundan etkilenmez.",
     "dataImportSection": "Veri İçe Aktarma",
     "categoricalMaxDistinct": "Nominal Eşiği (Farklı Değer Sayısı)",
     "categoricalMaxDistinctHint": "Tüm değerleri tam sayı olan bir sütun, bu sayıdan az farklı değere sahipse içe aktarma sırasında Ölçek yerine Nominal olarak sınıflandırılır. 0 = eski davranış (hepsi Ölçek).",

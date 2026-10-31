@@ -80,7 +80,7 @@
     "variableView": "Vue des variables",
     "outputView": "Vue des résultats",
     "normalityView": "Vue de la normalité",
-    "terminalView": "Syntaxe / Terminal",
+    "terminalView": "Syntaxe / Console R",
     "valueLabels": "Étiquettes de valeur",
     "variableNames": "Noms des variables",
     "columnLetters": "Lettres de colonne",

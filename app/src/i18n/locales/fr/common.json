@@ -67,7 +67,7 @@
     "variableView": "Vue des variables",
     "outputView": "Résultats",
     "normalityView": "Normalité",
-    "terminalView": "Syntaxe"
+    "terminalView": "Code"
   },
   "status": {
     "ready": "Prêt",

@@ -45,7 +45,7 @@
     "rSection": "Console R",
     "timeoutSeconds": "Tempo Limite do R (segundos)",
     "consoleEnabled": "Ativar o console R",
-    "consoleEnabledHint": "Quando desativado, o modo console R na aba Sintaxe/Terminal não pode ser iniciado. O modo Sintaxe SPSS e as análises via menu não são afetados.",
+    "consoleEnabledHint": "Quando desativado, o modo Console R na aba Código não pode ser iniciado. O modo Sintaxe SPSS e as análises via menu não são afetados.",
     "dataImportSection": "Importação de Dados",
     "categoricalMaxDistinct": "Limite Nominal (Valores Distintos)",
     "categoricalMaxDistinctHint": "Uma coluna de inteiros com menos valores distintos do que este número é importada como Nominal em vez de Escala. 0 = comportamento anterior (tudo Escala).",

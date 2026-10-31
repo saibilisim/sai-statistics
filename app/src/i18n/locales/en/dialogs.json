@@ -45,7 +45,7 @@
     "rSection": "R Console",
     "timeoutSeconds": "R Timeout (seconds)",
     "consoleEnabled": "Enable the R console",
-    "consoleEnabledHint": "When off, the R console mode in the Syntax/Terminal tab can't be started. SPSS Syntax mode and menu-driven analyses are unaffected.",
+    "consoleEnabledHint": "When off, the R Console mode in the Code tab can't be started. SPSS Syntax mode and menu-driven analyses are unaffected.",
     "dataImportSection": "Data Import",
     "categoricalMaxDistinct": "Nominal Threshold (Distinct Values)",
     "categoricalMaxDistinctHint": "An all-integer column with fewer distinct values than this is imported as Nominal instead of Scale. 0 = old behavior (everything Scale).",

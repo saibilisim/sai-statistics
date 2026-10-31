@@ -45,7 +45,7 @@
     "rSection": "Console R",
     "timeoutSeconds": "Délai d'Expiration R (secondes)",
     "consoleEnabled": "Activer la console R",
-    "consoleEnabledHint": "Si désactivé, le mode console R de l'onglet Syntaxe/Terminal ne pourra pas être démarré. Le mode Syntaxe SPSS et les analyses par menu ne sont pas affectés.",
+    "consoleEnabledHint": "Si désactivé, le mode Console R de l'onglet Code ne pourra pas être démarré. Le mode Syntaxe SPSS et les analyses par menu ne sont pas affectés.",
     "dataImportSection": "Importation de Données",
     "categoricalMaxDistinct": "Seuil Nominal (Valeurs Distinctes)",
     "categoricalMaxDistinctHint": "Une colonne d'entiers ayant moins de valeurs distinctes que ce nombre est importée en Nominal au lieu d'Échelle. 0 = ancien comportement (tout en Échelle).",
