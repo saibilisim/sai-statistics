@@ -136,7 +136,19 @@ function decodeJwtExpiryMs(token: string): number | null {
 // süresini kapsayacak kadar cömert bir pay.
 const ACCESS_TOKEN_REFRESH_SKEW_MS = 60_000
 
-async function refreshAccessToken(refreshToken: string): Promise<StoredSession | null> {
+// Sunucu refresh token'ı her kullanımda rotate eder (server auth.ts
+// /auth/refresh): aynı token'la gelen ikinci istek 401 alır. Panel açılırken
+// hesap durumu, kredi ve sohbet isteği aynı anda ensureFreshAccessToken
+// çağırabiliyordu — süresi dolmuş access token'la ikisi de refresh atıyor,
+// ikincisi 401 alıp oturumu siliyordu (kullanıcı "kendiliğinden çıkış
+// yaptı" görüyordu). Uçuştaki tek refresh paylaşılır.
+let refreshInFlight: Promise<StoredSession | 'rejected' | null> | null = null
+
+/** Yeni token çifti; 'rejected' = sunucu refresh token'ı kesin reddetti
+ * (süresi dolmuş/iptal); null = geçici hata (ağ, 5xx, 429) — oturum durur. */
+async function refreshAccessToken(
+  refreshToken: string
+): Promise<StoredSession | 'rejected' | null> {
   try {
     const res = await fetch(`${AI_SERVER_BASE_URL}/auth/refresh`, {
       method: 'POST',
@@ -148,7 +160,14 @@ async function refreshAccessToken(refreshToken: string): Promise<StoredSession |
       token?: string
       refreshToken?: string
     }
-    if (!res.ok || !json.token || !json.refreshToken) return null
+    if (res.status === 400 || res.status === 401) {
+      log.warn(`[ai-bridge] refresh token rejected (${String(res.status)}) — signing out`)
+      return 'rejected'
+    }
+    if (!res.ok || !json.token || !json.refreshToken) {
+      log.warn(`[ai-bridge] refresh failed (${String(res.status)}) — keeping the session`)
+      return null
+    }
     const tokens: StoredSession = { accessToken: json.token, refreshToken: json.refreshToken }
     saveSessionTokens(tokens)
     return tokens
@@ -159,19 +178,26 @@ async function refreshAccessToken(refreshToken: string): Promise<StoredSession |
 }
 
 /** Geçerli bir access token döner; süresi dolmuşsa/dolmak üzereyse önce
- * sessizce /auth/refresh ile yeniler. Refresh de başarısızsa (refresh token
- * da süresi dolmuş/iptal edilmiş) yerel oturumu temizler — kullanıcı tekrar
- * login olmalı. */
+ * sessizce /auth/refresh ile yeniler. Yerel oturum yalnız sunucu refresh
+ * token'ı kesin reddederse temizlenir — kullanıcı tekrar login olmalı. Geçici
+ * bir hatada null döner ama oturum kalır, sonraki istek yeniden dener. */
 export async function ensureFreshAccessToken(): Promise<string | null> {
+  if (refreshInFlight) return tokenOf(await refreshInFlight)
   const stored = readSessionTokens()
   if (!stored) return null
   const exp = decodeJwtExpiryMs(stored.accessToken)
   const stillFresh = exp !== null && exp - Date.now() > ACCESS_TOKEN_REFRESH_SKEW_MS
   if (stillFresh) return stored.accessToken
-  const refreshed = await refreshAccessToken(stored.refreshToken)
-  if (!refreshed) {
-    deleteSessionToken()
-    return null
+  refreshInFlight = refreshAccessToken(stored.refreshToken)
+  try {
+    const refreshed = await refreshInFlight
+    if (refreshed === 'rejected') deleteSessionToken()
+    return tokenOf(refreshed)
+  } finally {
+    refreshInFlight = null
   }
-  return refreshed.accessToken
+}
+
+function tokenOf(result: StoredSession | 'rejected' | null): string | null {
+  return result && result !== 'rejected' ? result.accessToken : null
 }
