@@ -49,18 +49,29 @@ const CASE_LEVEL_TITLE_PREFIXES = [
  * verisini ve vaka-düzeyi değerleri (caseVars — §9 "ham satır gönderilmez"
  * kuralının da gereği) almaz, yalnız varlıklarından haberdar edilir.
  */
-export function compactAnalysisResult(result: AnalysisResult): Record<string, unknown> {
+export function compactAnalysisResult(
+  result: AnalysisResult,
+  /** i18n key → UI-language text from the renderer (mentions/interpret);
+   *  absent for tool results, which then keep their keys. */
+  labels?: Record<string, string>
+): Record<string, unknown> {
+  const text = (key: string): string => labels?.[key] ?? key
   const tables = result.tables
+    // Matches on keys, so it runs before any key becomes text.
     .filter(table => !CASE_LEVEL_TITLE_PREFIXES.some(p => table.titleKey.startsWith(p)))
     .map(table => {
       const rows = table.rows
         .slice(0, MAX_TABLE_ROWS)
-        .map(row => row.map(cell => (typeof cell === 'number' ? roundNumber(cell) : cell)))
+        .map(row =>
+          row.map(cell =>
+            typeof cell === 'number' ? roundNumber(cell) : cell === null ? cell : text(cell)
+          )
+        )
       return {
-        titleKey: table.titleKey,
-        columns: table.columns,
+        titleKey: text(table.titleKey),
+        columns: table.columns.map(text),
         rows,
-        ...(table.footnoteKey ? { footnoteKey: table.footnoteKey } : {}),
+        ...(table.footnoteKey ? { footnoteKey: text(table.footnoteKey) } : {}),
         ...(table.rows.length > MAX_TABLE_ROWS
           ? {
               rowsOmitted: `${String(table.rows.length - MAX_TABLE_ROWS)} more rows are shown in the Output tab but not here; do not guess their values.`
@@ -71,9 +82,11 @@ export function compactAnalysisResult(result: AnalysisResult): Record<string, un
   return {
     success: result.success,
     tables,
-    ...(result.warnings.length > 0 ? { warnings: result.warnings } : {}),
-    ...(result.notes.length > 0 ? { notes: result.notes } : {}),
-    ...(result.plots.length > 0 ? { plotsShownInOutput: result.plots.map(p => p.titleKey) } : {}),
+    ...(result.warnings.length > 0 ? { warnings: result.warnings.map(text) } : {}),
+    ...(result.notes.length > 0 ? { notes: result.notes.map(text) } : {}),
+    ...(result.plots.length > 0
+      ? { plotsShownInOutput: result.plots.map(p => text(p.titleKey)) }
+      : {}),
     ...(result.caseVars.length > 0
       ? { caseVariablesAvailable: result.caseVars.map(c => c.name) }
       : {})

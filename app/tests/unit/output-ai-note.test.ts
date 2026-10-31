@@ -165,7 +165,9 @@ describe('ai-block-actions', () => {
       titleKey: 'analysis.descriptives.title',
       timestamp: '2026-07-27T12:00:00.000Z',
       datasetName: 'demo.sdf',
-      result: makeResult()
+      result: makeResult(),
+      // keys go out with their UI-language text (ai-block-payload.ts)
+      labels: expect.objectContaining({ 'analysis.descriptives.title': 'Descriptives' })
     })
     expect('id' in payload).toBe(false)
     expect('isCollapsed' in payload).toBe(false)

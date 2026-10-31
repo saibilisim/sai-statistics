@@ -61,9 +61,10 @@ export function agentPrompt(language: string, mentionBlocks?: AiInterpretBlock[]
       // verisi modele gitmez, yalnız tablolar (context-budget.ts).
       ...(mentionBlocks && mentionBlocks.length > 0
         ? {
-            mentionBlocks: mentionBlocks.map(b => ({
+            mentionBlocks: mentionBlocks.map(({ labels, ...b }) => ({
               ...b,
-              result: compactAnalysisResult(b.result)
+              titleKey: labels?.[b.titleKey] ?? b.titleKey,
+              result: compactAnalysisResult(b.result, labels)
             }))
           }
         : {})

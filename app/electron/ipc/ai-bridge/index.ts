@@ -73,7 +73,7 @@ import type {
 } from '../../../shared/ai-types'
 import { handleValidated, validateSender, openExternalHttps } from '../security'
 import { getSettings } from '../settings-handler'
-import { chatCompletion } from '../../ai/ai-provider'
+import { chatCompletion, AiProviderError } from '../../ai/ai-provider'
 import {
   purgeLegacyApiKey,
   hasSessionToken,
@@ -140,26 +140,33 @@ export function registerAiBridgeHandlers(): void {
     async (req, event): Promise<{ text: string }> => {
       const config = await requireProviderConfig()
       const language = getSettings().appearance.language
-      // TODO(F1/F2): electron/i18n.ts Main'de yalnız `dialogs` namespace'ini
-      // çözümlüyor — titleKey/columns/warnings/notes şimdilik ham i18n anahtarı
-      // olarak modele gidiyor (§5.3). Main-side analiz/output namespace
-      // çözümleyicisi eklenince burada kullanıcı diline çözümlenmeli.
+      // Titles, columns and notes arrive as i18n keys plus the renderer's
+      // translations (labels) — Main has no output namespace of its own.
+      const { labels, ...block } = req.block
       const userContent = [
-        'Output block JSON (i18n keys unresolved):',
+        labels ? 'Output block JSON:' : 'Output block JSON (i18n keys unresolved):',
         // Grafik/vaka verisi modele gitmez — yalnız tablolar (context-budget.ts).
-        JSON.stringify({ ...req.block, result: compactAnalysisResult(req.block.result) }),
+        JSON.stringify({
+          ...block,
+          titleKey: labels?.[block.titleKey] ?? block.titleKey,
+          result: compactAnalysisResult(block.result, labels)
+        }),
         req.question ? `\nUser question: ${req.question}` : ''
       ]
         .filter(Boolean)
         .join('\n')
       // Sistem prompt'unu sunucu kurar (interpretPrompt yalnız dili taşır).
+      // Reasoning models count their thinking against max_tokens: at 1500 a
+      // Turkish interpretation from DeepSeek came back with no text at all.
       const text = await chatCompletion(config, [{ role: 'user', content: userContent }], {
-        maxTokens: 1500,
+        maxTokens: 4000,
         saiPrompt: interpretPrompt(language)
       }).finally(() => {
         notifyCreditsSpent(event.sender)
       })
       log.info(`[ai-bridge] interpret completed (${String(text.length)} chars)`)
+      // An empty answer would be attached to the block as a blank note.
+      if (text.trim() === '') throw new AiProviderError('Provider returned an empty interpretation')
       return { text }
     }
   )

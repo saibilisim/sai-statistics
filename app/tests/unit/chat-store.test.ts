@@ -349,7 +349,8 @@ describe('chat-store', () => {
         titleKey: 'output.descriptives.title',
         timestamp: '2026-07-27T00:00:00.000Z',
         datasetName: 'Test Veri',
-        result: expect.objectContaining({ success: true })
+        result: expect.objectContaining({ success: true }),
+        labels: expect.objectContaining({ 'output.descriptives.title': 'Descriptive Statistics' })
       })
       expect(req?.mentionBlocks?.[0]).not.toHaveProperty('id')
       expect(req?.mentionBlocks?.[0]).not.toHaveProperty('aiNote')

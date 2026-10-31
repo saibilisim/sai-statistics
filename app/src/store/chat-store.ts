@@ -24,6 +24,7 @@ import type {
   AiStreamNotice,
   PersistedAiChatEntry
 } from '@shared/ai-types'
+import { blockToAiPayload } from '../lib/ai-block-payload'
 import { resolveAiErrorCode } from '../lib/ai-errors'
 import { runSpssSyntax } from '../lib/spss-syntax'
 import { useSettingsStore } from './settings-store'
@@ -221,28 +222,17 @@ export function loadPersistedChat(entries: PersistedAiChatEntry[]): void {
  * Mention'lanan blok id'lerini ai:send payload'ına çözümler (§5.4). Blok
  * verisi Main'de yaşamadığı için AnalysisResult Renderer'dan gider.
  * Çözülemeyen id'ler (blok silinmiş olabilir) sessizce atlanır.
- * Payload şekli ai-block-actions.ts blockToAiPayload ile birebir aynıdır —
- * o modül chat-store'u import ettiği için buradan çağırmak döngüsel import
- * yaratırdı; 5 satırlık eşleme bilinçli olarak çoğaltıldı.
  */
 function resolveMentionBlocks(blockIds: string[]): AiInterpretBlock[] {
   if (blockIds.length === 0) return []
   const blocks = useOutputStore.getState().blocks
-  const payloads: AiInterpretBlock[] = []
   // AiSendRequestSchema.mentionBlocks max(5) ile aynı sınır — aşılırsa Main
   // bütün ai:send'i reddeder; fazlası burada kırpılır.
-  for (const id of blockIds.slice(0, 5)) {
-    const block = blocks.find(b => b.id === id)
-    if (!block) continue
-    payloads.push({
-      analysisId: block.analysisId,
-      titleKey: block.titleKey,
-      timestamp: block.timestamp,
-      datasetName: block.datasetName,
-      result: block.result
-    })
-  }
-  return payloads
+  return blockIds
+    .slice(0, 5)
+    .map(id => blocks.find(b => b.id === id))
+    .filter(b => b !== undefined)
+    .map(blockToAiPayload)
 }
 
 export const useChatStore = create<ChatState & ChatActions>()((set, get) => ({

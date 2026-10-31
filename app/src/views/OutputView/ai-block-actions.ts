@@ -16,23 +16,13 @@
  * §6.5: sohbet/prompt içeriği burada da loglanmaz.
  */
 
-import type { AiInterpretBlock } from '@shared/ai-types'
 import { useOutputStore, type OutputBlock } from '../../store/output-store'
 import { useSettingsStore } from '../../store/settings-store'
 import { useChatStore } from '../../store/chat-store'
 import { useUIStore } from '../../store/ui-store'
+import { blockToAiPayload } from '../../lib/ai-block-payload'
 
-/** OutputBlock → ai:interpret payload'ı (§5.4: id/isCollapsed/aiNote gitmez,
- *  result AnalysisResultSchema'yı aynen yeniden kullanır). */
-export function blockToAiPayload(block: OutputBlock): AiInterpretBlock {
-  return {
-    analysisId: block.analysisId,
-    titleKey: block.titleKey,
-    timestamp: block.timestamp,
-    datasetName: block.datasetName,
-    result: block.result
-  }
-}
+export { blockToAiPayload }
 
 /** AI panelini açar (ui-store F1'in kapsamı — yalnızca mevcut aksiyon çağrılır). */
 function openAiPanel(): void {

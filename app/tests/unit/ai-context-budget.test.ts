@@ -64,6 +64,46 @@ describe('compactAnalysisResult', () => {
     expect(table?.rows[0]).toEqual(['v0', 0.123457, 1.23457e-9, 0])
     expect(table?.rowsOmitted).toMatch(/^15 more rows/)
   })
+
+  it('etiketleri (labels) uygular, ama vaka-düzeyi tabloyu anahtara göre yine atar', () => {
+    const compact = compactAnalysisResult(
+      result({
+        tables: [
+          {
+            titleKey: 'output.crosstabs.title',
+            columns: ['output.col.statistic', 'output.col.value'],
+            rows: [['output.col.pearsonChiSq', 0.556]],
+            footnoteKey: 'output.foot.x'
+          },
+          {
+            titleKey: 'output.caseSummaries.listTitle',
+            columns: ['output.col.value'],
+            rows: [['secret-case', 1]]
+          }
+        ],
+        notes: ['output.note.a']
+      }),
+      {
+        'output.crosstabs.title': 'Crosstabulation',
+        'output.col.statistic': 'Statistic',
+        'output.col.value': 'Value',
+        'output.col.pearsonChiSq': 'Pearson Chi-Square',
+        'output.foot.x': 'Footnote',
+        'output.caseSummaries.listTitle': 'Case Summaries',
+        'output.note.a': 'A note'
+      }
+    )
+    expect(compact['tables']).toEqual([
+      {
+        titleKey: 'Crosstabulation',
+        columns: ['Statistic', 'Value'],
+        rows: [['Pearson Chi-Square', 0.556]],
+        footnoteKey: 'Footnote'
+      }
+    ])
+    expect(JSON.stringify(compact)).not.toContain('secret-case')
+    expect(compact['notes']).toEqual(['A note'])
+  })
 })
 
 describe('elideStaleToolResults', () => {

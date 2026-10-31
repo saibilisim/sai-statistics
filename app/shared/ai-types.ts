@@ -565,7 +565,11 @@ export const AiInterpretBlockSchema = z.object({
   titleKey: z.string(),
   timestamp: z.string(),
   datasetName: z.string(),
-  result: AnalysisResultSchema
+  result: AnalysisResultSchema,
+  // i18n key → UI-language text for this block (src/lib/ai-block-payload.ts).
+  // Main has no output translations; context-budget.ts applies these after its
+  // key-based case-level filter.
+  labels: z.record(z.string().max(1000), z.string().max(4000)).optional()
 })
 export type AiInterpretBlock = z.infer<typeof AiInterpretBlockSchema>
 
