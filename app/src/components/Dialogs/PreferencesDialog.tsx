@@ -14,6 +14,7 @@ import type { AppSettings } from '@shared/settings-types'
 import { SUPPORTED_LANGUAGES, LANGUAGE_LABELS } from '@shared/languages'
 import { SHORTCUT_DEFS, resolveShortcuts } from '@shared/shortcuts'
 import {
+  effectiveModelId,
   modelCostTier,
   modelSpeedTier,
   usdToSaiTokens,
@@ -254,16 +255,8 @@ export function PreferencesDialog({ onClose, initialCategory }: Props) {
     // kalır — Kaydet'e basılınca o geçersiz id sunucuya gider. Persist anında
     // aynı düzeltmeyi burada uygula ki görünen değerle kayıt edilen değer hep
     // tutarlı olsun.
-    if (
-      toPersist.provider === 'server' &&
-      modelCatalog.status === 'ready' &&
-      !serverModels.some(m => m.id === toPersist.model)
-    ) {
-      const fallback =
-        (appConfig?.defaultModelId && serverModels.some(m => m.id === appConfig.defaultModelId)
-          ? appConfig.defaultModelId
-          : undefined) ?? serverModels[0]?.id
-      if (fallback) toPersist.model = fallback
+    if (toPersist.provider === 'server' && modelCatalog.status === 'ready') {
+      toPersist.model = effectiveModelId(toPersist.model, serverModels, appConfig?.defaultModelId)
     }
     setSetting('ai', toPersist)
   }
@@ -730,9 +723,11 @@ export function PreferencesDialog({ onClose, initialCategory }: Props) {
                                   type="radio"
                                   name="ai-model"
                                   checked={
-                                    (serverModels.some(m => m.id === ai.model)
-                                      ? ai.model
-                                      : serverModels[0]?.id) === preset.id
+                                    effectiveModelId(
+                                      ai.model,
+                                      serverModels,
+                                      appConfig?.defaultModelId
+                                    ) === preset.id
                                   }
                                   onChange={() => {
                                     setAi(s => ({ ...s, model: preset.id }))

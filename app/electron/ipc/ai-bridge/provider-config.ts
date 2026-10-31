@@ -5,7 +5,11 @@
  * guard'ları, hata indirgeme ve reachability ping'i.
  */
 
-import { AI_SERVER_BASE_URL, AI_SERVER_DEFAULT_MODEL } from '../../../shared/ai-types'
+import {
+  AI_SERVER_BASE_URL,
+  AI_SERVER_DEFAULT_MODEL,
+  effectiveModelId
+} from '../../../shared/ai-types'
 import type { AiProviderConfig, AiErrorCode } from '../../../shared/ai-types'
 import { getSettings } from '../settings-handler'
 import { AiProviderError, AiTimeoutError } from '../../ai/ai-provider'
@@ -52,11 +56,11 @@ async function resolveProviderConfig(): Promise<AiProviderConfig | null> {
  */
 async function resolveServerModel(saved: string): Promise<string> {
   const fallback = (await fetchAppConfig())?.defaultModelId || AI_SERVER_DEFAULT_MODEL
-  if (!saved) return fallback
-  const catalog = await fetchModelCatalog()
-  if (catalog.length === 0 || catalog.some(m => m.id === saved)) return saved
-  log.warn(`[ai] model "${saved}" is no longer offered — using "${fallback}"`)
-  return fallback
+  const model = effectiveModelId(saved, await fetchModelCatalog(), fallback)
+  if (saved && model !== saved) {
+    log.warn(`[ai] model "${saved}" is no longer offered — using "${model}"`)
+  }
+  return model
 }
 
 /** Yapılandırma kaynaklı hatalar — `code` renderer'da yerelleştirilir. */

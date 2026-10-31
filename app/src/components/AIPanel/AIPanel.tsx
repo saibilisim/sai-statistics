@@ -6,7 +6,8 @@ import { useUIStore, AI_PANEL_MIN_WIDTH, AI_PANEL_MAX_WIDTH } from '../../store/
 import { useSettingsStore } from '../../store/settings-store'
 import { useChatStore } from '../../store/chat-store'
 import { useAiModelCatalog } from '../../lib/use-ai-model-catalog'
-import { usdToSaiTokens, type AiAccountStatus } from '@shared/ai-types'
+import { useAiAppConfig } from '../../lib/use-ai-app-config'
+import { effectiveModelId, usdToSaiTokens, type AiAccountStatus } from '@shared/ai-types'
 import { ChatMessageList } from './ChatMessageList'
 import { ChatInput } from './ChatInput'
 import { SparkleIcon, GearIcon, TrashIcon, XIcon } from './ai-icons'
@@ -33,6 +34,7 @@ export function AIPanel() {
   const messages = useChatStore(s => s.messages)
   const clearChat = useChatStore(s => s.clearChat)
   const modelCatalog = useAiModelCatalog(provider === 'server')
+  const appConfig = useAiAppConfig()
 
   const dragState = useRef<{ startX: number; startWidth: number } | null>(null)
 
@@ -181,11 +183,7 @@ export function AIPanel() {
           ) : modelCatalog.status === 'ready' ? (
             <select
               className={styles.modelSelect}
-              value={
-                modelCatalog.models.some(m => m.id === model)
-                  ? model
-                  : (modelCatalog.models[0]?.id ?? model)
-              }
+              value={effectiveModelId(model, modelCatalog.models, appConfig?.defaultModelId)}
               onChange={e => {
                 setSetting('ai', { model: e.target.value })
               }}

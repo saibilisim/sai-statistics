@@ -3,6 +3,9 @@
 import { useTranslation } from 'react-i18next'
 import { useChatStore } from '../../store/chat-store'
 import { useSettingsStore } from '../../store/settings-store'
+import { useAiModelCatalog } from '../../lib/use-ai-model-catalog'
+import { useAiAppConfig } from '../../lib/use-ai-app-config'
+import { effectiveModelId } from '@shared/ai-types'
 import styles from '../Dialogs/DialogBase.module.css'
 import local from './AiConsentDialog.module.css'
 
@@ -68,6 +71,12 @@ export function AiConsentDialog() {
   // Tercihler ▸ AI'dan yeniden açıldığında onay zaten verilmiş olabilir:
   // o zaman Kabul/Reddet yerine Geri çek/Kapat.
   const given = aiSettings.consentGiven
+  // The model the request will really use, by its catalog label — the raw
+  // saved id may be one the server has retired (provider-config.ts).
+  const catalog = useAiModelCatalog(open && aiSettings.provider === 'server')
+  const appConfig = useAiAppConfig()
+  const modelId = effectiveModelId(aiSettings.model, catalog.models, appConfig?.defaultModelId)
+  const modelLabel = catalog.models.find(m => m.id === modelId)?.label ?? modelId
 
   if (!open) return null
 
@@ -120,7 +129,7 @@ export function AiConsentDialog() {
             <dt>{t('ai.consent.providerLabel')}</dt>
             <dd>{providerLabel}</dd>
             <dt>{t('ai.consent.modelLabel')}</dt>
-            <dd className={local.model}>{aiSettings.model}</dd>
+            <dd className={local.model}>{modelLabel}</dd>
           </dl>
         </div>
 

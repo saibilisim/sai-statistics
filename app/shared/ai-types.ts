@@ -91,6 +91,25 @@ export const AiAppConfigSchema = z.object({
 })
 export type AiAppConfig = z.infer<typeof AiAppConfigSchema>
 
+/**
+ * The model a request actually uses: the saved id if the catalog still offers
+ * it, else the server default, else the catalog's first entry. With no
+ * catalog (offline) the saved id goes as is. Main (provider-config.ts), the
+ * AI panel's select, Preferences and the consent dialog all use this one rule
+ * — the panel used to show catalog[0] for a retired id while Main sent the
+ * server default, so the select and the request named different models.
+ */
+export function effectiveModelId(
+  saved: string,
+  catalog: readonly Pick<AiServerModel, 'id'>[],
+  defaultId: string = AI_SERVER_DEFAULT_MODEL
+): string {
+  if (catalog.length === 0) return saved || defaultId
+  if (catalog.some(m => m.id === saved)) return saved
+  if (catalog.some(m => m.id === defaultId)) return defaultId
+  return catalog[0]?.id ?? defaultId
+}
+
 // ─── Chat mesajları ──────────────────────────────────────────────────────────
 
 // No 'system': instructions live on the server (§9). A client/disk-supplied
