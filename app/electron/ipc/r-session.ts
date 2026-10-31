@@ -31,6 +31,7 @@ import type {
   TerminalRPkgInstallResult,
   TerminalRViewRowsResult
 } from '../../shared/ipc-contracts'
+import type { AppLanguage } from '../../shared/settings-types'
 import {
   TerminalRWriteRequestSchema,
   TerminalRRunRequestSchema,
@@ -152,10 +153,22 @@ function getRScriptsDir(): string {
     : join(app.getAppPath(), 'r-scripts')
 }
 
+// R's message catalogues by UI language. R ships Brazilian Portuguese only.
+const R_MESSAGE_LANGUAGE: Record<AppLanguage, string> = {
+  tr: 'tr',
+  en: 'en',
+  es: 'es',
+  fr: 'fr',
+  pt: 'pt_BR',
+  it: 'it'
+}
+
 function rEnv(): NodeJS.ProcessEnv {
   // Same environment as analysis runs (library order, DLL dirs, collation —
-  // see rChildEnv in r-bridge.ts).
-  return rChildEnv()
+  // see rChildEnv in r-bridge.ts). R's own errors and warnings follow the UI
+  // language, not the OS locale: an English UI on a Turkish Windows printed
+  // "'closure' tipi nesne alt küme yapılamaz".
+  return { ...rChildEnv(), LANGUAGE: R_MESSAGE_LANGUAGE[getSettings().appearance.language] }
 }
 
 function emitOutput(chunk: string, stream: 'stdout' | 'stderr'): void {
