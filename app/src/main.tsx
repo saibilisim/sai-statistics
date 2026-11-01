@@ -55,7 +55,7 @@ if (!root) throw new Error('Root element not found')
 const isLoginWindow = new URLSearchParams(window.location.search).get('window') === 'login'
 
 // The Code tab is part of the project (.sdf code.json); unsaved code is
-// guarded like unsaved data. Until 0.2.39 the buffers were one app-wide draft
+// guarded like unsaved data. Before 0.3.0 the buffers were one app-wide draft
 // in localStorage — drop it so no dataset inherits another one's code.
 if (!isLoginWindow) {
   startCodeDirtyTracking()

@@ -2,56 +2,56 @@
   "$comment": "Son kullanıcıya dönük sürüm notları — tek kaynak. Kurallar: app/scripts/check-release-notes.cjs başı ve CLAUDE.md §10.",
   "releases": [
     {
-      "version": "0.2.39",
+      "version": "0.3.0",
       "date": "2026-11-01",
       "notes": {
         "tr": [
-          "Sözdizimi sekmesinin adı artık Kod, içindeki R Terminal modunun adı da R Konsolu: burası bir sistem komut satırı değil, uygulamanın içindeki R oturumu.",
-          "R Kodunu Yapıştır ile alınan kod R Konsolu'nda doğrudan çalışıyor ve başlığı arayüz dilinde yazılıyor; Kısmi Korelasyonlar da artık çalıştırılabilir kod veriyor. R'ın hata mesajları uygulamanın dilinde.",
-          "AI asistanı oturumunuzu artık kendiliğinden kapatmıyor. Yorumla, tabloları arayüz dilindeki başlıklarıyla gönderiyor; model kutusu ve onay penceresi de gerçekten kullanılan modeli adıyla gösteriyor.",
-          "Kod sekmesindeki değişken listesi, R Konsolu'nun sağ paneli ve Çıktılar gezgini kenarından sürüklenerek genişletilebiliyor; seçtiğiniz genişlik hatırlanıyor.",
-          "İstatistik sonuçları denetlendi: ağırlıklı analizlerde serbestlik derecesi, Dunn testinde bağ düzeltmesi, eğik döndürmede faktör puanları ve parametrik olmayan testlerde kullanıcı tanımlı kayıp değerler düzeltildi.",
-          "Proje dosyaları kayıt sırasında kesintiye karşı korunuyor, dışa aktarılan tablolarda formül gibi başlayan hücreler etkisizleştiriliyor ve güncelleme denetimi Tercihler'den kapatılabiliyor."
+          "SAI Statistics artık açık kaynak: kaynak kodu GNU AGPL-3.0 lisansıyla herkese açık yayımlanıyor.",
+          "Sözdizimi sekmesinin adı artık Kod, R Terminal de R Konsolu oldu ve tam bir çalışma alanına dönüştü: sekmeli betik editörü, otomatik tamamlama, Ortam, Dosyalar, Geçmiş ve Paketler panelleri, hata ayıklayıcı, grafik dışa aktarma ve R Markdown/Quarto raporları.",
+          "Proje dosyası (.sdf) verinin yanında analiz sonuçlarını, AI sohbetini ve artık kendi kodunu da saklıyor: dosyayı açınca kodu geri gelir, yeni veri seti boş editörle başlar. Kaydedilmemiş her şey için tek bir \"Kaydedilsin mi?\" sorusu çıkar.",
+          "SPSS sözdizimi çok genişledi (DO IF, DO REPEAT, COUNT, RECODE, VALUE LABELS ve fazlası); veriler .sav olarak kaydedilebiliyor, çıktılar gerçek Word ve Excel dosyalarına aktarılıyor. R Kodunu Yapıştır ile alınan kod R Konsolu'nda doğrudan çalışıyor.",
+          "AI asistanı R kodu da öneriyor; kodu inceleyip kendiniz çalıştırırsınız. Asistan oturumunuzu artık kendiliğinden kapatmıyor, Yorumla tabloları arayüz dilindeki başlıklarıyla gönderiyor ve kullanılan model adıyla gösteriliyor.",
+          "Üç platformda aynı R 4.6.1 ve gereken tüm paketler uygulamayla geliyor; kurulum imzalı, güncellemeler uygulama içinden kuruluyor. İstatistik sonuçları denetlendi: ağırlıklı analizler, Dunn testi, eğik döndürme ve kayıp değerlerde düzeltmeler yapıldı."
         ],
         "en": [
-          "The Syntax tab is now called Code, and its R Terminal mode is now R Console: it is the app's own R session, not a system command prompt.",
-          "Code from Paste R now runs as-is in the R Console, with its header in your interface language, and Partial Correlations now pastes runnable code. R's error messages follow the app language.",
-          "The AI assistant no longer signs you out on its own. Interpret sends tables with their titles in your interface language, and the model selector and consent window show the model actually used, by name.",
-          "The variable list in the Code tab, the R Console side panel and the Output navigator can be widened by dragging their edge, and the width you choose is remembered.",
-          "Statistical results were audited: degrees of freedom in weighted analyses, the tie correction in Dunn's test, factor scores for oblique rotations and user-missing values in nonparametric tests are now correct.",
-          "Project files are protected against interruptions while saving, cells that look like formulas are neutralised in exported tables, and update checks can be turned off in Preferences."
+          "SAI Statistics is now open source: its source code is published openly under the GNU AGPL-3.0 license.",
+          "The Syntax tab is now called Code, and the R Terminal is now the R Console, grown into a full workspace: tabbed script editor, suggestions as you type, Environment, Files, History and Packages panes, a debugger, plot export and R Markdown/Quarto reports.",
+          "A project file (.sdf) keeps your analysis results, AI chat and now its own code next to the data: open the file and its code is back, while a new dataset starts with empty editors. One \"Save changes?\" question covers everything unsaved.",
+          "SPSS syntax covers much more (DO IF, DO REPEAT, COUNT, RECODE, VALUE LABELS and more); data can be saved as .sav and output exported to real Word and Excel files. Code from Paste R runs as-is in the R Console.",
+          "The AI assistant also proposes R code, which you review and run yourself. It no longer signs you out on its own, Interpret sends tables with their titles in your interface language, and the model in use is shown by name.",
+          "All three platforms ship the same R 4.6.1 with every package needed; the installer is signed and updates install from within the app. Statistical results were audited, with fixes in weighted analyses, Dunn's test, oblique rotations and missing values."
         ],
         "es": [
-          "La pestaña Sintaxis ahora se llama Código y su modo Terminal R ahora es Consola R: es la sesión de R de la aplicación, no una línea de comandos del sistema.",
-          "El código de Pegar código R se ejecuta tal cual en la Consola R, con el encabezado en el idioma de la interfaz, y Correlaciones parciales ahora pega código ejecutable. Los errores de R siguen el idioma de la aplicación.",
-          "El asistente de IA ya no cierra tu sesión por sí solo. Interpretar envía las tablas con sus títulos en el idioma de la interfaz, y el selector de modelo y la ventana de consentimiento muestran el modelo realmente usado.",
-          "La lista de variables de la pestaña Código, el panel lateral de la Consola R y el navegador de Resultados se ensanchan arrastrando su borde, y se recuerda el ancho elegido.",
-          "Se auditaron los resultados estadísticos: ahora son correctos los grados de libertad ponderados, la corrección por empates de Dunn, las puntuaciones factoriales oblicuas y los valores perdidos del usuario en pruebas no paramétricas.",
-          "Los archivos de proyecto están protegidos frente a interrupciones al guardar, las celdas que parecen fórmulas se neutralizan al exportar y la comprobación de actualizaciones se puede desactivar en Preferencias."
+          "SAI Statistics ahora es de código abierto: su código fuente se publica abiertamente bajo la licencia GNU AGPL-3.0.",
+          "La pestaña Sintaxis ahora se llama Código y el Terminal R ahora es la Consola R, un entorno completo: editor de scripts con pestañas, sugerencias al escribir, paneles Entorno, Archivos, Historial y Paquetes, depurador, exportación de gráficos e informes R Markdown/Quarto.",
+          "El archivo de proyecto (.sdf) guarda junto a los datos los resultados, el chat de IA y ahora su propio código: al abrirlo vuelve su código y un conjunto de datos nuevo empieza con editores vacíos. Una sola pregunta \"¿Guardar cambios?\" cubre todo lo pendiente.",
+          "La sintaxis SPSS abarca mucho más (DO IF, DO REPEAT, COUNT, RECODE, VALUE LABELS y más); los datos se guardan como .sav y los resultados se exportan a archivos reales de Word y Excel. El código de Pegar código R se ejecuta tal cual en la Consola R.",
+          "El asistente de IA también propone código R, que revisas y ejecutas tú. Ya no cierra tu sesión por sí solo, Interpretar envía las tablas con sus títulos en el idioma de la interfaz y se muestra por su nombre el modelo usado.",
+          "Las tres plataformas incluyen el mismo R 4.6.1 con todos los paquetes necesarios; el instalador está firmado y las actualizaciones se instalan desde la aplicación. Resultados estadísticos auditados: análisis ponderados, prueba de Dunn, rotaciones oblicuas y valores perdidos."
         ],
         "fr": [
-          "L'onglet Syntaxe s'appelle désormais Code, et son mode Terminal R devient Console R : c'est la session R de l'application, pas une invite de commandes du système.",
-          "Le code de Coller le code R s'exécute tel quel dans la Console R, avec un en-tête dans la langue de l'interface, et Corrélations partielles colle du code exécutable. Les erreurs de R suivent la langue de l'application.",
-          "L'assistant IA ne vous déconnecte plus de lui-même. Interpréter envoie les tableaux avec leurs titres dans la langue de l'interface, et le sélecteur de modèle et la fenêtre de consentement affichent le modèle réellement utilisé.",
-          "La liste des variables de l'onglet Code, le panneau latéral de la Console R et le navigateur des Résultats s'élargissent en faisant glisser leur bord, et la largeur choisie est mémorisée.",
-          "Les résultats statistiques ont été audités : degrés de liberté pondérés, correction des ex aequo de Dunn, scores factoriels obliques et valeurs manquantes utilisateur des tests non paramétriques sont désormais corrects.",
-          "Les fichiers de projet sont protégés contre les interruptions à l'enregistrement, les cellules ressemblant à des formules sont neutralisées à l'export et la vérification des mises à jour se désactive dans les Préférences."
+          "SAI Statistics est désormais open source : son code source est publié ouvertement sous la licence GNU AGPL-3.0.",
+          "L'onglet Syntaxe devient Code et le Terminal R la Console R, un espace de travail complet : éditeur de scripts à onglets, suggestions à la saisie, volets Environnement, Fichiers, Historique et Paquets, débogueur, export des graphiques et rapports R Markdown/Quarto.",
+          "Le fichier de projet (.sdf) conserve avec les données les résultats, la discussion IA et désormais son propre code : à l'ouverture, son code revient, et un nouveau jeu de données démarre avec des éditeurs vides. Une seule question « Enregistrer ? » couvre tout.",
+          "La syntaxe SPSS couvre bien plus (DO IF, DO REPEAT, COUNT, RECODE, VALUE LABELS et plus) ; les données s'enregistrent en .sav et les résultats s'exportent en vrais fichiers Word et Excel. Le code de Coller le code R s'exécute tel quel dans la Console R.",
+          "L'assistant IA propose aussi du code R, que vous relisez et exécutez vous-même. Il ne vous déconnecte plus de lui-même, Interpréter envoie les tableaux avec leurs titres dans la langue de l'interface et le modèle utilisé est affiché par son nom.",
+          "Les trois plateformes embarquent le même R 4.6.1 avec tous les paquets nécessaires ; l'installateur est signé et les mises à jour s'installent dans l'app. Les résultats statistiques ont été audités : analyses pondérées, test de Dunn, rotations obliques, valeurs manquantes."
         ],
         "pt": [
-          "A aba Sintaxe agora se chama Código, e o seu modo Terminal R agora é Console R: é a sessão R do próprio aplicativo, não um prompt de comando do sistema.",
-          "O código de Colar Código R é executado como está no Console R, com o cabeçalho no idioma da interface, e Correlações Parciais agora cola código executável. Os erros do R seguem o idioma do aplicativo.",
-          "O assistente de IA não encerra mais a sua sessão sozinho. Interpretar envia as tabelas com títulos no idioma da interface, e o seletor de modelo e a janela de consentimento mostram pelo nome o modelo realmente usado.",
-          "A lista de variáveis da aba Código, o painel lateral do Console R e o navegador de Resultados podem ser alargados arrastando a borda, e a largura escolhida é lembrada.",
-          "Os resultados estatísticos foram auditados: graus de liberdade ponderados, correção de empates no teste de Dunn, escores fatoriais em rotações oblíquas e valores ausentes do usuário em testes não paramétricos agora estão corretos.",
-          "Os arquivos de projeto ficam protegidos contra interrupções ao salvar, células que parecem fórmulas são neutralizadas ao exportar e a verificação de atualizações pode ser desativada em Preferências."
+          "O SAI Statistics agora é de código aberto: o seu código-fonte é publicado abertamente sob a licença GNU AGPL-3.0.",
+          "A aba Sintaxe agora se chama Código e o Terminal R agora é o Console R, transformado num ambiente completo: editor de scripts com abas, sugestões ao digitar, painéis Ambiente, Arquivos, Histórico e Pacotes, depurador, exportação de gráficos e relatórios R Markdown/Quarto.",
+          "O arquivo de projeto (.sdf) guarda junto com os dados os resultados, o chat de IA e agora o seu próprio código: ao abri-lo o código volta, e um novo conjunto de dados começa com editores vazios. Uma só pergunta \"Salvar alterações?\" cobre tudo o que falta salvar.",
+          "A sintaxe SPSS cobre muito mais (DO IF, DO REPEAT, COUNT, RECODE, VALUE LABELS e mais); os dados podem ser salvos como .sav e os resultados exportados para arquivos reais de Word e Excel. O código de Colar Código R é executado como está no Console R.",
+          "O assistente de IA também propõe código R, que você revisa e executa. Ele não encerra mais a sua sessão sozinho, Interpretar envia as tabelas com títulos no idioma da interface e o modelo em uso é mostrado pelo nome.",
+          "As três plataformas trazem o mesmo R 4.6.1 com todos os pacotes necessários; o instalador é assinado e as atualizações são instaladas pelo próprio aplicativo. Os resultados estatísticos foram auditados: análises ponderadas, teste de Dunn, rotações oblíquas e valores ausentes."
         ],
         "it": [
-          "La scheda Sintassi ora si chiama Codice e la sua modalità Terminale R ora è Console R: è la sessione R dell'app, non un prompt dei comandi del sistema.",
-          "Il codice di Incolla R viene eseguito così com'è nella Console R, con l'intestazione nella lingua dell'interfaccia, e Correlazioni parziali ora incolla codice eseguibile. Gli errori di R seguono la lingua dell'app.",
-          "L'assistente IA non ti disconnette più da solo. Interpreta invia le tabelle con i titoli nella lingua dell'interfaccia, e il selettore del modello e la finestra di consenso mostrano per nome il modello effettivamente usato.",
-          "L'elenco delle variabili nella scheda Codice, il pannello laterale della Console R e il navigatore dell'Output si allargano trascinandone il bordo, e la larghezza scelta viene ricordata.",
-          "I risultati statistici sono stati verificati: ora sono corretti i gradi di libertà ponderati, la correzione per i ranghi uguali di Dunn, i punteggi fattoriali obliqui e i valori mancanti utente nei test non parametrici.",
-          "I file di progetto sono protetti dalle interruzioni durante il salvataggio, le celle che sembrano formule vengono neutralizzate all'esportazione e il controllo degli aggiornamenti si disattiva nelle Preferenze."
+          "SAI Statistics ora è open source: il suo codice sorgente è pubblicato apertamente con la licenza GNU AGPL-3.0.",
+          "La scheda Sintassi ora si chiama Codice e il Terminale R ora è la Console R, un ambiente completo: editor di script a schede, suggerimenti durante la digitazione, pannelli Ambiente, File, Cronologia e Pacchetti, debugger, esportazione dei grafici e report R Markdown/Quarto.",
+          "Il file di progetto (.sdf) conserva accanto ai dati i risultati, la chat IA e ora anche il proprio codice: aprendolo il codice torna, mentre un nuovo dataset parte con editor vuoti. Un'unica domanda \"Salvare le modifiche?\" copre tutto ciò che non è salvato.",
+          "La sintassi SPSS copre molto di più (DO IF, DO REPEAT, COUNT, RECODE, VALUE LABELS e altro); i dati si salvano come .sav e i risultati si esportano in veri file Word ed Excel. Il codice di Incolla R viene eseguito così com'è nella Console R.",
+          "L'assistente IA propone anche codice R, che rivedi ed esegui tu. Non ti disconnette più da solo, Interpreta invia le tabelle con i titoli nella lingua dell'interfaccia e il modello in uso è mostrato per nome.",
+          "Le tre piattaforme includono lo stesso R 4.6.1 con tutti i pacchetti necessari; l'installer è firmato e gli aggiornamenti si installano dall'app. I risultati statistici sono stati verificati: analisi ponderate, test di Dunn, rotazioni oblique e valori mancanti."
         ]
       }
     },
