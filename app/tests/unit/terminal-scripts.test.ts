@@ -1,13 +1,19 @@
 // SPDX-FileCopyrightText: 2026 SAI Bilişim
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * terminal-scripts.test.ts — R script tabs and draft carry-over (2026-10-21).
- * Before: one script buffer, and quitting with unsaved R code lost it silently
- * (the close guard only knows datasets and Output).
+ * terminal-scripts.test.ts — R script tabs (2026-10-21) and the Code tab as
+ * part of the project (2026-11-01): saved in the .sdf, guarded when unsaved.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useTerminalStore, isScriptDirty, type RScriptTab } from '../../src/store/terminal-store'
-import { restoreTerminalDrafts, startTerminalDraftAutosave } from '../../src/lib/terminal-drafts'
+import {
+  currentProjectCode,
+  isCodeModified,
+  loadProjectCode,
+  markCodeSaved,
+  startCodeDirtyTracking
+} from '../../src/lib/project-code'
+import { ProjectCodeSchema } from '../../shared/project-code'
 
 const s = () => useTerminalStore.getState()
 const active = (): RScriptTab => s().rScripts.find(t => t.id === s().activeScriptId) as RScriptTab
@@ -79,43 +85,65 @@ describe('R script tabs', () => {
   })
 })
 
-describe('draft carry-over', () => {
-  let store: Map<string, string>
+describe('code as part of the project (.sdf code.json)', () => {
+  const setDirty = vi.fn()
 
   beforeEach(() => {
-    store = new Map()
-    vi.useFakeTimers()
-    vi.stubGlobal('localStorage', {
-      getItem: (k: string) => store.get(k) ?? null,
-      setItem: (k: string, v: string) => store.set(k, v)
-    })
-    vi.stubGlobal('window', { addEventListener: vi.fn(), removeEventListener: vi.fn() })
+    setDirty.mockClear()
+    vi.stubGlobal('window', { api: { app: { setOutputDirty: setDirty } } })
+    loadProjectCode(null)
   })
 
-  it('saves every tab and the SPSS buffer, and restores them — unsaved marks included', () => {
-    const stop = startTerminalDraftAutosave()
+  it('an untouched Code tab stores nothing', () => {
+    expect(currentProjectCode()).toBeNull()
+    expect(isCodeModified()).toBe(false)
+  })
+
+  it('round-trips every tab, the active one, the SPSS buffer and unsaved marks', () => {
     s().setRSource('x <- 1')
     s().newRScript()
     s().setRSource('y <- 2')
     s().setSource('FREQUENCIES age.')
-    vi.advanceTimersByTime(1000)
-    stop()
+    const code = currentProjectCode()
+    expect(ProjectCodeSchema.safeParse(code).success).toBe(true)
 
-    reset()
-    restoreTerminalDrafts()
+    loadProjectCode(null)
+    expect(s().rSource).toBe('')
+    expect(s().source).toBe('')
+
+    loadProjectCode(code)
     expect(s().rScripts.map(t => t.source)).toEqual(['x <- 1', 'y <- 2'])
     expect(s().rSource).toBe('y <- 2')
     expect(s().source).toBe('FREQUENCIES age.')
     expect(isScriptDirty(active(), s().rSource)).toBe(true)
+    // just loaded = what the project holds
+    expect(isCodeModified()).toBe(false)
   })
 
-  it('ignores a corrupt or foreign value', () => {
-    store.set('sai.terminalDrafts.v1', '{"scripts": "nope"}')
-    restoreTerminalDrafts()
-    expect(s().rScripts).toHaveLength(1)
-    store.set('sai.terminalDrafts.v1', 'not json')
-    expect(() => {
-      restoreTerminalDrafts()
-    }).not.toThrow()
+  it('typing makes the project unsaved until it is saved', () => {
+    s().setSource('DESCRIPTIVES age.')
+    expect(isCodeModified()).toBe(true)
+    markCodeSaved()
+    expect(isCodeModified()).toBe(false)
+  })
+
+  it('a script saved to its own .R file is not unsaved project work', () => {
+    s().openRScript('a.R', 'a()', 'C:\w\a.R')
+    expect(isCodeModified()).toBe(false)
+    s().setRSource('a(1)')
+    expect(isCodeModified()).toBe(true)
+  })
+
+  it('tells the close guard only when the state flips', () => {
+    const stop = startCodeDirtyTracking()
+    s().setSource('A.')
+    s().setSource('AB.')
+    s().setSource('')
+    stop()
+    expect(setDirty.mock.calls).toEqual([[true], [false]])
+  })
+
+  it('rejects a corrupt code.json', () => {
+    expect(ProjectCodeSchema.safeParse({ syntax: 1, scripts: [] }).success).toBe(false)
   })
 })

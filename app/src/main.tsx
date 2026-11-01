@@ -15,7 +15,7 @@ import { useTerminalStore } from './store/terminal-store'
 import { useGridBridgeStore } from './store/grid-bridge-store'
 import { useSettingsStore } from './store/settings-store'
 import { useChatStore } from './store/chat-store'
-import { restoreTerminalDrafts, startTerminalDraftAutosave } from './lib/terminal-drafts'
+import { startCodeDirtyTracking } from './lib/project-code'
 
 // E2E (Playwright) testlerinin store'lara erişebilmesi için debug kancası.
 // Renderer'ın kendi context'i dışında bir yetki vermez.
@@ -54,11 +54,16 @@ if (!root) throw new Error('Root element not found')
 // LoginWindow'u render eder (2026-08-02).
 const isLoginWindow = new URLSearchParams(window.location.search).get('window') === 'login'
 
-// Unsaved R scripts / SPSS syntax carry over to the next start. E2E runs share
-// one userData dir, so they start clean instead of inheriting the last test's.
-if (!isLoginWindow && !window.api.isE2E) {
-  restoreTerminalDrafts()
-  startTerminalDraftAutosave()
+// The Code tab is part of the project (.sdf code.json); unsaved code is
+// guarded like unsaved data. Until 0.2.39 the buffers were one app-wide draft
+// in localStorage — drop it so no dataset inherits another one's code.
+if (!isLoginWindow) {
+  startCodeDirtyTracking()
+  try {
+    localStorage.removeItem('sai.terminalDrafts.v1')
+  } catch {
+    // Storage unavailable — there is no old draft to drop either.
+  }
 }
 
 ReactDOM.createRoot(root).render(

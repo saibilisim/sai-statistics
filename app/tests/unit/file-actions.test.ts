@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { importDataset } from '../../src/lib/file-actions'
+import { useTerminalStore } from '../../src/store/terminal-store'
 
 const mocks = vi.hoisted(() => ({
   state: { isModified: false, datasetId: 'old', customStyles: null, setDataset: vi.fn() },
@@ -33,7 +34,10 @@ describe('dataset import replacement guard', () => {
     importFile.mockResolvedValue(result)
     saveData.mockResolvedValue(null)
     vi.stubGlobal('window', {
-      api: { file: { import: importFile, saveData }, app: { confirmUnsaved } }
+      api: {
+        file: { import: importFile, saveData },
+        app: { confirmUnsaved, setOutputDirty: vi.fn() }
+      }
     })
   })
   afterEach(() => vi.unstubAllGlobals())
@@ -43,6 +47,14 @@ describe('dataset import replacement guard', () => {
     expect(importFile).toHaveBeenCalledWith({ filePath: 'C:\\Users\\Test\\Desktop\\data.csv' })
     expect(mocks.state.setDataset).toHaveBeenCalledWith('new', 'data.csv', null, [], 2, undefined)
     expect(confirmUnsaved).not.toHaveBeenCalled()
+  })
+
+  it('a new dataset starts with empty code — after asking if the old code is unsaved', async () => {
+    useTerminalStore.getState().setSource('FREQUENCIES old_var.')
+    confirmUnsaved.mockResolvedValue(1) // Discard
+    await importDataset({ filePath: 'data.csv' })
+    expect(confirmUnsaved).toHaveBeenCalledTimes(1)
+    expect(useTerminalStore.getState().source).toBe('')
   })
 
   it('keeps current data when the user cancels replacement', async () => {

@@ -18,6 +18,7 @@ import {
 } from '../../../shared/data-types'
 import { AiChatEntrySchema, type PersistedAiChatEntry } from '../../../shared/ai-types'
 import { OutputDocumentSchema, type OutputDocument } from '../../../shared/output-document'
+import { ProjectCodeSchema, type ProjectCode } from '../../../shared/project-code'
 import { FileOpenRequestSchema, FileSaveDataRequestSchema } from '../../../shared/ipc-schemas'
 import {
   getDbConnection,
@@ -47,13 +48,15 @@ import {
  * `outputDocument` embeds the Output tab (OutputDocumentSchema) as
  * `output.json`, so reopening the .sdf restores the results
  * too. Omitted/null → no output.json entry (recovery autosave, empty Output).
+ * `code` embeds the Code tab (ProjectCodeSchema) as `code.json` the same way.
  */
 export async function writeDatasetSdf(
   dataset: Dataset,
   targetPath: string,
   customStyles?: CustomStyles | null,
   chatHistory?: PersistedAiChatEntry[] | null,
-  outputDocument?: OutputDocument | null
+  outputDocument?: OutputDocument | null,
+  code?: ProjectCode | null
 ): Promise<void> {
   const conn = await getDbConnection()
   // Private per-call directory: unpredictable (no symlink pre-planting in a
@@ -65,6 +68,7 @@ export async function writeDatasetSdf(
   const tempMetadataPath = path.join(tempDir, 'metadata.json')
   const tempChatPath = path.join(tempDir, 'ai-chat.json')
   const tempOutputPath = path.join(tempDir, 'output.json')
+  const tempCodePath = path.join(tempDir, 'code.json')
   // The zip is built next to the target and renamed over it, so a crash or a
   // full disk never leaves a truncated .sdf in place of the previous save.
   const tempTargetPath = `${targetPath}.tmp-${randomUUID()}`
@@ -113,7 +117,13 @@ export async function writeDatasetSdf(
       await fs.promises.writeFile(tempOutputPath, JSON.stringify(outputDocument), 'utf-8')
     }
 
-    // 7. Zip files together
+    // 7. Write code.json — Kod sekmesi (ProjectCodeSchema); eski okuyucular
+    // output.json gibi bunu da yok sayar.
+    if (code) {
+      await fs.promises.writeFile(tempCodePath, JSON.stringify(code), 'utf-8')
+    }
+
+    // 8. Zip files together
     const zip = new AdmZip()
     zip.addLocalFile(tempParquetPath, undefined, 'data.parquet')
     zip.addLocalFile(tempVariablesPath, undefined, 'variables.json')
@@ -121,6 +131,7 @@ export async function writeDatasetSdf(
     zip.addLocalFile(tempMetadataPath, undefined, 'metadata.json')
     zip.addLocalFile(tempChatPath, undefined, 'ai-chat.json')
     if (outputDocument) zip.addLocalFile(tempOutputPath, undefined, 'output.json')
+    if (code) zip.addLocalFile(tempCodePath, undefined, 'code.json')
     await zip.writeZipPromise(tempTargetPath)
     await fs.promises.rename(tempTargetPath, targetPath)
 
@@ -145,12 +156,13 @@ async function saveDatasetToSdf(
   targetPath: string,
   customStyles?: CustomStyles | null,
   chatHistory?: PersistedAiChatEntry[] | null,
-  outputDocument?: OutputDocument | null
+  outputDocument?: OutputDocument | null,
+  code?: ProjectCode | null
 ): Promise<void> {
   // The recovery snapshot is housekeeping state that Main deletes — a user
   // "save" must never land there (the only copy of their work would vanish).
   if (isRecoveryPath(targetPath)) throw new Error('Cannot save into the recovery file')
-  await writeDatasetSdf(dataset, targetPath, customStyles, chatHistory, outputDocument)
+  await writeDatasetSdf(dataset, targetPath, customStyles, chatHistory, outputDocument, code)
   if (customStyles) datasetCustomStyles.set(dataset.id, customStyles)
   dataset.filePath = targetPath
   dataset.name = path.basename(targetPath, '.sdf')
@@ -318,7 +330,8 @@ export function registerDatasetHandlers(): void {
             'styles.json',
             'metadata.json',
             'ai-chat.json',
-            'output.json'
+            'output.json',
+            'code.json'
           ],
           tempExtractPath,
           '.sdf'
@@ -330,6 +343,7 @@ export function registerDatasetHandlers(): void {
         const metadataPath = path.join(tempExtractPath, 'metadata.json')
         const chatPath = path.join(tempExtractPath, 'ai-chat.json')
         const outputPath = path.join(tempExtractPath, 'output.json')
+        const codePath = path.join(tempExtractPath, 'code.json')
 
         if (!fs.existsSync(variablesPath) || !fs.existsSync(parquetPath)) {
           throw new Error('Invalid .sdf file format: missing variables.json or data.parquet')
@@ -434,6 +448,24 @@ export function registerDatasetHandlers(): void {
           }
         }
 
+        // code.json — Kod sekmesi (2026-11-01 öncesi .sdf'lerde yok → boş
+        // editörler). Yalnız editöre yüklenir; hiçbir şey kendiliğinden
+        // çalışmaz (CLAUDE.md §9, R terminal kuralı 2).
+        let code: ProjectCode | null = null
+        if (fs.existsSync(codePath)) {
+          try {
+            const rawCode: unknown = JSON.parse(await fs.promises.readFile(codePath, 'utf-8'))
+            const parsedCode = ProjectCodeSchema.safeParse(rawCode)
+            if (parsedCode.success) {
+              code = parsedCode.data
+            } else {
+              log.warn('Invalid code.json schema ignored', parsedCode.error.message)
+            }
+          } catch (codeErr) {
+            log.warn('Failed to parse code.json', codeErr)
+          }
+        }
+
         const conn = await getDbConnection()
         const datasetId = `ds_${String(Date.now())}`
         const tempTableName = `temp_open_${datasetId}`
@@ -467,7 +499,8 @@ export function registerDatasetHandlers(): void {
           variables,
           styles,
           chatHistory,
-          outputDocument
+          outputDocument,
+          code
         }
       } catch (err) {
         log.error('Failed to open file', err)
@@ -487,11 +520,24 @@ export function registerDatasetHandlers(): void {
   handleValidated(
     IPC.FILE_SAVE_DATA,
     FileSaveDataRequestSchema,
-    async ({ datasetId, customStyles, chatHistory, outputDocument }): Promise<string | null> => {
+    async ({
+      datasetId,
+      customStyles,
+      chatHistory,
+      outputDocument,
+      code
+    }): Promise<string | null> => {
       const dataset = getDatasetOrThrow(datasetId)
 
       if (dataset.filePath) {
-        await saveDatasetToSdf(dataset, dataset.filePath, customStyles, chatHistory, outputDocument)
+        await saveDatasetToSdf(
+          dataset,
+          dataset.filePath,
+          customStyles,
+          chatHistory,
+          outputDocument,
+          code
+        )
         return dataset.filePath
       } else {
         // If never saved before, trigger Save As dialog
@@ -506,7 +552,14 @@ export function registerDatasetHandlers(): void {
         }
 
         approvePath(result.filePath)
-        await saveDatasetToSdf(dataset, result.filePath, customStyles, chatHistory, outputDocument)
+        await saveDatasetToSdf(
+          dataset,
+          result.filePath,
+          customStyles,
+          chatHistory,
+          outputDocument,
+          code
+        )
         return result.filePath
       }
     }
@@ -516,7 +569,13 @@ export function registerDatasetHandlers(): void {
   handleValidated(
     IPC.FILE_SAVE_DATA_AS,
     FileSaveDataRequestSchema,
-    async ({ datasetId, customStyles, chatHistory, outputDocument }): Promise<string | null> => {
+    async ({
+      datasetId,
+      customStyles,
+      chatHistory,
+      outputDocument,
+      code
+    }): Promise<string | null> => {
       const dataset = getDatasetOrThrow(datasetId)
 
       const result = await dialog.showSaveDialog({
@@ -530,7 +589,14 @@ export function registerDatasetHandlers(): void {
       }
 
       approvePath(result.filePath)
-      await saveDatasetToSdf(dataset, result.filePath, customStyles, chatHistory, outputDocument)
+      await saveDatasetToSdf(
+        dataset,
+        result.filePath,
+        customStyles,
+        chatHistory,
+        outputDocument,
+        code
+      )
       return result.filePath
     }
   )

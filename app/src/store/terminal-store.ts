@@ -105,6 +105,9 @@ interface TerminalState {
 
   source: string
   setSource: (s: string) => void
+  /** The Code tab differs from what the project (.sdf) holds — set by
+   *  lib/project-code.ts, read by the window title's "*". */
+  codeDirty: boolean
   /** Append a syntax line (adds a separating newline if the buffer is non-empty). */
   appendSyntax: (line: string) => void
 
@@ -130,7 +133,7 @@ let rSeq = 0
 let rPlotSeq = 0
 let scriptSeq = 0
 
-const newScriptId = (): string => `script-${String(Date.now())}-${String(scriptSeq++)}`
+export const newScriptId = (): string => `script-${String(Date.now())}-${String(scriptSeq++)}`
 
 /** script.R, script2.R, … — the first name not already on a tab. */
 function untitledName(tabs: RScriptTab[]): string {
@@ -322,6 +325,7 @@ export const useTerminalStore = create<TerminalState>()(set => ({
   setSource: source => {
     set({ source })
   },
+  codeDirty: false,
   appendSyntax: line => {
     set(s => {
       const base = s.source.replace(/\s*$/, '')

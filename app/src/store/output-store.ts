@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import { temporal } from 'zundo'
 import type { AnalysisResult } from '@shared/analysis-types'
 import type { BlockEdits, TableEdits, OutputDocItem } from '@shared/output-document'
+import { setProjectDirtyPart } from '../lib/project-dirty'
 
 export type TableFormat = 'standard' | 'apa' | 'compact' | 'classic'
 
@@ -112,13 +113,10 @@ interface OutputActions {
 }
 
 // Push the dirty flag to Main so the window-close guard (main.ts) can warn
-// before the user loses unsaved Output changes. Only sends on a change —
-// edit actions mark dirty on every keystroke-level update.
-let pushedDirty: boolean | null = null
+// before the user loses unsaved Output changes (project-dirty.ts combines it
+// with the Code tab's).
 function pushDirty(dirty: boolean): void {
-  if (pushedDirty === dirty) return
-  pushedDirty = dirty
-  void window.api.app.setOutputDirty(dirty)
+  setProjectDirtyPart('output', dirty)
 }
 
 function getTableEdits(

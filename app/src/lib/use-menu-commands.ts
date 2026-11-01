@@ -15,6 +15,7 @@ import { useDatasetStore } from '../store/dataset-store'
 import { useStatusNoticeStore } from '../store/status-notice-store'
 import { useChatStore, loadPersistedChat } from '../store/chat-store'
 import { saveCurrentDataset, ensureCanReplaceDataset, importDataset } from './file-actions'
+import { loadProjectCode } from './project-code'
 import { exportOutputHtml, exportOutputPdf, loadOutputDocument } from './output-export'
 import i18nInstance from '../i18n'
 import type { SupportedLanguage } from '@shared/languages'
@@ -134,7 +135,7 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
       switch (channel) {
         case 'menu:file:new': {
           void (async () => {
-            if (!(await ensureCanReplaceDataset())) return
+            if (!(await ensureCanReplaceDataset({ code: true }))) return
             const result = await window.api.file.new()
             useDatasetStore
               .getState()
@@ -147,6 +148,7 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
                 result.styles
               )
             useChatStore.getState().clearChat()
+            loadProjectCode(null)
           })().catch((err: unknown) => {
             console.error('Failed to create new file:', err)
             notifyFailure('status.openFailed')
@@ -155,7 +157,7 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
         }
         case 'menu:file:open': {
           void (async () => {
-            if (!(await ensureCanReplaceDataset(true))) return
+            if (!(await ensureCanReplaceDataset({ output: true, code: true }))) return
             const filePath = typeof args[0] === 'string' ? args[0] : undefined
             const result = await window.api.file.open(filePath)
             if (result) {
@@ -173,6 +175,8 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
               // .sdf is the project: its embedded Output replaces the tab
               // (legacy files without output.json → empty Output).
               loadOutputDocument(result.outputDocument ?? null)
+              // ...and its Code tab (legacy files → empty editors).
+              loadProjectCode(result.code ?? null)
               if (result.dataset.filePath) {
                 useSettingsStore.getState().addRecentFile(result.dataset.filePath)
               }

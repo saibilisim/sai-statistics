@@ -21,6 +21,7 @@ import { setOutputNumberFormat } from './output-format'
 import { setDataViewDecimalSeparator } from './aggrid-data'
 import { useDatasetStore } from '../store/dataset-store'
 import { useOutputStore } from '../store/output-store'
+import { useTerminalStore } from '../store/terminal-store'
 import { useNormalityStore } from '../store/normality-store'
 import { saveCurrentDataset, hasUnsavedChanges } from './file-actions'
 import { setMenuDispatch } from './menu-dispatch'
@@ -55,17 +56,18 @@ export function useAppEffects({
   const datasetFilePath = useDatasetStore(s => s.filePath)
   const isDatasetModified = useDatasetStore(s => s.isModified)
   const isOutputDirty = useOutputStore(s => s.dirty)
+  const isCodeDirty = useTerminalStore(s => s.codeDirty)
 
-  // Window title: "SAI Statistics — <open file>" (+ "*" while unsaved — data
-  // or Output, since the Output tab is saved inside the .sdf).
+  // Window title: "SAI Statistics — <open file>" (+ "*" while unsaved — data,
+  // Output or Code, since both tabs are saved inside the .sdf).
   // Electron mirrors document.title onto the native BrowserWindow title
   // (main.ts doesn't intercept 'page-title-updated').
   useEffect(() => {
     const fileName = datasetFilePath?.split(/[/\\]/).pop() || datasetName
     document.title = fileName
-      ? `SAI Statistics — ${fileName}${isDatasetModified || isOutputDirty ? ' *' : ''}`
+      ? `SAI Statistics — ${fileName}${isDatasetModified || isOutputDirty || isCodeDirty ? ' *' : ''}`
       : 'SAI Statistics'
-  }, [datasetName, datasetFilePath, isDatasetModified, isOutputDirty])
+  }, [datasetName, datasetFilePath, isDatasetModified, isOutputDirty, isCodeDirty])
 
   // Main owns the dataset's dirty flag (every mutating handler sets it) and
   // pushes each change — grid edits, paste, row/column ops, undo, saves —

@@ -117,6 +117,15 @@ Ayrı bir output dosya formatı yoktur (eski `.sof` 2026-09-29'da kaldırıldı)
 `.sdf` kaydedilirken `output.json` olarak arşive eklenir, açılırken zod ile doğrulanıp geri
 yüklenir. Kapanış guard'ı veri ve Output değişikliğini tek "kaydet?" sorusunda birleştirir.
 
+### Kod sekmesi → `.sdf` içinde `code.json`
+
+SPSS sözdizimi metni ve R betik sekmeleri (`shared/project-code.ts` `ProjectCodeSchema`) projeye
+aittir (2026-11-01): Kaydet `code.json` olarak arşive ekler, Aç dosyanın kodunu editörlere geri
+koyar, Yeni / İçe Aktar boş editörle başlar. Yüklenen kod yalnız editöre girer, kendiliğinden
+çalışmaz. Kaydedilmemiş kod (kendi `.R` dosyasına kaydedilmiş ve değişmemiş sekmeler hariç;
+`src/lib/project-code.ts`) kapanış ve veri seti değiştirme guard'larına girer. Eskiden
+uygulama geneli bir localStorage taslağıydı; her veri seti öncekinin kodunu gösteriyordu.
+
 ### Ayarlar → `settings.json`
 
 Şemanın ve varsayılanların tek kaynağı `shared/settings-types.ts`'teki zod şemasıdır (her alanın
@@ -286,6 +295,7 @@ Kullanıcı "Kaydet" der
 Main: DuckDB → data.parquet yaz
 Main: variables.json yaz
 Main: Output sekmesi → output.json
+Main: Kod sekmesi → code.json
 Main: hepsini zip → proje.sdf
 ```
 

@@ -21,6 +21,7 @@ import {
   AiChatEntrySchema
 } from './ai-types'
 import { OutputDocumentSchema } from './output-document'
+import { ProjectCodeSchema } from './project-code'
 import { CaseVarSchema } from './analysis-types'
 
 // datasetId is interpolated into SQL as a table-name suffix (`dataset_${datasetId}`)
@@ -598,7 +599,9 @@ export const FileSaveDataRequestSchema = z.object({
   customStyles: CustomStylesSchema.nullish(),
   chatHistory: z.array(AiChatEntrySchema).nullish(),
   /** Output sekmesi — .sdf içine output.json olarak gömülür. */
-  outputDocument: OutputDocumentSchema.nullish()
+  outputDocument: OutputDocumentSchema.nullish(),
+  /** Kod sekmesi (SPSS sözdizimi + R betikleri) — .sdf içine code.json olarak gömülür. */
+  code: ProjectCodeSchema.nullish()
 })
 export type FileSaveDataRequest = z.infer<typeof FileSaveDataRequestSchema>
 

@@ -5,6 +5,7 @@ import type { Variable, Dataset, CellValue, CustomStyles } from './data-types'
 import type { AnalysisResult } from './analysis-types'
 import type { PersistedAiChatEntry } from './ai-types'
 import type { OutputDocument } from './output-document'
+import type { ProjectCode } from './project-code'
 
 // Request payload TYPES (validation schemas live in ipc-schemas.ts — Main-only,
 // so importing channel names here never pulls zod into the preload bundle).
@@ -372,6 +373,8 @@ export interface FileOpenResult {
   chatHistory?: PersistedAiChatEntry[]
   /** Output sekmesi — yalnız output.json taşıyan .sdf'lerde (file:open). */
   outputDocument?: OutputDocument | null
+  /** Kod sekmesi — yalnız code.json taşıyan .sdf'lerde (file:open). */
+  code?: ProjectCode | null
 }
 
 // data:get-all response

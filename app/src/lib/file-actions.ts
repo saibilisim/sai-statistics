@@ -12,10 +12,11 @@ import { useChatStore, toPersistedChat } from '../store/chat-store'
 import { useStatusNoticeStore } from '../store/status-notice-store'
 import { useOutputStore } from '../store/output-store'
 import { buildOutputDocument } from './output-export'
+import { currentProjectCode, isCodeModified, loadProjectCode, markCodeSaved } from './project-code'
 
 /** Post-save bookkeeping shared by Save and Save As: adopts the written path
- *  as the dataset's file/name, clears the dirty flags (dataset + Output, which
- *  is embedded in the .sdf), records it in recent files and confirms in the
+ *  as the dataset's file/name, clears the dirty flags (dataset + Output + Code,
+ *  both embedded in the .sdf), records it in recent files and confirms in the
  *  StatusBar. */
 export function applySavedPath(filePath: string): void {
   const name =
@@ -25,18 +26,23 @@ export function applySavedPath(filePath: string): void {
       ?.replace(/\.sdf$/, '') ?? ''
   useDatasetStore.setState({ filePath, datasetName: name, isModified: false })
   useOutputStore.getState().markSaved()
+  markCodeSaved()
   useSettingsStore.getState().addRecentFile(filePath)
   useStatusNoticeStore.getState().show('status.saveSuccess')
 }
 
-/** True when there's anything a Save would persist: dataset edits or Output
- *  changes (results/edits/order — stored as output.json inside the .sdf). */
+/** True when there's anything a Save would persist: dataset edits, Output
+ *  changes (results/edits/order — output.json inside the .sdf) or Code tab
+ *  changes (code.json). */
 export function hasUnsavedChanges(): boolean {
-  return useDatasetStore.getState().isModified || useOutputStore.getState().dirty
+  return (
+    useDatasetStore.getState().isModified || useOutputStore.getState().dirty || isCodeModified()
+  )
 }
 
 /**
- * Saves the project (.sdf): data + cell styles + AI chat + the Output tab.
+ * Saves the project (.sdf): data + cell styles + AI chat + the Output tab +
+ * the Code tab.
  * `saveAs` always shows the save dialog; otherwise it only appears for a
  * never-saved dataset. A cancelled dialog leaves the dirty flags untouched.
  */
@@ -50,7 +56,8 @@ export async function saveCurrentDataset(saveAs = false): Promise<void> {
     datasetId,
     customStyles: state.customStyles,
     chatHistory: toPersistedChat(useChatStore.getState().messages),
-    outputDocument: hasOutput ? buildOutputDocument() : null
+    outputDocument: hasOutput ? buildOutputDocument() : null,
+    code: currentProjectCode()
   }
   try {
     const filePath = saveAs
@@ -69,12 +76,19 @@ export async function saveCurrentDataset(saveAs = false): Promise<void> {
  * or the user chose Save and the save completed. Returns false on Cancel (or a
  * cancelled Save dialog), so the in-progress action should abort.
  *
- * `replacesOutput` — Open also replaces the Output tab (with the file's own
- * output.json), so unsaved Output changes count too. New/Import keep the
- * current Output, which then gets saved with the next dataset.
+ * `replaces` names what else the action swaps out, so unsaved changes there
+ * count too: Open replaces the Output tab (with the file's own output.json)
+ * and the Code tab; New/Import replace the Code tab (a new dataset starts
+ * with empty editors) but keep the current Output, which then gets saved with
+ * the next dataset. Transformations (Aggregate, Merge, …) replace neither.
  */
-export async function ensureCanReplaceDataset(replacesOutput = false): Promise<boolean> {
-  const unsaved = replacesOutput ? hasUnsavedChanges() : useDatasetStore.getState().isModified
+export async function ensureCanReplaceDataset(
+  replaces: { output?: boolean; code?: boolean } = {}
+): Promise<boolean> {
+  const unsaved =
+    useDatasetStore.getState().isModified ||
+    (replaces.output === true && useOutputStore.getState().dirty) ||
+    (replaces.code === true && isCodeModified())
   if (!unsaved) return true
   const choice = await window.api.app.confirmUnsaved() // 0=Save, 1=Discard, 2=Cancel
   if (choice === 2) return false
@@ -89,9 +103,10 @@ export async function ensureCanReplaceDataset(replacesOutput = false): Promise<b
 export async function importDataset(
   request: Parameters<Window['api']['file']['import']>[0]
 ): Promise<void> {
-  if (!(await ensureCanReplaceDataset())) return
+  if (!(await ensureCanReplaceDataset({ code: true }))) return
   const result = await window.api.file.import(request)
   if (!result) return
+  loadProjectCode(null)
   useDatasetStore
     .getState()
     .setDataset(
