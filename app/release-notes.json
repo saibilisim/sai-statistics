@@ -2,6 +2,48 @@
   "$comment": "Son kullanıcıya dönük sürüm notları — tek kaynak. Kurallar: app/scripts/check-release-notes.cjs başı ve CLAUDE.md §10.",
   "releases": [
     {
+      "version": "0.3.1",
+      "date": "2026-11-02",
+      "notes": {
+        "tr": [
+          "Frekans tablosu ve çubuk/pasta grafiği artık değer etiketlerini gösteriyor (ör. 1 yerine \"Memnun değil\"); grafik de tablonun sırasını izliyor.",
+          "Grafiklerdeki \"Frekans\" gibi eksen başlıkları artık arayüz dilinde; ekranda ve Word, Excel, PDF, HTML dışa aktarımında.",
+          "Grafikler menüsündeki grafikler Çıktı'da düzgün başlıkla görünüyor; tek serili grafiklerde fazladan \"trace 0\" açıklaması çıkmıyor.",
+          "R beklenmedik biçimde durursa iç kod yerine ne yapılacağını söyleyen anlaşılır bir mesaj gösteriliyor."
+        ],
+        "en": [
+          "The frequency table and its bar/pie chart now show value labels (e.g. \"Dissatisfied\" instead of 2), and the chart follows the table's order.",
+          "Axis titles such as \"Frequency\" now appear in your interface language, on screen and in Word, Excel, PDF and HTML exports.",
+          "Charts from the Graphs menu now get a proper title in Output, and single-series charts no longer show a stray \"trace 0\" legend.",
+          "If R stops unexpectedly you now see a clear message saying what to do, instead of an internal code."
+        ],
+        "es": [
+          "La tabla de frecuencias y su gráfico de barras/sectores muestran ahora las etiquetas de valor (p. ej. \"Insatisfecho\" en lugar de 2), y el gráfico sigue el orden de la tabla.",
+          "Los títulos de eje como \"Frecuencia\" aparecen ahora en el idioma de la interfaz, en pantalla y al exportar a Word, Excel, PDF y HTML.",
+          "Los gráficos del menú Gráficos tienen ahora un título correcto en Resultados, y los gráficos de una sola serie ya no muestran una leyenda \"trace 0\" sobrante.",
+          "Si R se detiene inesperadamente, ahora aparece un mensaje claro que indica qué hacer, en lugar de un código interno."
+        ],
+        "fr": [
+          "Le tableau des effectifs et son diagramme en barres/secteurs affichent désormais les étiquettes de valeur (par ex. « Insatisfait » au lieu de 2), et le graphique suit l'ordre du tableau.",
+          "Les titres d'axe comme « Effectif » s'affichent désormais dans la langue de l'interface, à l'écran comme dans les exports Word, Excel, PDF et HTML.",
+          "Les graphiques du menu Graphiques ont désormais un vrai titre dans les Résultats, et les graphiques à une seule série n'affichent plus de légende « trace 0 » superflue.",
+          "Si R s'arrête de façon inattendue, un message clair indique désormais quoi faire, au lieu d'un code interne."
+        ],
+        "pt": [
+          "A tabela de frequências e o seu gráfico de barras/setores mostram agora os rótulos de valor (p. ex. \"Insatisfeito\" em vez de 2), e o gráfico segue a ordem da tabela.",
+          "Os títulos de eixo como \"Frequência\" aparecem agora no idioma da interface, no ecrã e nas exportações para Word, Excel, PDF e HTML.",
+          "Os gráficos do menu Gráficos têm agora um título correto nos Resultados, e os gráficos de uma só série já não mostram uma legenda \"trace 0\" a mais.",
+          "Se o R parar inesperadamente, aparece agora uma mensagem clara a indicar o que fazer, em vez de um código interno."
+        ],
+        "it": [
+          "La tabella delle frequenze e il relativo grafico a barre/torta mostrano ora le etichette dei valori (ad es. \"Insoddisfatto\" invece di 2), e il grafico segue l'ordine della tabella.",
+          "I titoli degli assi come \"Frequenza\" compaiono ora nella lingua dell'interfaccia, a schermo e nelle esportazioni Word, Excel, PDF e HTML.",
+          "I grafici del menu Grafici hanno ora un titolo corretto nell'Output, e i grafici a serie singola non mostrano più una legenda \"trace 0\" superflua.",
+          "Se R si arresta in modo imprevisto, ora compare un messaggio chiaro che dice cosa fare, invece di un codice interno."
+        ]
+      }
+    },
+    {
       "version": "0.3.0",
       "date": "2026-11-01",
       "notes": {
