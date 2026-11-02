@@ -733,5 +733,8 @@
       "intelligenceHint": "Artificial Analysis Intelligence Index — higher means more capable",
       "attribution": "Intelligence score source:"
     }
+  },
+  "error": {
+    "rScriptFailed": "The analysis could not be run: R stopped unexpectedly. Try again; if it keeps happening, restart the app."
   }
 }

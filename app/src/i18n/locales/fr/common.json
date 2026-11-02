@@ -733,5 +733,8 @@
       "intelligenceHint": "Artificial Analysis Intelligence Index — plus il est élevé, plus le modèle est performant",
       "attribution": "Source du score d'intelligence :"
     }
+  },
+  "error": {
+    "rScriptFailed": "L'analyse n'a pas pu être exécutée : R s'est arrêté de façon inattendue. Réessayez ; si cela se reproduit, redémarrez l'application."
   }
 }

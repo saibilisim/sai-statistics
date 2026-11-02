@@ -733,5 +733,8 @@
       "intelligenceHint": "Artificial Analysis Intelligence Index — mais alto significa mais capaz",
       "attribution": "Fonte da pontuação de inteligência:"
     }
+  },
+  "error": {
+    "rScriptFailed": "Não foi possível executar a análise: o R parou inesperadamente. Tente novamente; se continuar, reinicie o aplicativo."
   }
 }

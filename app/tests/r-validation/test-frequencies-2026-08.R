@@ -227,3 +227,55 @@ test_that("frequencies: CV is omitted (not NaN/Inf) when the mean is zero", {
   val <- stats$rows[[which(labels == "output.stat.cv")]][[2]]
   expect_true(is.null(val), "CV value is null (undefined), not NaN/Inf, when mean is 0")
 })
+
+# ══ value labels (2026-11) ═══════════════════════════════════════════════════
+# Categories with a Variable View label are shown by that label in the table
+# and the bar chart (SPSS's default "Values and labels"); unlabelled values
+# keep their code. Row order still follows the codes.
+
+test_that("frequencies: value labels replace codes in the table and chart", {
+  df <- data.frame(col_1 = c(1, 1, 1, 2, 3, 3))
+  fixture <- write_fixture(df, list(
+    variables = list("col_1"), varNames = list(col_1 = "v"),
+    valueLabels = list(col_1 = list("1" = "Low", "3" = "High")),
+    options = list(showTable = TRUE, charts = list(type = "barChart"))
+  ))
+  result <- run_analysis_script("frequencies.R", fixture)
+  expect_true(isTRUE(result$success), "result$success")
+  tbl <- find_table(result, "output.frequencies.tableTitle")
+  expect_equal(freq_values(tbl), c("Low", "2", "High"), tolerance = 0,
+               "labelled values by label, unlabelled by code, in value order")
+
+  fig <- result$plots[[1]]$data
+  cats <- vapply(fig$data[[1]]$x, as.character, character(1))
+  expect_true(setequal(cats, c("Low", "2", "High")), "bar categories use the labels")
+  expect_equal(fig$layout$yaxis$title$text, "output.col.frequency",
+               "y-axis title is an output key the UI translates")
+})
+
+# The bar/pie chart follows the table's category order (SPSS), not the
+# count order it used before.
+test_that("frequencies: chart categories follow the table order", {
+  chart_cats <- function(order) {
+    df <- data.frame(col_1 = .freq_x)
+    fixture <- write_fixture(df, list(
+      variables = list("col_1"), varNames = list(col_1 = "v"),
+      options = list(showTable = TRUE, order = order, charts = list(type = "barChart"))
+    ))
+    result <- run_analysis_script("frequencies.R", fixture)
+    expect_true(isTRUE(result$success), "result$success")
+    fig <- result$plots[[1]]$data
+    list(
+      table = freq_values(find_table(result, "output.frequencies.tableTitle")),
+      x = vapply(fig$data[[1]]$x, as.character, character(1)),
+      y = vapply(fig$data[[1]]$y, as.numeric, numeric(1))
+    )
+  }
+  asc <- chart_cats("ascending")
+  expect_equal(asc$x, c("1", "2", "3"), tolerance = 0, "default: ascending by value")
+  expect_equal(asc$y, c(50, 10, 30), tolerance = 0, "counts move with their categories")
+  for (o in c("descending", "ascFreq", "descFreq")) {
+    r <- chart_cats(o)
+    expect_equal(r$x, r$table, tolerance = 0, paste("chart order matches table:", o))
+  }
+})

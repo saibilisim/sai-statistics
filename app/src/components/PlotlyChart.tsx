@@ -51,9 +51,14 @@ export function PlotlyChart({
   useEffect(() => {
     if (!ref.current) return
     let cleanup: (() => void) | undefined
+    // Plotly loads asynchronously: a figure that changed before it arrived
+    // (e.g. the plot editor's first settings pass) must not be drawn after
+    // the newer one — the stale draw used to win and showed a legend the
+    // editor had already turned off.
+    let cancelled = false
 
     void (import('plotly.js-dist-min') as Promise<PlotlyModule>).then(Plotly => {
-      if (!ref.current) return
+      if (cancelled || !ref.current) return
       plotlyRef.current = Plotly
       const plotData = sanitizePlotlyFigure(
         data as {
@@ -101,7 +106,10 @@ export function PlotlyChart({
       }
     })
 
-    return () => cleanup?.()
+    return () => {
+      cancelled = true
+      cleanup?.()
+    }
   }, [data, filename])
 
   // Relayout when the container resizes

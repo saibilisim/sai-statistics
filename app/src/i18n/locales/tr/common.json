@@ -733,5 +733,8 @@
       "intelligenceHint": "Artificial Analysis Intelligence Index — yüksek puan daha yetenekli model demektir",
       "attribution": "Zeka puanı kaynağı:"
     }
+  },
+  "error": {
+    "rScriptFailed": "Analiz çalıştırılamadı: R beklenmedik biçimde durdu. Tekrar deneyin; sorun sürerse uygulamayı yeniden başlatın."
   }
 }

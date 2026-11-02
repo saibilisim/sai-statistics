@@ -10,7 +10,7 @@
 import { useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { OutputPlot } from '@shared/analysis-types'
-import { translateOutputKey } from '../../lib/output-format'
+import { localizePlotFigure, translateOutputKey } from '../../lib/output-format'
 import {
   DEFAULT_COLORS,
   extractTitleFont,
@@ -110,7 +110,7 @@ export function usePlotEditor(plot: OutputPlot) {
       return
     }
 
-    const base = plot.data as PlotlyFigure | undefined
+    const base = localizePlotFigure(plot.data, t) as PlotlyFigure | undefined
     if (!base) return
 
     const layout = base.layout ?? {}
@@ -166,7 +166,10 @@ export function usePlotEditor(plot: OutputPlot) {
     setGridColor(
       typeof layout.xaxis?.gridcolor === 'string' ? layout.xaxis.gridcolor : DEFAULT_COLORS.grid
     )
-    setShowLegend(layout.showlegend !== false)
+    // Unset = Plotly's own default: a legend only for several traces or a pie.
+    // Forcing it on labelled every single-series chart "trace 0".
+    const traces = Array.isArray(base.data) ? base.data : []
+    setShowLegend(layout.showlegend ?? (traces.length > 1 || traces.some(tr => tr.type === 'pie')))
     setTickFontSize(layout.xaxis?.tickfont?.size ?? 10)
 
     // Traces

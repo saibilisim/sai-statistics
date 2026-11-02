@@ -564,7 +564,7 @@ tryCatch({
         trace <- sai_histogram_trace(nv, name = var_name, color = BAR_COLOR)
         layout <- list(
           xaxis = list(title = list(text = var_name)),
-          yaxis = list(title = list(text = "Frequency")),
+          yaxis = list(title = list(text = "output.col.frequency")),
           bargap = 0.02, margin = list(t = 40, r = 20, b = 40, l = 60)
         )
         all_plots <- c(all_plots, list(list(

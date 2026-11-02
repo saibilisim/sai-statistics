@@ -733,5 +733,8 @@
       "intelligenceHint": "Artificial Analysis Intelligence Index — più alto significa più capace",
       "attribution": "Fonte del punteggio di intelligenza:"
     }
+  },
+  "error": {
+    "rScriptFailed": "Impossibile eseguire l'analisi: R si è arrestato in modo imprevisto. Riprova; se succede ancora, riavvia l'app."
   }
 }

@@ -7,6 +7,8 @@
 #   rScriptsDir  — directory containing _bootstrap.R
 #   variables    — character vector of colIds
 #   varNames     — named list colId → display name
+#   valueLabels  — named list colId → (value → label); categories with a label
+#                  are shown by it in the table and the chart, like SPSS
 #   options      — named list:
 #     showTable  — boolean: emit a frequency table per variable
 #     order      — frequency-table row order: "ascending" (by value, the SPSS
@@ -65,12 +67,26 @@ tryCatch({
     sai_error("No variables specified for frequencies analysis")
   }
 
+  # Category order of the frequency table — and of the bar/pie chart, which
+  # follows the table like SPSS. table()/tapply() return categories ascending
+  # by value (the SPSS default, which Cumulative % depends on); the Format
+  # sub-dialog can switch to descending values or count-based ordering (ties
+  # keep the value order).
+  category_order <- function(counts) {
+    switch(order_opt,
+      descending = rev(seq_along(counts)),
+      ascFreq    = order(counts, seq_along(counts)),
+      descFreq   = order(-counts, seq_along(counts)),
+      seq_along(counts)  # "ascending" or anything unrecognized
+    )
+  }
+
   # ── Plotly chart builder ─────────────────────────────────────────────────────
   # Builds a hand-constructed Plotly spec { data:[traces], layout:{} } per
   # variable. No ggplot/plotly R packages required — only jsonlite. as.list()
   # forces JSON arrays even for length-1 axes (auto_unbox would otherwise emit
   # a scalar and break Plotly).
-  build_chart <- function(raw_vals, var_name, type, normal, chart_w = NULL) {
+  build_chart <- function(raw_vals, var_name, type, normal, chart_w = NULL, labels = NULL) {
     valid_vals <- raw_vals[!is.na(raw_vals)]
     if (length(valid_vals) == 0) return(NULL)
     valid_w <- if (is.null(chart_w)) NULL else chart_w[!is.na(raw_vals)]
@@ -85,14 +101,17 @@ tryCatch({
       # frequencies here too). The histogram branch below stays unweighted —
       # Plotly's client-side binning has no per-point weight option.
       if (is.null(valid_w)) {
-        freq_tbl <- sort(table(valid_vals), decreasing = TRUE)
+        freq_tbl <- table(valid_vals)
         cats     <- names(freq_tbl)
         cnts     <- as.integer(freq_tbl)
       } else {
-        agg  <- sort(tapply(valid_w, valid_vals, sum), decreasing = TRUE)
+        agg  <- tapply(valid_w, valid_vals, sum)
         cats <- names(agg)
         cnts <- round(as.numeric(agg), 6)
       }
+      ord  <- category_order(cnts)
+      cats <- resolve_var_names(cats[ord], labels)
+      cnts <- cnts[ord]
 
       if (type == "barChart") {
         trace <- list(
@@ -103,7 +122,7 @@ tryCatch({
         )
         layout <- c(layout_base, list(
           xaxis = list(title = list(text = var_name), type = "category"),
-          yaxis = list(title = list(text = "Frequency")),
+          yaxis = list(title = list(text = "output.col.frequency")),
           bargap = 0.15
         ))
         return(list(data = list(trace), layout = layout))
@@ -114,7 +133,11 @@ tryCatch({
         type   = "pie",
         labels = as.list(cats),
         values = as.list(cnts),
-        textinfo = "label+percent"
+        textinfo = "label+percent",
+        # Plotly re-sorts slices by size unless told not to; keep the table's
+        # order, clockwise from the top.
+        sort      = FALSE,
+        direction = "clockwise"
       )
       return(list(data = list(trace), layout = layout_base))
     }
@@ -134,7 +157,7 @@ tryCatch({
         x       = as.list(nv),
         marker  = list(color = BAR_COLOR),
         opacity = 0.85,
-        name    = "Frequency",
+        name    = "output.col.frequency",
         xbins   = list(start = rng[1], end = rng[2] + binwidth, size = binwidth)
       )
       traces <- list(hist_trace)
@@ -160,7 +183,7 @@ tryCatch({
 
       layout <- c(layout_base, list(
         xaxis    = list(title = list(text = var_name)),
-        yaxis    = list(title = list(text = "Frequency")),
+        yaxis    = list(title = list(text = "output.col.frequency")),
         bargap   = 0.02,
         showlegend = isTRUE(normal)
       ))
@@ -168,6 +191,14 @@ tryCatch({
     }
 
     NULL
+  }
+
+  # A category's value label (Variable View) when it has one, otherwise the
+  # value in the variable's own decimals (M2) — SPSS's default "Values and
+  # labels" display shows the label.
+  display_value <- function(v, col_id) {
+    lbl <- resolve_var_name(v, params$valueLabels[[col_id]])
+    if (!identical(lbl, as.character(v))) lbl else format_decimals(v, col_id, params)
   }
 
   all_tables <- list()
@@ -216,22 +247,12 @@ tryCatch({
           values   <- names(agg)
           counts   <- round(as.numeric(agg), 6)
         }
-        # Row order: table()/tapply() already return categories ascending by
-        # value — the SPSS default, which Cumulative % depends on. The Format
-        # sub-dialog can switch to descending values or count-based ordering
-        # (ties keep the value order).
-        ord <- switch(order_opt,
-          descending = rev(seq_along(values)),
-          ascFreq    = order(counts, seq_along(values)),
-          descFreq   = order(-counts, seq_along(values)),
-          seq_along(values)  # "ascending" or anything unrecognized
-        )
+        ord <- category_order(counts)
         values <- values[ord]
         counts <- counts[ord]
-        # Decimals (M2): display each category using the variable's own
-        # Variable View precision (no-op for string categories or variables
-        # without a decimals spec).
-        values <- vapply(values, function(v) format_decimals(v, col_id, params), character(1))
+        # Each category by its value label, else in the variable's own
+        # Variable View precision (display_value above).
+        values <- unname(vapply(values, display_value, character(1), col_id = col_id))
 
         # Percent of total (including missing)
         pct      <- if (n_total > 0) round(counts / n_total * 100, 1) else rep(0, length(counts))
@@ -292,7 +313,7 @@ tryCatch({
             }
             n_sys <- sum(w[sys_mask])
           }
-          u_vals <- vapply(u_vals, function(v) format_decimals(v, col_id, params), character(1))
+          u_vals <- unname(vapply(u_vals, display_value, character(1), col_id = col_id))
 
           missing_rows <- vector("list", length(u_vals))
           for (k in seq_along(u_vals)) {
@@ -519,7 +540,8 @@ tryCatch({
 
       # ── Chart ────────────────────────────────────────────────────────────────────
       if (!is.null(chart_type) && chart_type != "none") {
-        spec <- build_chart(raw_vals, var_name, chart_type, show_normal, chart_w = w)
+        spec <- build_chart(raw_vals, var_name, chart_type, show_normal, chart_w = w,
+                            labels = params$valueLabels[[col_id]])
         if (!is.null(spec)) {
           all_plots <- c(all_plots, list(list(
             titleKey = split_title(

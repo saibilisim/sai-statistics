@@ -221,6 +221,12 @@ export function translateOutputKey(key: string, t: TFunction): string {
     return call(realKey, opts)
   }
 
+  // Graphs-menu blocks are titled `analysis.chart-<type>.title` (from their
+  // analysisId); the locale names them chart.<type>Title. Mapped here, at
+  // display time, so .sdf files saved with the old key show a title too.
+  const chart = /^analysis\.chart-(\w+)\.title$/.exec(key)
+  if (chart) return call(`analysis:chart.${chart[1] ?? ''}Title`, { defaultValue: key })
+
   if (key.startsWith('analysis.')) {
     const subKey = key.substring('analysis.'.length)
     return call(`analysis:${subKey}`, { defaultValue: key })
@@ -261,4 +267,56 @@ export function translateOutputKey(key: string, t: TFunction): string {
   }
 
   return call(key, { defaultValue: key })
+}
+
+/** An axis title or trace name R wrote as an output key, e.g. "output.col.frequency". */
+const PLOT_TEXT_KEY = /^output\.col\.\w+$/
+
+/**
+ * Plotly figure with R's output-key axis titles and trace names translated.
+ * R writes words like "Frequency" as keys so a chart follows the UI language;
+ * every place that draws a figure (Output view, HTML/PDF/Word/Excel export)
+ * passes it through here first. Anything else — user variable names, plain
+ * text, non-figure data — comes back untouched, the same object when nothing
+ * needed translating.
+ */
+export function localizePlotFigure<T>(figure: T, t: TFunction): T {
+  if (typeof figure !== 'object' || figure === null) return figure
+  const fig = figure as { data?: unknown; layout?: unknown }
+  const tr = (s: unknown): unknown =>
+    typeof s === 'string' && PLOT_TEXT_KEY.test(s) ? translateOutputKey(s, t) : s
+  let changed = false
+
+  let layout = fig.layout
+  if (typeof layout === 'object' && layout !== null) {
+    const next: Record<string, unknown> = { ...(layout as Record<string, unknown>) }
+    for (const [k, axis] of Object.entries(next)) {
+      if (!/^[xy]axis\d*$/.test(k) || typeof axis !== 'object' || axis === null) continue
+      const title = (axis as { title?: unknown }).title
+      if (typeof title === 'string') {
+        const text = tr(title)
+        if (text !== title) next[k] = { ...axis, title: text }
+      } else if (typeof title === 'object' && title !== null) {
+        const raw = (title as { text?: unknown }).text
+        const text = tr(raw)
+        if (text !== raw) next[k] = { ...axis, title: { ...title, text } }
+      }
+      if (next[k] !== axis) changed = true
+    }
+    layout = next
+  }
+
+  let data = fig.data
+  if (Array.isArray(data)) {
+    data = data.map((trace: unknown) => {
+      if (typeof trace !== 'object' || trace === null) return trace
+      const name = (trace as { name?: unknown }).name
+      const text = tr(name)
+      if (text === name) return trace
+      changed = true
+      return { ...trace, name: text }
+    })
+  }
+
+  return changed ? ({ ...fig, data, layout } as T) : figure
 }

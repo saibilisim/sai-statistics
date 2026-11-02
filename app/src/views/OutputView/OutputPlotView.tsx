@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef } from 'react'
 import type { OutputPlot } from '@shared/analysis-types'
 import { PlotlyChart } from '../../components/PlotlyChart'
-import { translateOutputKey } from '../../lib/output-format'
+import { localizePlotFigure, translateOutputKey } from '../../lib/output-format'
 import styles from './OutputView.module.css'
 import { buildModifiedFigure, getStaticImageSrc, type PlotlyFigure } from './plot-helpers'
 import { copyPlotImageToClipboard } from './plot-clipboard'
@@ -62,7 +62,7 @@ export function OutputPlotView({ plot }: OutputPlotViewProps) {
 
   const modifiedData = useMemo(
     (): PlotlyFigure | string | null =>
-      buildModifiedFigure(plot.type, plot.data, {
+      buildModifiedFigure(plot.type, localizePlotFigure(plot.data, t), {
         customTitle,
         titleFontFamily,
         titleFontSize,
@@ -96,6 +96,7 @@ export function OutputPlotView({ plot }: OutputPlotViewProps) {
     [
       plot.data,
       plot.type,
+      t,
       customTitle,
       titleFontFamily,
       titleFontSize,

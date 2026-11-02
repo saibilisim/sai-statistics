@@ -18,7 +18,7 @@ import type * as PlotlyTypes from 'plotly.js'
 import { useOutputStore, type OutputBlock } from '../store/output-store'
 import type { OutputPlot } from '@shared/analysis-types'
 import type { OutputDocument } from '@shared/output-document'
-import { translateOutputKey } from './output-format'
+import { localizePlotFigure, translateOutputKey } from './output-format'
 import {
   resolveTable,
   resolvedTableToHtml,
@@ -56,7 +56,10 @@ async function renderPlotlyPng(data: unknown): Promise<string> {
   div.style.top = '0'
   document.body.appendChild(div)
   try {
-    const figure = data as { data: PlotlyTypes.Data[]; layout?: Partial<PlotlyTypes.Layout> }
+    const figure = localizePlotFigure(data, i18n.t) as {
+      data: PlotlyTypes.Data[]
+      layout?: Partial<PlotlyTypes.Layout>
+    }
     const width = 800
     const height = 500
     await Plotly.newPlot(div, figure.data, { ...figure.layout, width, height })

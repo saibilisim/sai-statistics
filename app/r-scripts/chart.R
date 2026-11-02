@@ -183,7 +183,7 @@ tryCatch({
         line = list(color = "#E45756"))))
     }
     layout <- list(xaxis = list(title = list(text = xname)),
-                   yaxis = list(title = list(text = "Frequency")),
+                   yaxis = list(title = list(text = "output.col.frequency")),
                    showlegend = length(traces) > 1,
                    bargap = 0.02, margin = list(t = 40, r = 20, b = 40, l = 60))
     plot <- list(titleKey = paste0("output.chart.histTitle:", xname), type = "plotly",
