@@ -43,6 +43,8 @@ interface RocAnalysisDisplay {
   coordinates: boolean
   prCoordinates: boolean
   metrics: boolean
+  youden: boolean
+  youdenCi: boolean
   compareAuc: boolean
 }
 
@@ -56,6 +58,8 @@ const defaultDisplay: RocAnalysisDisplay = {
   coordinates: false,
   prCoordinates: false,
   metrics: true,
+  youden: true,
+  youdenCi: false,
   compareAuc: false
 }
 
@@ -166,6 +170,24 @@ function DisplayContent({
           }}
         >
           {t('analysis:rocAnalysis.metrics')}
+        </CheckOption>
+        <CheckOption
+          checked={local.youden}
+          onChange={v => {
+            set('youden', v)
+          }}
+        >
+          {t('analysis:roc.youden')}
+        </CheckOption>
+        <CheckOption
+          className={shellStyles.checkRowIndent}
+          checked={local.youdenCi}
+          disabled={!local.youden}
+          onChange={v => {
+            set('youdenCi', v)
+          }}
+        >
+          {t('analysis:roc.youdenCi')}
         </CheckOption>
         <CheckOption
           checked={local.compareAuc}

@@ -39,6 +39,10 @@ interface CrosstabsCells {
   unstdResid: boolean
   stdResid: boolean
   adjResid: boolean
+  /** z-test: compare column proportions (SPSS CELLS=PROP / BPROP). */
+  colPropZ: boolean
+  /** Bonferroni-adjust the column-proportion p values (BPROP). */
+  bonferroni: boolean
 }
 
 interface CrosstabsStats {
@@ -72,7 +76,9 @@ const defaultOptions: CrosstabsOptions = {
     totalPct: false,
     unstdResid: false,
     stdResid: false,
-    adjResid: false
+    adjResid: false,
+    colPropZ: false,
+    bonferroni: true
   },
   stats: {
     chisquare: true,
@@ -266,6 +272,29 @@ function CellsContent({
           }}
         >
           {t('analysis:crosstabs.cells.adjResid')}
+        </CheckOption>
+      </OptionSection>
+
+      <hr className={shellStyles.separator} />
+
+      <OptionSection titleKey="analysis:crosstabs.cells.zTest" grid={false}>
+        <CheckOption
+          checked={local.colPropZ}
+          onChange={v => {
+            set('colPropZ', v)
+          }}
+        >
+          {t('analysis:crosstabs.cells.colPropZ')}
+        </CheckOption>
+        <CheckOption
+          className={shellStyles.checkRowIndent}
+          checked={local.bonferroni}
+          disabled={!local.colPropZ}
+          onChange={v => {
+            set('bonferroni', v)
+          }}
+        >
+          {t('analysis:crosstabs.cells.bonferroni')}
         </CheckOption>
       </OptionSection>
 

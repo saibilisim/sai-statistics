@@ -328,7 +328,10 @@
       "residuals": "Residuals",
       "unstdResid": "Unstandardized",
       "stdResid": "Standardized",
-      "adjResid": "Adjusted standardized"
+      "adjResid": "Adjusted standardized",
+      "zTest": "z-test",
+      "colPropZ": "Compare column proportions",
+      "bonferroni": "Adjust p-values (Bonferroni method)"
     }
   },
   "ttest1": {
@@ -640,7 +643,9 @@
     "missingTitle": "Missing Values",
     "missingExclude": "Exclude both user-missing and system missing values",
     "missingInclude": "User-missing values are treated as valid",
-    "displayTitle": "ROC Curve: Display"
+    "displayTitle": "ROC Curve: Display",
+    "youden": "Optimal cut-off point (Youden index)",
+    "youdenCi": "Bootstrap confidence interval for Youden's J and the cut-off"
   },
   "rocAnalysis": {
     "title": "ROC Analysis",
@@ -1526,7 +1531,15 @@
       "aucFootnote": "a. Under the nonparametric assumption. b. Null hypothesis: true area = 0.5.",
       "aucFootnoteNegexp": "a. Under the bi-negative exponential assumption. b. Null hypothesis: true area = 0.5.",
       "coordsTitle": "Coordinates of the Curve",
-      "cutoffFootnote": "The smallest cutoff value is the minimum observed test value minus 1, and the largest cutoff value is the maximum observed test value plus 1. All the other cutoff values are the averages of two consecutive ordered observed test values."
+      "cutoffFootnote": "The smallest cutoff value is the minimum observed test value minus 1, and the largest cutoff value is the maximum observed test value plus 1. All the other cutoff values are the averages of two consecutive ordered observed test values.",
+      "youdenTitle": "Optimal Cut-off Point (Youden Index)",
+      "youdenFootnote": "Youden's J = Sensitivity + Specificity − 1; the cut-off with the largest J. PPV and NPV depend on the proportion of positives in this sample and do not carry over directly to a population with a different prevalence. LR+ = Sensitivity / (1 − Specificity), LR− = (1 − Sensitivity) / Specificity; left blank where the denominator is zero.",
+      "youdenTiesNote": "{{name}}: more than one cut-off reaches the same maximum Youden's J; all are listed. The plot marks the smallest.",
+      "youdenCiTitle": "Bootstrap Confidence Intervals for the Optimal Cut-off",
+      "youdenCiFootnote": "Percentile bootstrap, {{name}} stratified resamples (positive and negative group sizes kept), fixed seed. The optimal point is re-selected in every resample; the cut-off's interval is usually wide — it shows how unstable the threshold is.",
+      "youdenCutoffRow": "Cut-off",
+      "youdenCiNoWeight": "Youden bootstrap confidence interval skipped: case weighting is on and the bootstrap does not support weighted cases. The optimal cut-off table uses the weights.",
+      "youdenCiNoPackage": "Youden bootstrap confidence interval skipped: the 'pROC' R package was not found."
     },
     "rocAnalysis": {
       "prCurveTitle": "Precision-Recall Curve",
@@ -2007,7 +2020,17 @@
       "chiSqFootnote": "{{p0}} cells ({{p1}}%) have expected count less than 5. The minimum expected count is {{p2}}.",
       "warnExactWeighted": "Fisher's exact test is not computed when case weights are active (exact tests require integer counts).",
       "warnMcnemarCategories": "McNemar test not computed: both variables must have identical category values (McNemar compares two measurements of the same trait).",
-      "warnKappaCategories": "Kappa not computed: the row and column variables must have identical category values (Kappa measures agreement between two ratings of the same categories). Pairing the categories by position would produce a number here, but it would not be an agreement measure."
+      "warnKappaCategories": "Kappa not computed: the row and column variables must have identical category values (Kappa measures agreement between two ratings of the same categories). Pairing the categories by position would produce a number here, but it would not be an agreement measure.",
+      "cellColPropSubset": "Column proportion subset",
+      "colPropFootnote": "Categories of {{name}} sharing a letter have column proportions that do not differ significantly from each other at the .05 level (two-proportion z-test). \".\": this category is not used in comparisons because its column proportion is equal to zero or one.",
+      "colPropFootnoteBonf": "Categories of {{name}} sharing a letter have column proportions that do not differ significantly from each other at the .05 level (two-proportion z-test, Bonferroni-adjusted). \".\": this category is not used in comparisons because its column proportion is equal to zero or one.",
+      "colPropTitle": "Comparisons of Column Proportions (z-test) — {{name}}",
+      "colPropCat1": "Category 1",
+      "colPropCat2": "Category 2",
+      "colPropPct1": "% (1)",
+      "colPropPct2": "% (2)",
+      "colPropBonfSig": "Bonferroni-adjusted p",
+      "colPropPairsFootnote": "Within each row category, the column proportions of {{name}} are compared pairwise: z = (p₁ − p₂) / √(p(1 − p)(1/n₁ + 1/n₂)), p the pooled proportion. The Bonferroni adjustment multiplies p by the number of comparisons in that row (at most 1)."
     },
     "explore": {
       "descTitle": "{{name}} — Descriptives",
@@ -2584,7 +2607,10 @@
     "effect": "Effect",
     "withinEffect": "Within Subjects Effect",
     "levelI": "(I) {{name}}",
-    "levelJ": "(J) {{name}}"
+    "levelJ": "(J) {{name}}",
+    "accuracy": "Accuracy",
+    "lrPositive": "LR+",
+    "lrNegative": "LR−"
   },
   "mixed": {
     "title": "Linear Mixed Models",

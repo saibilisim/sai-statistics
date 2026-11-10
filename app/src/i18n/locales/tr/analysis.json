@@ -328,7 +328,10 @@
       "residuals": "Artıklar",
       "unstdResid": "Standartlaştırılmamış",
       "stdResid": "Standartlaştırılmış",
-      "adjResid": "Düzeltilmiş standartlaştırılmış"
+      "adjResid": "Düzeltilmiş standartlaştırılmış",
+      "zTest": "z-testi",
+      "colPropZ": "Sütun oranlarını karşılaştır",
+      "bonferroni": "p değerlerini düzelt (Bonferroni yöntemi)"
     }
   },
   "ttest1": {
@@ -640,7 +643,9 @@
     "missingTitle": "Kayıp Değerler",
     "missingExclude": "Hem kullanıcı tanımlı hem sistem kayıp değerlerini dışla",
     "missingInclude": "Kullanıcı tanımlı kayıp değerler geçerli sayılsın",
-    "displayTitle": "ROC Eğrisi: Görüntüle"
+    "displayTitle": "ROC Eğrisi: Görüntüle",
+    "youden": "Optimal kesim noktası (Youden indeksi)",
+    "youdenCi": "Youden J ve kesim noktası için bootstrap güven aralığı"
   },
   "rocAnalysis": {
     "title": "ROC Analizi",
@@ -1526,7 +1531,15 @@
       "aucFootnote": "a. Parametrik olmayan varsayım altında. b. Sıfır hipotezi: gerçek alan = 0,5.",
       "aucFootnoteNegexp": "a. İki-negatif üstel varsayım altında. b. Sıfır hipotezi: gerçek alan = 0,5.",
       "coordsTitle": "Eğrinin Koordinatları",
-      "cutoffFootnote": "En küçük kesim değeri gözlenen en küçük test değerinin 1 eksiği, en büyük kesim değeri gözlenen en büyük test değerinin 1 fazlasıdır. Diğer tüm kesim değerleri, sıralı iki ardışık gözlenen test değerinin ortalamasıdır."
+      "cutoffFootnote": "En küçük kesim değeri gözlenen en küçük test değerinin 1 eksiği, en büyük kesim değeri gözlenen en büyük test değerinin 1 fazlasıdır. Diğer tüm kesim değerleri, sıralı iki ardışık gözlenen test değerinin ortalamasıdır.",
+      "youdenTitle": "Optimal Kesim Noktası (Youden İndeksi)",
+      "youdenFootnote": "Youden J = Duyarlılık + Özgüllük − 1; en büyük J'yi veren kesim noktası. PPV ve NPV örneklemdeki pozitif oranına bağlıdır; yaygınlığı farklı bir topluluğa doğrudan taşınmaz. LR+ = Duyarlılık / (1 − Özgüllük), LR− = (1 − Duyarlılık) / Özgüllük; payda sıfırsa hücre boş bırakılır.",
+      "youdenTiesNote": "{{name}}: birden fazla kesim noktası aynı en büyük Youden J değerini veriyor; hepsi listelendi. Grafikte en küçüğü işaretlendi.",
+      "youdenCiTitle": "Optimal Kesim Noktası için Bootstrap Güven Aralıkları",
+      "youdenCiFootnote": "Yüzdelik bootstrap, {{name}} tabakalı yeniden örnekleme (pozitif ve negatif grup büyüklükleri korunur), sabit tohum. Her yeniden örneklemde optimal nokta yeniden seçilir; kesim noktasının aralığı genellikle geniştir — eşiğin ne kadar kararsız olduğunu gösterir.",
+      "youdenCutoffRow": "Kesim noktası",
+      "youdenCiNoWeight": "Youden bootstrap güven aralığı atlandı: vaka ağırlığı etkin ve bootstrap ağırlıklı vakaları desteklemiyor. Optimal kesim noktası tablosu ağırlıklarla hesaplandı.",
+      "youdenCiNoPackage": "Youden bootstrap güven aralığı atlandı: 'pROC' R paketi bulunamadı."
     },
     "rocAnalysis": {
       "prCurveTitle": "Kesinlik-Duyarlılık (Precision-Recall) Eğrisi",
@@ -2007,7 +2020,17 @@
       "chiSqFootnote": "{{p0}} hücre (%{{p1}}) 5'ten küçük beklenen değere sahip. En küçük beklenen değer {{p2}}.",
       "warnExactWeighted": "Vaka ağırlıkları etkinken Fisher kesin testi hesaplanmaz (kesin testler tam sayı frekans gerektirir).",
       "warnMcnemarCategories": "McNemar testi hesaplanmadı: iki değişkenin kategori değerleri aynı olmalıdır (McNemar aynı özelliğin iki ölçümünü karşılaştırır).",
-      "warnKappaCategories": "Kappa hesaplanmadı: satır ve sütun değişkenlerinin kategori değerleri aynı olmalıdır (Kappa aynı kategorilerin iki değerlendirmesi arasındaki uyumu ölçer). Kategorileri konum sırasına göre eşleştiren bir hesap burada sayı üretir, ama ölçtüğü şey uyum olmaz."
+      "warnKappaCategories": "Kappa hesaplanmadı: satır ve sütun değişkenlerinin kategori değerleri aynı olmalıdır (Kappa aynı kategorilerin iki değerlendirmesi arasındaki uyumu ölçer). Kategorileri konum sırasına göre eşleştiren bir hesap burada sayı üretir, ama ölçtüğü şey uyum olmaz.",
+      "cellColPropSubset": "Sütun oranı alt kümesi",
+      "colPropFootnote": "Aynı harfi taşıyan {{name}} kategorilerinin sütun oranları ,05 düzeyinde birbirinden anlamlı farklı değildir (iki oran z-testi). \".\": sütun oranı 0 ya da 1 olduğu için bu kategori karşılaştırmalara alınmadı.",
+      "colPropFootnoteBonf": "Aynı harfi taşıyan {{name}} kategorilerinin sütun oranları ,05 düzeyinde birbirinden anlamlı farklı değildir (iki oran z-testi, Bonferroni düzeltmeli). \".\": sütun oranı 0 ya da 1 olduğu için bu kategori karşılaştırmalara alınmadı.",
+      "colPropTitle": "Sütun Oranları Karşılaştırması (z-testi) — {{name}}",
+      "colPropCat1": "Kategori 1",
+      "colPropCat2": "Kategori 2",
+      "colPropPct1": "% (1)",
+      "colPropPct2": "% (2)",
+      "colPropBonfSig": "Bonferroni düzeltmeli p",
+      "colPropPairsFootnote": "Her satır kategorisinde {{name}} sütun oranları ikişer ikişer karşılaştırıldı: z = (p₁ − p₂) / √(p(1 − p)(1/n₁ + 1/n₂)), p birleşik oran. Bonferroni düzeltmesi p'yi o satırdaki karşılaştırma sayısıyla çarpar (en çok 1)."
     },
     "explore": {
       "descTitle": "{{name}} — Betimleyici İstatistikler",
@@ -2584,7 +2607,10 @@
     "effect": "Etki",
     "withinEffect": "Denek İçi Etki",
     "levelI": "(I) {{name}}",
-    "levelJ": "(J) {{name}}"
+    "levelJ": "(J) {{name}}",
+    "accuracy": "Doğruluk",
+    "lrPositive": "LR+",
+    "lrNegative": "LR−"
   },
   "mixed": {
     "title": "Doğrusal Karışık Modeller",

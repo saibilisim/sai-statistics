@@ -27,7 +27,9 @@
 #             (0-1, default 0.95), userMissingValid (boolean)
 #           Display sub-dialog: plotCurve (default TRUE), diagonal (default
 #             TRUE), prCurve, prInterp 'tp'|'fp', modelQuality, seCi (default
-#             TRUE), coordinates, prCoordinates, metrics, compareAuc (RA4)
+#             TRUE), coordinates, prCoordinates, metrics, compareAuc (RA4),
+#             youden / youdenCi (optimal cut-off table + bootstrap CI, shared
+#             with roc.R — roc_youden_outputs() in _bootstrap.R)
 
 suppressPackageStartupMessages(library(jsonlite))
 .params_file <- commandArgs(trailingOnly = TRUE)[1]
@@ -72,6 +74,7 @@ tryCatch({
   want_coords   <- isTRUE(opts$coordinates)
   want_pr_coord <- isTRUE(opts$prCoordinates)
   want_metrics  <- isTRUE(opts$metrics)
+  want_youden   <- isTRUE(opts$youden)
   pos_val <- as.character(params$stateValue)
   ci_pct  <- as.character(round_half_up(o$ci_level * 100, 4))
 
@@ -83,7 +86,7 @@ tryCatch({
   prep <- roc_prepare(df, vars, sv, params, o)
   positive <- prep$s == pos_val
 
-  stats <- list(); nms <- list()
+  stats <- list(); nms <- list(); xs <- list()
   metric_tables <- list()
   pr_curves <- list(); pr_auc_rows <- list()
   notes <- character(0)
@@ -94,7 +97,7 @@ tryCatch({
     x  <- prep$x[[v]]
     if (o$direction == "smaller") x <- -x
     r  <- roc_compute(x, positive, prep$w, o)
-    stats[[idx]] <- r; nms[[idx]] <- nm
+    stats[[idx]] <- r; nms[[idx]] <- nm; xs[[idx]] <- x
     np <- r$np; nn <- r$nn; tp <- r$tp; fp <- r$fp
     sens <- tp / np; spec <- 1 - fp / nn
     precision <- ifelse(tp + fp == 0, NA_real_, tp / (tp + fp))
@@ -141,7 +144,11 @@ tryCatch({
   }
 
   plots <- list()
-  if (want_plot) plots <- c(plots, list(roc_curve_plot(stats, nms, roc_palette, want_diag)))
+  if (want_plot) plots <- c(plots, list(roc_curve_plot(stats, nms, roc_palette, want_diag,
+                                                       if (want_youden) o else NULL)))
+  yo <- if (want_youden)
+    roc_youden_outputs(stats, nms, xs, positive, prep$w, o, isTRUE(opts$youdenCi))
+  else list(tables = list(), notes = character(0), warnings = character(0))
 
   if (want_pr) {
     pr_layout <- list(
@@ -242,8 +249,9 @@ tryCatch({
   progress(100L, "progress.done")
   sai_output(
     tables = c(list(cps, roc_auc_table(stats, nms, want_se, ci_pct, o, "output.rocAnalysis.aucTitle")), pr_auc_tables,
-               coord_tables, pr_coord_tables, metric_tables, compare_tables),
+               yo$tables, coord_tables, pr_coord_tables, metric_tables, compare_tables),
     plots = plots,
-    notes = c(roc_common_notes(stats, nms, want_se, ci_pct, o), notes)
+    warnings = yo$warnings,
+    notes = c(roc_common_notes(stats, nms, want_se, ci_pct, o), notes, yo$notes)
   )
 }, error = function(e) sai_error(conditionMessage(e)))

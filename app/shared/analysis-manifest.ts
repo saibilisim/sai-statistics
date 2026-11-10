@@ -171,7 +171,7 @@ export const ANALYSIS_MANIFEST: readonly AnalysisManifestEntry[] = [
         required: false,
         default: { cells: { observed: true }, stats: { chisquare: true } },
         description:
-          'cells (observed, expected, rowPct, colPct, totalPct, residuals) and stats (chisquare, phiCramer, contingency, correlations, eta, kappa, risk, mcnemar, …). Partial object merged over defaults.'
+          'cells (observed, expected, rowPct, colPct, totalPct, residuals, colPropZ = z-test comparing column proportions with subset letters + pairwise p, bonferroni default true) and stats (chisquare, phiCramer, contingency, correlations, eta, kappa, risk, mcnemar, …). Partial object merged over defaults.'
       }
     },
     companions: {

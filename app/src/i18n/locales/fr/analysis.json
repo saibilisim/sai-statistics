@@ -328,7 +328,10 @@
       "residuals": "Résidus",
       "unstdResid": "Non standardisés",
       "stdResid": "Standardisés",
-      "adjResid": "Standardisés ajustés"
+      "adjResid": "Standardisés ajustés",
+      "zTest": "Test z",
+      "colPropZ": "Comparer les proportions de colonne",
+      "bonferroni": "Ajuster les valeurs p (méthode de Bonferroni)"
     }
   },
   "ttest1": {
@@ -640,7 +643,9 @@
     "missingTitle": "Valeurs manquantes",
     "missingExclude": "Exclure les valeurs manquantes de l'utilisateur et du système",
     "missingInclude": "Les valeurs manquantes de l'utilisateur sont traitées comme valides",
-    "displayTitle": "Courbe ROC : Afficher"
+    "displayTitle": "Courbe ROC : Afficher",
+    "youden": "Seuil optimal (indice de Youden)",
+    "youdenCi": "Intervalle de confiance bootstrap pour le J de Youden et le seuil"
   },
   "rocAnalysis": {
     "title": "Analyse ROC",
@@ -1526,7 +1531,15 @@
       "aucFootnote": "a. Sous l'hypothèse non paramétrique. b. Hypothèse nulle : aire vraie = 0,5.",
       "aucFootnoteNegexp": "a. Sous l'hypothèse bi-exponentielle négative. b. Hypothèse nulle : aire vraie = 0,5.",
       "coordsTitle": "Coordonnées de la courbe",
-      "cutoffFootnote": "La plus petite valeur seuil est la valeur de test minimale observée moins 1, et la plus grande est la valeur de test maximale observée plus 1. Toutes les autres valeurs seuils sont les moyennes de deux valeurs de test observées consécutives ordonnées."
+      "cutoffFootnote": "La plus petite valeur seuil est la valeur de test minimale observée moins 1, et la plus grande est la valeur de test maximale observée plus 1. Toutes les autres valeurs seuils sont les moyennes de deux valeurs de test observées consécutives ordonnées.",
+      "youdenTitle": "Seuil optimal (indice de Youden)",
+      "youdenFootnote": "J de Youden = Sensibilité + Spécificité − 1 ; le seuil qui donne le J le plus élevé. VPP et VPN dépendent de la proportion de positifs dans cet échantillon et ne se transposent pas directement à une population de prévalence différente. LR+ = Sensibilité / (1 − Spécificité), LR− = (1 − Sensibilité) / Spécificité ; cellule vide si le dénominateur est nul.",
+      "youdenTiesNote": "{{name}} : plusieurs seuils atteignent le même J de Youden maximal ; tous sont listés. Le graphique marque le plus petit.",
+      "youdenCiTitle": "Intervalles de confiance bootstrap pour le seuil optimal",
+      "youdenCiFootnote": "Bootstrap des percentiles, {{name}} rééchantillonnages stratifiés (tailles des groupes positif et négatif conservées), graine fixe. Le point optimal est resélectionné à chaque rééchantillonnage ; l'intervalle du seuil est souvent large — il montre l'instabilité du seuil.",
+      "youdenCutoffRow": "Seuil",
+      "youdenCiNoWeight": "Intervalle de confiance bootstrap de Youden ignoré : la pondération des observations est active et le bootstrap ne prend pas en charge les observations pondérées. Le tableau du seuil optimal utilise les poids.",
+      "youdenCiNoPackage": "Intervalle de confiance bootstrap de Youden ignoré : le package R 'pROC' est introuvable."
     },
     "rocAnalysis": {
       "prCurveTitle": "Courbe précision-rappel",
@@ -2007,7 +2020,17 @@
       "chiSqFootnote": "{{p0}} cellules ({{p1}} %) ont un effectif théorique inférieur à 5. L'effectif théorique minimum est {{p2}}.",
       "warnExactWeighted": "Le test exact de Fisher n'est pas calculé lorsque la pondération des observations est active (les tests exacts nécessitent des effectifs entiers).",
       "warnMcnemarCategories": "Test de McNemar non calculé : les deux variables doivent avoir des valeurs de catégorie identiques (McNemar compare deux mesures du même trait).",
-      "warnKappaCategories": "Kappa non calculé : les variables en ligne et en colonne doivent avoir des valeurs de catégorie identiques (Kappa mesure l'accord entre deux évaluations des mêmes catégories). Apparier les catégories par position produirait un nombre ici, mais ce ne serait pas une mesure d'accord."
+      "warnKappaCategories": "Kappa non calculé : les variables en ligne et en colonne doivent avoir des valeurs de catégorie identiques (Kappa mesure l'accord entre deux évaluations des mêmes catégories). Apparier les catégories par position produirait un nombre ici, mais ce ne serait pas une mesure d'accord.",
+      "cellColPropSubset": "Sous-ensemble de proportion de colonne",
+      "colPropFootnote": "Les modalités de {{name}} partageant une lettre ont des proportions de colonne qui ne diffèrent pas significativement entre elles au seuil de .05 (test z de deux proportions). « . » : cette modalité n'est pas utilisée dans les comparaisons car sa proportion de colonne vaut zéro ou un.",
+      "colPropFootnoteBonf": "Les modalités de {{name}} partageant une lettre ont des proportions de colonne qui ne diffèrent pas significativement entre elles au seuil de .05 (test z de deux proportions, ajusté par Bonferroni). « . » : cette modalité n'est pas utilisée dans les comparaisons car sa proportion de colonne vaut zéro ou un.",
+      "colPropTitle": "Comparaisons des proportions de colonne (test z) — {{name}}",
+      "colPropCat1": "Modalité 1",
+      "colPropCat2": "Modalité 2",
+      "colPropPct1": "% (1)",
+      "colPropPct2": "% (2)",
+      "colPropBonfSig": "p ajusté (Bonferroni)",
+      "colPropPairsFootnote": "Dans chaque modalité de ligne, les proportions de colonne de {{name}} sont comparées deux à deux : z = (p₁ − p₂) / √(p(1 − p)(1/n₁ + 1/n₂)), p la proportion commune. L'ajustement de Bonferroni multiplie p par le nombre de comparaisons de la ligne (au plus 1)."
     },
     "explore": {
       "descTitle": "{{name}} — Statistiques descriptives",
@@ -2584,7 +2607,10 @@
     "effect": "Effet",
     "withinEffect": "Effet intra-sujets",
     "levelI": "(I) {{name}}",
-    "levelJ": "(J) {{name}}"
+    "levelJ": "(J) {{name}}",
+    "accuracy": "Exactitude",
+    "lrPositive": "LR+",
+    "lrNegative": "LR−"
   },
   "mixed": {
     "title": "Modèles linéaires mixtes",

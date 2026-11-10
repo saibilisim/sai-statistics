@@ -10,7 +10,12 @@
 #   cols         — character vector of column-variable colIds
 #   colNames     — named list colId → display name
 #   options      — named list:
-#     cells — { observed, expected, rowPct, colPct, totalPct }
+#     cells — { observed, expected, rowPct, colPct, totalPct, unstdResid,
+#               stdResid, adjResid, colPropZ, bonferroni }
+#       colPropZ   — SPSS's "z-test: Compare column proportions" (CELLS=PROP /
+#                    BPROP): subset letters under every row level plus a
+#                    pairwise table with z, p and (bonferroni, default TRUE)
+#                    the Bonferroni-adjusted p.
 #     stats — { chisquare }
 #
 # Output: for each row × column pair, a Count crosstabulation (+ optional
@@ -27,6 +32,77 @@ source(file.path(.params_raw$rScriptsDir, "_bootstrap.R"))
 
 params <- read_params()
 df     <- load_data(params)
+
+#' Compact letter display (Piepho 2004, insert-and-absorb). `n` items, `sig`
+#' a list of index pairs that differ significantly. Returns one string of
+#' letters per item; items sharing a letter do not differ. Letters are
+#' assigned in order of the first item that carries them, so the first column
+#' always starts with "a".
+compact_letters <- function(n, sig) {
+  sets <- list(rep(TRUE, n))
+  for (pr in sig) {
+    a <- pr[1]; b <- pr[2]
+    out <- list()
+    for (s in sets) {
+      if (s[a] && s[b]) {
+        s1 <- s; s1[a] <- FALSE
+        s2 <- s; s2[b] <- FALSE
+        out <- c(out, list(s1, s2))
+      } else out <- c(out, list(s))
+    }
+    # Absorb: drop a set contained in another one (and exact duplicates).
+    keep <- rep(TRUE, length(out))
+    for (i in seq_along(out)) for (j in seq_along(out)) {
+      if (i != j && keep[i] && keep[j] && all(!out[[i]] | out[[j]]) &&
+          (any(out[[j]] & !out[[i]]) || i > j)) keep[i] <- FALSE
+    }
+    sets <- out[keep]
+  }
+  sets <- sets[vapply(sets, any, logical(1))]
+  sets <- sets[order(vapply(sets, function(s) which(s)[1], integer(1)),
+                     vapply(sets, function(s) paste(which(s), collapse = ","), character(1)))]
+  vapply(seq_len(n), function(i)
+    paste(letters[which(vapply(sets, function(s) s[i], logical(1)))], collapse = ""),
+    character(1))
+}
+
+#' SPSS's column-proportions z-test, one row category at a time: for every
+#' pair of columns j, k the two-proportion z with the pooled variance,
+#' z = (p_j - p_k) / sqrt(p (1 - p) (1/n_j + 1/n_k)). A column whose
+#' proportion in that row is 0 or 1 has no sampling variance and is left out of
+#' the row's comparisons, as SPSS does. Bonferroni multiplies p by the number of
+#' comparisons made within the row.
+#' @return list(letters = r x c character matrix ("." for an excluded
+#'   column), pairs = list of rows i, j, k, p_j, p_k, z, p, p_adj)
+col_prop_z <- function(tab, bonferroni, alpha = 0.05) {
+  nr <- nrow(tab); nc <- ncol(tab)
+  col_n <- colSums(tab)
+  lett <- matrix("", nr, nc)
+  pairs <- list()
+  for (i in seq_len(nr)) {
+    pr <- ifelse(col_n > 0, tab[i, ] / col_n, NA_real_)
+    use <- which(!is.na(pr) & pr > 0 & pr < 1)
+    lett[i, setdiff(seq_len(nc), use)] <- "."
+    if (length(use) < 1) next
+    if (length(use) == 1) { lett[i, use] <- "a"; next }
+    cmb <- utils::combn(use, 2)
+    m <- ncol(cmb)
+    sig <- list()
+    for (q in seq_len(m)) {
+      j <- cmb[1, q]; k <- cmb[2, q]
+      pooled <- (tab[i, j] + tab[i, k]) / (col_n[j] + col_n[k])
+      se <- sqrt(pooled * (1 - pooled) * (1 / col_n[j] + 1 / col_n[k]))
+      z <- (pr[j] - pr[k]) / se
+      p <- 2 * stats::pnorm(-abs(z))
+      p_adj <- if (bonferroni) min(1, p * m) else p
+      if (p_adj < alpha) sig <- c(sig, list(c(match(j, use), match(k, use))))
+      pairs[[length(pairs) + 1L]] <- list(i = i, j = j, k = k, pj = pr[[j]], pk = pr[[k]],
+                                         z = unname(z), p = unname(p), p_adj = p_adj)
+    }
+    lett[i, use] <- compact_letters(length(use), sig)
+  }
+  list(letters = lett, pairs = pairs)
+}
 
 tryCatch({
   progress(10L, "progress.loading")
@@ -141,6 +217,16 @@ tryCatch({
         function(j) cnt(col_tot[j]),
         cnt(grand)
       )
+      # Column-proportion subsets ride directly under the counts they test —
+      # SPSS prints them as subscripts on the count cells; a dedicated sub-row
+      # keeps every count cell a plain number.
+      want_cpz <- isTRUE(cells$colPropZ) && ncol(tab) >= 2
+      cpz <- if (want_cpz) col_prop_z(tab, !isFALSE(cells$bonferroni)) else NULL
+      if (want_cpz) add_measure(
+        "output.crosstabs.cellColPropSubset",
+        function(i, j) cpz$letters[i, j],
+        function(i) "", function(j) "", ""
+      )
       if (isTRUE(cells$expected)) add_measure(
         "output.crosstabs.cellExpected",
         function(i, j) round(exp_mat[i, j], 1),
@@ -223,12 +309,40 @@ tryCatch({
         out_rows <- c(out_rows, list(row))
       }
 
+      bonf <- !isFALSE(cells$bonferroni)
       all_tables <- c(all_tables, list(list(
         titleKey    = paste0("output.crosstabs.crosstabTitle:", title_name),
         columns     = as.list(cols_hdr),
         rows        = out_rows,
-        footnoteKey = NULL
+        footnoteKey = if (want_cpz) paste0(
+          if (bonf) "output.crosstabs.colPropFootnoteBonf:" else "output.crosstabs.colPropFootnote:",
+          gsub("|", "/", c_name, fixed = TRUE)) else NULL
       )))
+
+      # Pairwise column-proportion comparisons: the p values behind the letters.
+      if (want_cpz && length(cpz$pairs) > 0) {
+        pz_rows <- lapply(seq_along(cpz$pairs), function(q) {
+          pq <- cpz$pairs[[q]]
+          first <- q == 1 || cpz$pairs[[q - 1]]$i != pq$i
+          row <- list(if (first) r_levels_disp[pq$i] else "",
+                      c_levels_disp[pq$j], c_levels_disp[pq$k],
+                      round_half_up(pq$pj * 100, 1), round_half_up(pq$pk * 100, 1),
+                      round_half_up(pq$z, 3), round_half_up(pq$p, 6))
+          if (bonf) row <- c(row, list(round_half_up(pq$p_adj, 6)))
+          row
+        })
+        pz_cols <- list(r_name, "output.crosstabs.colPropCat1", "output.crosstabs.colPropCat2",
+                        "output.crosstabs.colPropPct1", "output.crosstabs.colPropPct2",
+                        "output.col.z", "output.col.sigTwoTailed")
+        if (bonf) pz_cols <- c(pz_cols, list("output.crosstabs.colPropBonfSig"))
+        all_tables <- c(all_tables, list(list(
+          titleKey    = paste0("output.crosstabs.colPropTitle:", title_name),
+          columns     = pz_cols,
+          rows        = pz_rows,
+          footnoteKey = paste0("output.crosstabs.colPropPairsFootnote:",
+                               gsub("|", "/", c_name, fixed = TRUE))
+        )))
+      }
 
       # Numeric view of the data — needed for Linear-by-Linear Association,
       # correlations, eta and the numeric (rather than alphabetical) ordering

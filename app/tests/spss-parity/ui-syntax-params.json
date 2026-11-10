@@ -73,7 +73,9 @@
             "totalPct": false,
             "unstdResid": false,
             "stdResid": false,
-            "adjResid": false
+            "adjResid": false,
+            "colPropZ": false,
+            "bonferroni": false
           },
           "stats": {
             "chisquare": true,

@@ -168,7 +168,8 @@ const XT_CELLS = [
   'totalPct',
   'unstdResid',
   'stdResid',
-  'adjResid'
+  'adjResid',
+  'colPropZ'
 ] as const
 const XT_STATS = [
   'chisquare',
@@ -195,7 +196,11 @@ function canonCrosstabs(p: Params) {
   return {
     rows: namesOf(p, 'rows'),
     cols: namesOf(p, 'cols'),
-    cells: XT_CELLS.filter(k => cells[k] === true),
+    cells: [
+      ...XT_CELLS.filter(k => cells[k] === true),
+      // Bonferroni only means something with the z-test on (BPROP vs PROP).
+      ...(cells.colPropZ === true && cells.bonferroni !== false ? ['bonferroni'] : [])
+    ],
     stats: XT_STATS.filter(k => stats[k] === true),
     unsayableSelected: XT_UNSAYABLE.filter(k => stats[k] === true)
   }

@@ -33,13 +33,19 @@ interface RocDisplay {
   diagonal: boolean
   seCi: boolean
   coordinates: boolean
+  /** Optimal cut-off table (Youden's J) — not in SPSS, on by default here. */
+  youden: boolean
+  /** Bootstrap CI for the optimal point (slow on large samples, so opt-in). */
+  youdenCi: boolean
 }
 
 const defaultDisplay: RocDisplay = {
   plotCurve: true,
   diagonal: true,
   seCi: true,
-  coordinates: false
+  coordinates: false,
+  youden: true,
+  youdenCi: false
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -99,6 +105,24 @@ function DisplayContent({
           }}
         >
           {t('analysis:roc.coordinates')}
+        </CheckOption>
+        <CheckOption
+          checked={local.youden}
+          onChange={v => {
+            set('youden', v)
+          }}
+        >
+          {t('analysis:roc.youden')}
+        </CheckOption>
+        <CheckOption
+          className={shellStyles.checkRowIndent}
+          checked={local.youdenCi}
+          disabled={!local.youden}
+          onChange={v => {
+            set('youdenCi', v)
+          }}
+        >
+          {t('analysis:roc.youdenCi')}
         </CheckOption>
       </OptionSection>
       <SubDialogFooter

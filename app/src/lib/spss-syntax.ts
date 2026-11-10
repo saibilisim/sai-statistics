@@ -1991,6 +1991,8 @@ interface CrosstabsOptionsParam {
     unstdResid: boolean
     stdResid: boolean
     adjResid: boolean
+    colPropZ?: boolean
+    bonferroni?: boolean
   }
   stats: {
     chisquare: boolean
@@ -2338,6 +2340,10 @@ export const buildSyntax = {
       if (options.cells.unstdResid) cellsList.push('RESID')
       if (options.cells.stdResid) cellsList.push('SRESID')
       if (options.cells.adjResid) cellsList.push('ASRESID')
+      // z-test: compare column proportions — BPROP is the Bonferroni-adjusted form.
+      if (options.cells.colPropZ) {
+        cellsList.push(options.cells.bonferroni === false ? 'PROP' : 'BPROP')
+      }
 
       if (cellsList.length) {
         syntax += `\n  /CELLS=${cellsList.join(' ')}`

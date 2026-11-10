@@ -328,7 +328,10 @@
       "residuals": "Residuos",
       "unstdResid": "No tipificados",
       "stdResid": "Tipificados",
-      "adjResid": "Tipificados corregidos"
+      "adjResid": "Tipificados corregidos",
+      "zTest": "Prueba z",
+      "colPropZ": "Comparar proporciones de columna",
+      "bonferroni": "Ajustar valores p (método de Bonferroni)"
     }
   },
   "ttest1": {
@@ -640,7 +643,9 @@
     "missingTitle": "Valores perdidos",
     "missingExclude": "Excluir los valores perdidos del usuario y del sistema",
     "missingInclude": "Los valores perdidos del usuario se tratan como válidos",
-    "displayTitle": "Curva COR: Mostrar"
+    "displayTitle": "Curva COR: Mostrar",
+    "youden": "Punto de corte óptimo (índice de Youden)",
+    "youdenCi": "Intervalo de confianza bootstrap para la J de Youden y el punto de corte"
   },
   "rocAnalysis": {
     "title": "Análisis ROC",
@@ -1526,7 +1531,15 @@
       "aucFootnote": "a. Bajo el supuesto no paramétrico. b. Hipótesis nula: área verdadera = 0,5.",
       "aucFootnoteNegexp": "a. Bajo el supuesto exponencial binegativo. b. Hipótesis nula: área verdadera = 0,5.",
       "coordsTitle": "Coordenadas de la curva",
-      "cutoffFootnote": "El valor de corte más pequeño es el valor de prueba mínimo observado menos 1, y el más grande es el valor de prueba máximo observado más 1. Todos los demás valores de corte son las medias de dos valores de prueba observados ordenados consecutivos."
+      "cutoffFootnote": "El valor de corte más pequeño es el valor de prueba mínimo observado menos 1, y el más grande es el valor de prueba máximo observado más 1. Todos los demás valores de corte son las medias de dos valores de prueba observados ordenados consecutivos.",
+      "youdenTitle": "Punto de corte óptimo (índice de Youden)",
+      "youdenFootnote": "J de Youden = Sensibilidad + Especificidad − 1; el punto de corte con la J más alta. VPP y VPN dependen de la proporción de positivos de esta muestra y no se trasladan directamente a una población con otra prevalencia. LR+ = Sensibilidad / (1 − Especificidad), LR− = (1 − Sensibilidad) / Especificidad; la celda queda vacía si el denominador es cero.",
+      "youdenTiesNote": "{{name}}: más de un punto de corte alcanza la misma J de Youden máxima; se muestran todos. El gráfico marca el menor.",
+      "youdenCiTitle": "Intervalos de confianza bootstrap para el punto de corte óptimo",
+      "youdenCiFootnote": "Bootstrap de percentiles, {{name}} remuestreos estratificados (se conservan los tamaños de los grupos positivo y negativo), semilla fija. El punto óptimo se vuelve a elegir en cada remuestreo; el intervalo del punto de corte suele ser amplio: muestra lo inestable que es el umbral.",
+      "youdenCutoffRow": "Punto de corte",
+      "youdenCiNoWeight": "Se omitió el intervalo de confianza bootstrap de Youden: la ponderación de casos está activa y el bootstrap no admite casos ponderados. La tabla del punto de corte óptimo usa las ponderaciones.",
+      "youdenCiNoPackage": "Se omitió el intervalo de confianza bootstrap de Youden: no se encontró el paquete de R 'pROC'."
     },
     "rocAnalysis": {
       "prCurveTitle": "Curva de precisión-exhaustividad (Precision-Recall)",
@@ -2007,7 +2020,17 @@
       "chiSqFootnote": "{{p0}} casillas ({{p1}}%) tienen un recuento esperado inferior a 5. El recuento esperado mínimo es {{p2}}.",
       "warnExactWeighted": "Con las ponderaciones de casos activas no se calcula la prueba exacta de Fisher (las pruebas exactas requieren frecuencias enteras).",
       "warnMcnemarCategories": "Prueba de McNemar no calculada: ambas variables deben tener valores de categoría idénticos (McNemar compara dos mediciones del mismo rasgo).",
-      "warnKappaCategories": "Kappa no calculada: las variables de fila y columna deben tener valores de categoría idénticos (Kappa mide el acuerdo entre dos valoraciones de las mismas categorías). Emparejar las categorías por posición produciría un número aquí, pero no sería una medida de acuerdo."
+      "warnKappaCategories": "Kappa no calculada: las variables de fila y columna deben tener valores de categoría idénticos (Kappa mide el acuerdo entre dos valoraciones de las mismas categorías). Emparejar las categorías por posición produciría un número aquí, pero no sería una medida de acuerdo.",
+      "cellColPropSubset": "Subconjunto de proporción de columna",
+      "colPropFootnote": "Las categorías de {{name}} que comparten una letra tienen proporciones de columna que no difieren significativamente entre sí al nivel .05 (prueba z de dos proporciones). \".\": esta categoría no se usa en las comparaciones porque su proporción de columna es cero o uno.",
+      "colPropFootnoteBonf": "Las categorías de {{name}} que comparten una letra tienen proporciones de columna que no difieren significativamente entre sí al nivel .05 (prueba z de dos proporciones, ajustada por Bonferroni). \".\": esta categoría no se usa en las comparaciones porque su proporción de columna es cero o uno.",
+      "colPropTitle": "Comparaciones de proporciones de columna (prueba z) — {{name}}",
+      "colPropCat1": "Categoría 1",
+      "colPropCat2": "Categoría 2",
+      "colPropPct1": "% (1)",
+      "colPropPct2": "% (2)",
+      "colPropBonfSig": "p ajustado por Bonferroni",
+      "colPropPairsFootnote": "Dentro de cada categoría de fila, las proporciones de columna de {{name}} se comparan por pares: z = (p₁ − p₂) / √(p(1 − p)(1/n₁ + 1/n₂)), p la proporción combinada. El ajuste de Bonferroni multiplica p por el número de comparaciones de esa fila (como máximo 1)."
     },
     "explore": {
       "descTitle": "{{name}} — Descriptivos",
@@ -2584,7 +2607,10 @@
     "effect": "Efecto",
     "withinEffect": "Efecto intrasujetos",
     "levelI": "(I) {{name}}",
-    "levelJ": "(J) {{name}}"
+    "levelJ": "(J) {{name}}",
+    "accuracy": "Exactitud",
+    "lrPositive": "LR+",
+    "lrNegative": "LR−"
   },
   "mixed": {
     "title": "Modelos lineales mixtos",

@@ -328,7 +328,10 @@
       "residuals": "Residui",
       "unstdResid": "Non standardizzati",
       "stdResid": "Standardizzati",
-      "adjResid": "Standardizzati corretti"
+      "adjResid": "Standardizzati corretti",
+      "zTest": "Test z",
+      "colPropZ": "Confronta proporzioni di colonna",
+      "bonferroni": "Correggi i valori p (metodo di Bonferroni)"
     }
   },
   "ttest1": {
@@ -640,7 +643,9 @@
     "missingTitle": "Valori mancanti",
     "missingExclude": "Escludi i valori mancanti dell'utente e di sistema",
     "missingInclude": "I valori mancanti dell'utente sono considerati validi",
-    "displayTitle": "Curva ROC: Visualizza"
+    "displayTitle": "Curva ROC: Visualizza",
+    "youden": "Punto di cut-off ottimale (indice di Youden)",
+    "youdenCi": "Intervallo di confidenza bootstrap per la J di Youden e il cut-off"
   },
   "rocAnalysis": {
     "title": "Analisi ROC",
@@ -1526,7 +1531,15 @@
       "aucFootnote": "a. Sotto l'assunzione non parametrica. b. Ipotesi nulla: area vera = 0,5.",
       "aucFootnoteNegexp": "a. Sotto l'assunzione bi-esponenziale negativa. b. Ipotesi nulla: area vera = 0,5.",
       "coordsTitle": "Coordinate della curva",
-      "cutoffFootnote": "Il valore di cutoff più piccolo è il valore minimo osservato del test meno 1, e il più grande è il valore massimo osservato più 1. Tutti gli altri valori di cutoff sono le medie di due valori osservati consecutivi ordinati."
+      "cutoffFootnote": "Il valore di cutoff più piccolo è il valore minimo osservato del test meno 1, e il più grande è il valore massimo osservato più 1. Tutti gli altri valori di cutoff sono le medie di due valori osservati consecutivi ordinati.",
+      "youdenTitle": "Punto di cut-off ottimale (indice di Youden)",
+      "youdenFootnote": "J di Youden = Sensibilità + Specificità − 1; il cut-off con la J più alta. VPP e VPN dipendono dalla proporzione di positivi in questo campione e non si trasferiscono direttamente a una popolazione con prevalenza diversa. LR+ = Sensibilità / (1 − Specificità), LR− = (1 − Sensibilità) / Specificità; cella vuota se il denominatore è zero.",
+      "youdenTiesNote": "{{name}}: più di un cut-off raggiunge la stessa J di Youden massima; sono elencati tutti. Il grafico segna il più piccolo.",
+      "youdenCiTitle": "Intervalli di confidenza bootstrap per il cut-off ottimale",
+      "youdenCiFootnote": "Bootstrap dei percentili, {{name}} ricampionamenti stratificati (dimensioni dei gruppi positivo e negativo mantenute), seme fisso. Il punto ottimale viene riscelto in ogni ricampionamento; l'intervallo del cut-off è di solito ampio — mostra quanto la soglia sia instabile.",
+      "youdenCutoffRow": "Cut-off",
+      "youdenCiNoWeight": "Intervallo di confidenza bootstrap di Youden omesso: la ponderazione dei casi è attiva e il bootstrap non supporta casi ponderati. La tabella del cut-off ottimale usa i pesi.",
+      "youdenCiNoPackage": "Intervallo di confidenza bootstrap di Youden omesso: pacchetto R 'pROC' non trovato."
     },
     "rocAnalysis": {
       "prCurveTitle": "Curva Precision-Recall",
@@ -2007,7 +2020,17 @@
       "chiSqFootnote": "{{p0}} celle ({{p1}}%) hanno un valore atteso inferiore a 5. Il valore atteso minimo è {{p2}}.",
       "warnExactWeighted": "Il test esatto di Fisher non viene calcolato quando sono attive ponderazioni dei casi (i test esatti richiedono frequenze intere).",
       "warnMcnemarCategories": "Test di McNemar non calcolato: entrambe le variabili devono avere valori di categoria identici (McNemar confronta due misurazioni dello stesso tratto).",
-      "warnKappaCategories": "Kappa non calcolato: le variabili di riga e di colonna devono avere valori di categoria identici (Kappa misura l'accordo tra due valutazioni delle stesse categorie). Abbinare le categorie per posizione produrrebbe un numero, ma non sarebbe una misura di accordo."
+      "warnKappaCategories": "Kappa non calcolato: le variabili di riga e di colonna devono avere valori di categoria identici (Kappa misura l'accordo tra due valutazioni delle stesse categorie). Abbinare le categorie per posizione produrrebbe un numero, ma non sarebbe una misura di accordo.",
+      "cellColPropSubset": "Sottoinsieme di proporzione di colonna",
+      "colPropFootnote": "Le categorie di {{name}} che condividono una lettera hanno proporzioni di colonna che non differiscono significativamente tra loro al livello .05 (test z per due proporzioni). \".\": questa categoria non è usata nei confronti perché la sua proporzione di colonna è zero o uno.",
+      "colPropFootnoteBonf": "Le categorie di {{name}} che condividono una lettera hanno proporzioni di colonna che non differiscono significativamente tra loro al livello .05 (test z per due proporzioni, corretto con Bonferroni). \".\": questa categoria non è usata nei confronti perché la sua proporzione di colonna è zero o uno.",
+      "colPropTitle": "Confronti delle proporzioni di colonna (test z) — {{name}}",
+      "colPropCat1": "Categoria 1",
+      "colPropCat2": "Categoria 2",
+      "colPropPct1": "% (1)",
+      "colPropPct2": "% (2)",
+      "colPropBonfSig": "p corretto (Bonferroni)",
+      "colPropPairsFootnote": "All'interno di ogni categoria di riga, le proporzioni di colonna di {{name}} sono confrontate a coppie: z = (p₁ − p₂) / √(p(1 − p)(1/n₁ + 1/n₂)), p la proporzione combinata. La correzione di Bonferroni moltiplica p per il numero di confronti nella riga (al massimo 1)."
     },
     "explore": {
       "descTitle": "{{name}} — Descrittive",
@@ -2584,7 +2607,10 @@
     "effect": "Effetto",
     "withinEffect": "Effetto entro soggetti",
     "levelI": "(I) {{name}}",
-    "levelJ": "(J) {{name}}"
+    "levelJ": "(J) {{name}}",
+    "accuracy": "Accuratezza",
+    "lrPositive": "LR+",
+    "lrNegative": "LR−"
   },
   "mixed": {
     "title": "Modelli misti lineari",

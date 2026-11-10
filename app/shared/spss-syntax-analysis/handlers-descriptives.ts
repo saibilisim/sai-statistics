@@ -389,7 +389,9 @@ export async function runCrosstabs(
         totalPct: cellsWords.includes('TOTAL'),
         unstdResid: cellsWords.includes('RESID') || cellsWords.includes('UNSTDRESID'),
         stdResid: cellsWords.includes('SRESID') || cellsWords.includes('STDRESID'),
-        adjResid: cellsWords.includes('ASRESID') || cellsWords.includes('ADJRESID')
+        adjResid: cellsWords.includes('ASRESID') || cellsWords.includes('ADJRESID'),
+        colPropZ: cellsWords.includes('PROP') || cellsWords.includes('BPROP'),
+        bonferroni: cellsWords.includes('BPROP')
       }
     : {
         observed: true,

@@ -995,13 +995,30 @@ roc_common_notes <- function(stats_by_var, names_by_var, se_ci, ci_pct, o) {
 }
 
 #' ROC curve plot (one line per variable), optionally with the diagonal.
-roc_curve_plot <- function(stats_by_var, names_by_var, palette, diagonal) {
+#' With `youden_o` (the roc_read_options() result) each curve also gets a
+#' marker on its Youden-optimal point (the lowest such cutoff when J ties).
+roc_curve_plot <- function(stats_by_var, names_by_var, palette, diagonal, youden_o = NULL) {
   traces <- lapply(seq_along(stats_by_var), function(i) {
     r <- stats_by_var[[i]]
     list(type = "scatter", mode = "lines", name = names_by_var[[i]],
          x = as.list(r$fp / r$nn), y = as.list(r$tp / r$np),
          line = list(color = palette[((i - 1) %% length(palette)) + 1]))
   })
+  if (!is.null(youden_o)) {
+    traces <- c(traces, lapply(seq_along(stats_by_var), function(i) {
+      r <- stats_by_var[[i]]
+      b <- roc_youden_best(r, youden_o)[1]
+      se <- r$tp[b] / r$np; fpr <- r$fp[b] / r$nn
+      list(type = "scatter", mode = "markers+text", showlegend = FALSE,
+           name = names_by_var[[i]],
+           x = list(fpr), y = list(se),
+           text = list(paste0("J = ", format(round_half_up(se - fpr, 3), nsmall = 3),
+                              " (", format(round_half_up(roc_display_cutoff(r$cutoffs[b], youden_o), 4)), ")")),
+           textposition = "bottom right",
+           marker = list(size = 9, color = palette[((i - 1) %% length(palette)) + 1],
+                         line = list(width = 1, color = "#ffffff")))
+    }))
+  }
   if (diagonal) {
     traces <- c(traces, list(list(
       type = "scatter", mode = "lines", name = "Reference", showlegend = FALSE,
@@ -1056,6 +1073,107 @@ roc_coord_table <- function(stats_by_var, names_by_var, o, title_key = "output.r
 roc_precision <- function(tp, fp) ifelse(tp + fp == 0, 1, tp / (tp + fp))
 
 roc_palette <- c("#3b6ea5", "#e07b39", "#3f9142", "#a3419b", "#c94040", "#3aa6a6")
+
+#' Cutoff indices of roc_compute() result `r` where Youden's J
+#' (sensitivity + specificity - 1) is largest. Every tied maximum is returned
+#' — several cutoffs can reach the same J, and silently picking one would hide
+#' that the "optimal" threshold is not unique. Ordered by displayed cutoff.
+roc_youden_best <- function(r, o) {
+  j <- r$tp / r$np - r$fp / r$nn
+  best <- which(j >= max(j) - 1e-12)
+  best[order(roc_display_cutoff(r$cutoffs[best], o))]
+}
+
+#' "Optimal Cut-off Point (Youden Index)": per test variable, the cutoff(s)
+#' maximizing J and the classification they give — sensitivity, specificity,
+#' PPV, NPV, accuracy and the likelihood ratios. LR+ is undefined where
+#' specificity is 1 and LR- where specificity is 0 (blank cells, not Inf).
+roc_youden_table <- function(stats_by_var, names_by_var, o) {
+  rows <- list(); n_tied <- character(0)
+  for (k in seq_along(stats_by_var)) {
+    r <- stats_by_var[[k]]
+    best <- roc_youden_best(r, o)
+    if (length(best) > 1) n_tied <- c(n_tied, names_by_var[[k]])
+    for (j in seq_along(best)) {
+      i <- best[j]
+      tp <- r$tp[i]; fp <- r$fp[i]; fn <- r$np - tp; tn <- r$nn - fp
+      se <- tp / r$np; sp <- tn / r$nn
+      num <- function(v) if (is.finite(v)) round_half_up(v, 3) else NULL
+      rows[[length(rows) + 1L]] <- list(
+        if (j == 1) names_by_var[[k]] else "",
+        round_half_up(roc_display_cutoff(r$cutoffs[i], o), 4),
+        round_half_up(se + sp - 1, 3), round_half_up(se, 3), round_half_up(sp, 3),
+        if (tp + fp == 0) NULL else round_half_up(tp / (tp + fp), 3),
+        if (tn + fn == 0) NULL else round_half_up(tn / (tn + fn), 3),
+        round_half_up((tp + tn) / (r$np + r$nn), 3),
+        if (sp >= 1) NULL else num(se / (1 - sp)),
+        if (sp <= 0) NULL else num((1 - se) / sp))
+    }
+  }
+  list(
+    titleKey = "output.roc.youdenTitle",
+    columns = list("output.col.testResultVar", roc_cutoff_col(o), "output.col.youdenJ",
+                   "output.col.sensitivity", "output.col.specificity", "output.col.ppv",
+                   "output.col.npv", "output.col.accuracy", "output.col.lrPositive",
+                   "output.col.lrNegative"),
+    rows = rows,
+    footnoteKey = "output.roc.youdenFootnote",
+    tied = n_tied)
+}
+
+#' Percentile bootstrap intervals for the Youden-optimal point: J, cutoff,
+#' sensitivity and specificity, from pROC::ci.coords() (stratified resampling —
+#' positive and negative group sizes kept, as the design fixed them). Within a
+#' replicate a tied maximum is broken at random (best.policy = "random"), so
+#' the seed is fixed for a reproducible table. pROC has no case weights, so the
+#' caller skips this under weighting. `xs` are the sign-flipped scores
+#' roc_compute() received, so pROC always runs with controls < cases.
+roc_youden_ci_table <- function(xs, positive, names_by_var, o, n_boot = 2000L) {
+  ci_pct <- as.character(round_half_up(o$ci_level * 100, 4))
+  rows <- list()
+  for (k in seq_along(xs)) {
+    rr <- pROC::roc(response = as.integer(positive), predictor = xs[[k]], levels = c(0L, 1L),
+                    direction = "<", quiet = TRUE)
+    set.seed(20261111L)
+    ci <- pROC::ci.coords(rr, x = "best", best.method = "youden",
+                          best.policy = "random",
+                          ret = c("youden", "threshold", "sensitivity", "specificity"),
+                          conf.level = o$ci_level, boot.n = n_boot, boot.stratified = TRUE)
+    lim <- function(nm) as.numeric(ci[[nm]][1, c(1, 3)])
+    j  <- lim("youden") - 1 # pROC's "youden" is sensitivity + specificity
+    th <- sort(roc_display_cutoff(lim("threshold"), o))
+    se <- lim("sensitivity"); sp <- lim("specificity")
+    add <- function(first, key, v) rows[[length(rows) + 1L]] <<- list(
+      if (first) names_by_var[[k]] else "", key, round_half_up(v[1], 3), round_half_up(v[2], 3))
+    add(TRUE, "output.col.youdenJ", j)
+    add(FALSE, "output.roc.youdenCutoffRow", th)
+    add(FALSE, "output.col.sensitivity", se)
+    add(FALSE, "output.col.specificity", sp)
+  }
+  list(
+    titleKey = "output.roc.youdenCiTitle",
+    columns = list("output.col.testResultVar", "output.col.statistic",
+                   paste0("output.col.ciLowerPct:", ci_pct), paste0("output.col.ciUpperPct:", ci_pct)),
+    rows = rows,
+    footnoteKey = paste0("output.roc.youdenCiFootnote:", n_boot))
+}
+
+#' The Youden output both ROC scripts share: the optimal cut-off table, its
+#' tie note, and the optional bootstrap interval table (skipped with a warning
+#' under case weights or without pROC).
+roc_youden_outputs <- function(stats_by_var, names_by_var, xs, positive, w, o, want_ci) {
+  yt <- roc_youden_table(stats_by_var, names_by_var, o)
+  notes <- if (length(yt$tied) > 0)
+    paste0("output.roc.youdenTiesNote:", paste(yt$tied, collapse = ", ")) else character(0)
+  yt$tied <- NULL
+  tables <- list(yt); warns <- character(0)
+  if (want_ci) {
+    if (!is.null(w)) warns <- "output.roc.youdenCiNoWeight"
+    else if (!requireNamespace("pROC", quietly = TRUE)) warns <- "output.roc.youdenCiNoPackage"
+    else tables <- c(tables, list(roc_youden_ci_table(xs, positive, names_by_var, o)))
+  }
+  list(tables = tables, notes = notes, warnings = warns)
+}
 
 #' The Options sub-dialog of SPSS's one-sample nonparametric tests (Binomial,
 #' One-Sample K-S, Runs): Missing Values "Exclude cases listwise" drops a case

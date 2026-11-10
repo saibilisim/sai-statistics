@@ -6,7 +6,9 @@
 #         stateVar (colId), stateName, stateValue (value identifying the
 #         positive/event group), options:
 #           Display (main dialog): plotCurve (default TRUE), diagonal (default
-#             TRUE), seCi (default TRUE), coordinates (default FALSE)
+#             TRUE), seCi (default TRUE), coordinates (default FALSE),
+#             youden (default FALSE — absent from SPSS's ROC command, so syntax
+#             and older payloads keep SPSS's output), youdenCi (default FALSE)
 #           Options sub-dialog: cutoff 'include'|'exclude', direction
 #             'larger'|'smaller', distribution 'free'|'negexpo', ciLevel (0-1),
 #             userMissingValid (boolean)
@@ -40,6 +42,7 @@ tryCatch({
   want_diag   <- !isFALSE(opts$diagonal)
   want_se     <- !isFALSE(opts$seCi)
   want_coords <- isTRUE(opts$coordinates)
+  want_youden <- isTRUE(opts$youden)
   pos_val <- as.character(params$stateValue)
   ci_pct  <- as.character(round_half_up(o$ci_level * 100, 4))
 
@@ -50,23 +53,29 @@ tryCatch({
   prep <- roc_prepare(df, vars, sv, params, o)
   positive <- prep$s == pos_val
 
-  stats <- list(); nms <- list()
+  stats <- list(); nms <- list(); xs <- list()
   for (v in vars) {
     nm <- if (!is.null(var_names[[v]])) var_names[[v]] else v
     x  <- prep$x[[v]]
     if (o$direction == "smaller") x <- -x
     r  <- roc_compute(x, positive, prep$w, o)
     stats[[length(stats) + 1L]] <- r
+    xs[[length(xs) + 1L]] <- x
     nms[[length(nms) + 1L]] <- nm
   }
 
   cps <- roc_case_summary(params, sv, stats[[1]]$np, stats[[1]]$nn, prep$n_missing, pos_val, o)
   coord_tables <- if (want_coords) list(roc_coord_table(stats, nms, o)) else list()
+  yo <- if (want_youden)
+    roc_youden_outputs(stats, nms, xs, positive, prep$w, o, isTRUE(opts$youdenCi))
+  else list(tables = list(), notes = character(0), warnings = character(0))
 
   progress(100L, "progress.done")
   sai_output(
-    notes = roc_common_notes(stats, nms, want_se, ci_pct, o),
-    tables = c(list(cps, roc_auc_table(stats, nms, want_se, ci_pct, o)), coord_tables),
-    plots = if (want_plot) list(roc_curve_plot(stats, nms, roc_palette, want_diag)) else list()
+    notes = c(roc_common_notes(stats, nms, want_se, ci_pct, o), yo$notes),
+    warnings = yo$warnings,
+    tables = c(list(cps, roc_auc_table(stats, nms, want_se, ci_pct, o)), yo$tables, coord_tables),
+    plots = if (want_plot) list(roc_curve_plot(stats, nms, roc_palette, want_diag,
+                                               if (want_youden) o else NULL)) else list()
   )
 }, error = function(e) sai_error(conditionMessage(e)))
