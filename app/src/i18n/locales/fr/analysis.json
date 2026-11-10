@@ -168,7 +168,8 @@
     "btnEmMeans": "Moyennes marginales",
     "btnContrasts": "Contrastes",
     "btnDisplay": "Afficher",
-    "btnPriors": "A priori"
+    "btnPriors": "A priori",
+    "btnExtraction": "Extraction"
   },
   "descriptives": {
     "title": "Statistiques descriptives",
@@ -862,7 +863,40 @@
       "score1": "Score factoriel 1",
       "score2": "Score factoriel 2",
       "score3": "Score factoriel 3"
-    }
+    },
+    "quartimax": "Quartimax (orthogonale)",
+    "equamax": "Equamax (orthogonale)",
+    "extractionTitle": "Analyse factorielle : Extraction",
+    "optionsTitle": "Analyse factorielle : Options",
+    "statisticsSection": "Statistiques",
+    "correlationSection": "Matrice de corrélation",
+    "univariate": "Statistiques descriptives univariées",
+    "correlation": "Coefficients et déterminant",
+    "antiImage": "Anti-image (adéquation de l'échantillonnage par item, MSA)",
+    "methodSection": "Méthode",
+    "method": "Méthode :",
+    "extract": {
+      "pc": "Composantes principales",
+      "paf": "Factorisation en axes principaux",
+      "ml": "Maximum de vraisemblance",
+      "uls": "Moindres carrés non pondérés",
+      "gls": "Moindres carrés généralisés"
+    },
+    "analyzeSection": "Analyser",
+    "matrixCorrelation": "Matrice de corrélation (Pearson)",
+    "matrixPolychoric": "Matrice de corrélation polychorique (items Likert / ordinaux)",
+    "extractSection": "Extraire",
+    "criterionEigen": "Basée sur les valeurs propres supérieures à :",
+    "criterionFixed": "Nombre fixe de facteurs :",
+    "criterionParallel": "Basée sur l'analyse parallèle (Horn)",
+    "displaySection": "Afficher",
+    "scree": "Graphique des valeurs propres",
+    "parallel": "Tableau de l'analyse parallèle",
+    "maxIter": "Nombre maximal d'itérations pour la convergence :",
+    "formatSection": "Format d'affichage des coefficients",
+    "sortBySize": "Classés par taille",
+    "suppress": "Supprimer les petits coefficients",
+    "suppressBelow": "Valeur absolue inférieure à :"
   },
   "kmeans": {
     "title": "Classification K-moyennes",
@@ -1740,7 +1774,62 @@
       "newVar": {
         "score": "Score factoriel {{name}}"
       },
-      "scoresSingular": "Les scores factoriels n’ont pas pu être calculés : la matrice de corrélation est singulière — certaines variables sont parfaitement colinéaires."
+      "scoresSingular": "Les scores factoriels n’ont pas pu être calculés : la matrice de corrélation est singulière — certaines variables sont parfaitement colinéaires.",
+      "descTitle": "Statistiques descriptives",
+      "analysisN": "N de l'analyse",
+      "corrTitle": "Matrice de corrélation",
+      "determinantFootnote": "Déterminant = {{name}}",
+      "antiImageTitle": "Matrice de corrélation anti-image",
+      "antiImageFootnote": "Diagonale : mesure de l'adéquation de l'échantillonnage (MSA) de chaque item. Hors diagonale : opposé des corrélations partielles.",
+      "lowMsaNote": "Items dont la mesure de l'adéquation de l'échantillonnage est inférieure à .50 : {{name}}. Ils sont candidats au retrait de l'analyse factorielle.",
+      "antiImageSingular": "La matrice anti-image n'a pas pu être calculée : la matrice de corrélation est singulière (certaines variables sont parfaitement colinéaires).",
+      "polychoricFallback": "Les corrélations polychoriques n'ont pas pu être utilisées (les items doivent être des entiers à 10 modalités au plus) ; les corrélations de Pearson ont été utilisées.",
+      "polychoricNote": "L'analyse a porté sur la matrice de corrélation polychorique (items traités comme des versions catégorisées d'un trait continu). Les scores factoriels sont calculés à partir des scores bruts standardisés.",
+      "parallelNone": "Selon l'analyse parallèle, aucune valeur propre ne dépasse celle de données aléatoires ; un facteur est tout de même affiché. Les données n'ont peut-être pas de structure commune.",
+      "tooManyFactors": "Le nombre de facteurs demandé ne peut pas être extrait de ce nombre de variables ; {{name}} facteurs ont été extraits.",
+      "notConverged": "L'extraction n'a pas convergé en {{name}} itérations ; les résultats sont ceux de la dernière itération. Augmentez la limite d'itérations ou extrayez moins de facteurs.",
+      "heywood": "Variable(s) dont la qualité de représentation atteint ou dépasse 1 (cas de Heywood) : {{name}}. La solution peut être invalide ; changez le nombre de facteurs ou la méthode.",
+      "factorHdr": "Facteur {{name}}",
+      "method": {
+        "pc": "Analyse en composantes principales",
+        "paf": "Factorisation en axes principaux",
+        "ml": "Maximum de vraisemblance",
+        "uls": "Moindres carrés non pondérés",
+        "gls": "Moindres carrés généralisés"
+      },
+      "rot": {
+        "varimax": "Varimax avec normalisation de Kaiser",
+        "quartimax": "Quartimax avec normalisation de Kaiser",
+        "equamax": "Equamax avec normalisation de Kaiser",
+        "oblimin": "Oblimin directe",
+        "promax": "Promax"
+      },
+      "commFootnote": "Méthode d'extraction : {{name}}. Les qualités de représentation initiales sont les carrés des corrélations multiples (SMC).",
+      "extrSSTotal": "Sommes des carrés des saturations (extraction)",
+      "extrSSPct": "% de la variance (extraction)",
+      "extrSSCum": "% cumulé (extraction)",
+      "parallelTitle": "Analyse parallèle",
+      "paObserved": "Valeur propre observée",
+      "paMean": "Valeur propre aléatoire (moyenne)",
+      "paP95": "Valeur propre aléatoire (95e centile)",
+      "paDecision": "Décision",
+      "paRetain": "Retenir",
+      "paDrop": "Écarter",
+      "parallelFootnote": "Analyse parallèle de Horn : les valeurs propres de la matrice de corrélation ont été comparées à celles de {{p0}} jeux de données normales aléatoires de même taille (n, nombre de variables). Les facteurs dont la valeur propre dépasse le 95e centile aléatoire sont retenus : {{p1}}.",
+      "screeTitle": "Graphique des valeurs propres",
+      "screeObserved": "Valeur propre",
+      "screeParallel": "Analyse parallèle (95e centile)",
+      "screeXComp": "Numéro de composante",
+      "screeXFactor": "Numéro de facteur",
+      "factorMatrixTitle": "Matrice factorielle",
+      "extractFootnote": "Méthode d'extraction : {{p0}}. {{p1}} facteur(s) extrait(s).",
+      "gofTitle": "Test d'adéquation",
+      "rotatedFactorMatrixTitle": "Matrice factorielle après rotation",
+      "factorTransformMatrixTitle": "Matrice de transformation des facteurs",
+      "rotFootnote": "Méthode d'extraction : {{p0}}. Méthode de rotation : {{p1}}.",
+      "suppressNote": "Les saturations de valeur absolue inférieure à {{name}} sont masquées.",
+      "lowLoadingNote": "Items sans aucune saturation de .30 ou plus sur un facteur : {{name}}.",
+      "crossLoadingNote": "Items à saturations croisées (saturations supérieures à .30 sur deux facteurs, à moins de .10 d'écart) : {{name}}."
     },
     "kmeans": {
       "centersTitle": "Centres de classes finaux",
@@ -2610,7 +2699,8 @@
     "levelJ": "(J) {{name}}",
     "accuracy": "Exactitude",
     "lrPositive": "LR+",
-    "lrNegative": "LR−"
+    "lrNegative": "LR−",
+    "factor": "Facteur"
   },
   "mixed": {
     "title": "Modèles linéaires mixtes",

@@ -168,7 +168,8 @@
     "btnEmMeans": "Médias marginais",
     "btnContrasts": "Contrastes",
     "btnDisplay": "Exibir",
-    "btnPriors": "Prioris"
+    "btnPriors": "Prioris",
+    "btnExtraction": "Extração"
   },
   "descriptives": {
     "title": "Descritivas",
@@ -862,7 +863,40 @@
       "score1": "Pontuação fatorial 1",
       "score2": "Pontuação fatorial 2",
       "score3": "Pontuação fatorial 3"
-    }
+    },
+    "quartimax": "Quartimax (ortogonal)",
+    "equamax": "Equamax (ortogonal)",
+    "extractionTitle": "Análise fatorial: Extração",
+    "optionsTitle": "Análise fatorial: Opções",
+    "statisticsSection": "Estatísticas",
+    "correlationSection": "Matriz de correlação",
+    "univariate": "Descritivas univariadas",
+    "correlation": "Coeficientes e determinante",
+    "antiImage": "Anti-imagem (adequação amostral por item, MSA)",
+    "methodSection": "Método",
+    "method": "Método:",
+    "extract": {
+      "pc": "Componentes principais",
+      "paf": "Fatoração por eixos principais",
+      "ml": "Máxima verossimilhança",
+      "uls": "Mínimos quadrados não ponderados",
+      "gls": "Mínimos quadrados generalizados"
+    },
+    "analyzeSection": "Analisar",
+    "matrixCorrelation": "Matriz de correlação (Pearson)",
+    "matrixPolychoric": "Matriz de correlação policórica (itens Likert / ordinais)",
+    "extractSection": "Extrair",
+    "criterionEigen": "Com base em autovalores maiores que:",
+    "criterionFixed": "Número fixo de fatores:",
+    "criterionParallel": "Com base na análise paralela (Horn)",
+    "displaySection": "Exibir",
+    "scree": "Gráfico de sedimentação (scree)",
+    "parallel": "Tabela da análise paralela",
+    "maxIter": "Máximo de iterações para convergência:",
+    "formatSection": "Formato de exibição dos coeficientes",
+    "sortBySize": "Ordenados por tamanho",
+    "suppress": "Suprimir coeficientes pequenos",
+    "suppressBelow": "Valor absoluto abaixo de:"
   },
   "kmeans": {
     "title": "Análise de Agrupamento K-Médias",
@@ -1740,7 +1774,62 @@
       "newVar": {
         "score": "Pontuação fatorial {{name}}"
       },
-      "scoresSingular": "Não foi possível calcular as pontuações fatoriais: a matriz de correlações é singular — algumas variáveis são perfeitamente colineares."
+      "scoresSingular": "Não foi possível calcular as pontuações fatoriais: a matriz de correlações é singular — algumas variáveis são perfeitamente colineares.",
+      "descTitle": "Estatísticas descritivas",
+      "analysisN": "N da análise",
+      "corrTitle": "Matriz de correlação",
+      "determinantFootnote": "Determinante = {{name}}",
+      "antiImageTitle": "Matriz de correlação anti-imagem",
+      "antiImageFootnote": "Diagonal: medida de adequação da amostra (MSA) de cada item. Fora da diagonal: correlações parciais com o sinal trocado.",
+      "lowMsaNote": "Itens com medida de adequação da amostra abaixo de .50: {{name}}. São candidatos à exclusão da análise fatorial.",
+      "antiImageSingular": "Não foi possível calcular a matriz anti-imagem: a matriz de correlação é singular (algumas variáveis são perfeitamente colineares).",
+      "polychoricFallback": "Não foi possível usar correlações policóricas (os itens devem ser inteiros com no máximo 10 categorias); foram usadas correlações de Pearson.",
+      "polychoricNote": "A análise usou a matriz de correlação policórica (itens tratados como versões categorizadas de um traço contínuo). Os escores fatoriais são calculados a partir dos escores brutos padronizados.",
+      "parallelNone": "Pela análise paralela, nenhum autovalor supera o de dados aleatórios; mesmo assim é mostrado um fator. Os dados podem não ter estrutura comum.",
+      "tooManyFactors": "O número de fatores pedido não pode ser extraído com tão poucas variáveis; foram extraídos {{name}} fatores.",
+      "notConverged": "A extração não convergiu em {{name}} iterações; os resultados são da última iteração. Aumente o limite de iterações ou extraia menos fatores.",
+      "heywood": "Variável(is) com comunalidade igual ou maior que 1 (caso de Heywood): {{name}}. A solução pode ser inválida; mude o número de fatores ou o método.",
+      "factorHdr": "Fator {{name}}",
+      "method": {
+        "pc": "Análise de componentes principais",
+        "paf": "Fatoração por eixos principais",
+        "ml": "Máxima verossimilhança",
+        "uls": "Mínimos quadrados não ponderados",
+        "gls": "Mínimos quadrados generalizados"
+      },
+      "rot": {
+        "varimax": "Varimax com normalização de Kaiser",
+        "quartimax": "Quartimax com normalização de Kaiser",
+        "equamax": "Equamax com normalização de Kaiser",
+        "oblimin": "Oblimin direto",
+        "promax": "Promax"
+      },
+      "commFootnote": "Método de extração: {{name}}. As comunalidades iniciais são as correlações múltiplas ao quadrado (SMC).",
+      "extrSSTotal": "Somas dos quadrados das cargas (extração)",
+      "extrSSPct": "% de variância (extração)",
+      "extrSSCum": "% acumulada (extração)",
+      "parallelTitle": "Análise paralela",
+      "paObserved": "Autovalor observado",
+      "paMean": "Autovalor aleatório (média)",
+      "paP95": "Autovalor aleatório (percentil 95)",
+      "paDecision": "Decisão",
+      "paRetain": "Reter",
+      "paDrop": "Descartar",
+      "parallelFootnote": "Análise paralela de Horn: os autovalores da matriz de correlação foram comparados com os de {{p0}} conjuntos de dados normais aleatórios do mesmo tamanho (n, número de variáveis). São retidos os fatores cujo autovalor supera o percentil 95 aleatório: {{p1}}.",
+      "screeTitle": "Gráfico de sedimentação",
+      "screeObserved": "Autovalor",
+      "screeParallel": "Análise paralela (percentil 95)",
+      "screeXComp": "Número do componente",
+      "screeXFactor": "Número do fator",
+      "factorMatrixTitle": "Matriz fatorial",
+      "extractFootnote": "Método de extração: {{p0}}. {{p1}} fator(es) extraído(s).",
+      "gofTitle": "Teste de qualidade do ajuste",
+      "rotatedFactorMatrixTitle": "Matriz fatorial rotacionada",
+      "factorTransformMatrixTitle": "Matriz de transformação dos fatores",
+      "rotFootnote": "Método de extração: {{p0}}. Método de rotação: {{p1}}.",
+      "suppressNote": "Cargas com valor absoluto abaixo de {{name}} foram ocultadas.",
+      "lowLoadingNote": "Itens sem nenhuma carga de .30 ou mais em algum fator: {{name}}.",
+      "crossLoadingNote": "Itens com cargas cruzadas (cargas acima de .30 em dois fatores, com menos de .10 de diferença): {{name}}."
     },
     "kmeans": {
       "centersTitle": "Centros Finais dos Agrupamentos",
@@ -2610,7 +2699,8 @@
     "levelJ": "(J) {{name}}",
     "accuracy": "Acurácia",
     "lrPositive": "LR+",
-    "lrNegative": "LR−"
+    "lrNegative": "LR−",
+    "factor": "Fator"
   },
   "mixed": {
     "title": "Modelos Lineares Mistos",

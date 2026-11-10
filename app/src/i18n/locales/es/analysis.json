@@ -168,7 +168,8 @@
     "btnEmMeans": "Medias marginales",
     "btnContrasts": "Contrastes",
     "btnDisplay": "Mostrar",
-    "btnPriors": "Previas"
+    "btnPriors": "Previas",
+    "btnExtraction": "Extracción"
   },
   "descriptives": {
     "title": "Descriptivos",
@@ -862,7 +863,40 @@
       "score1": "Puntuación factorial 1",
       "score2": "Puntuación factorial 2",
       "score3": "Puntuación factorial 3"
-    }
+    },
+    "quartimax": "Quartimax (ortogonal)",
+    "equamax": "Equamax (ortogonal)",
+    "extractionTitle": "Análisis factorial: Extracción",
+    "optionsTitle": "Análisis factorial: Opciones",
+    "statisticsSection": "Estadísticos",
+    "correlationSection": "Matriz de correlaciones",
+    "univariate": "Descriptivos univariados",
+    "correlation": "Coeficientes y determinante",
+    "antiImage": "Anti-imagen (adecuación muestral por ítem, MSA)",
+    "methodSection": "Método",
+    "method": "Método:",
+    "extract": {
+      "pc": "Componentes principales",
+      "paf": "Factorización de ejes principales",
+      "ml": "Máxima verosimilitud",
+      "uls": "Mínimos cuadrados no ponderados",
+      "gls": "Mínimos cuadrados generalizados"
+    },
+    "analyzeSection": "Analizar",
+    "matrixCorrelation": "Matriz de correlaciones (Pearson)",
+    "matrixPolychoric": "Matriz de correlaciones policóricas (ítems Likert / ordinales)",
+    "extractSection": "Extraer",
+    "criterionEigen": "Basado en autovalores mayores que:",
+    "criterionFixed": "Número fijo de factores:",
+    "criterionParallel": "Basado en análisis paralelo (Horn)",
+    "displaySection": "Mostrar",
+    "scree": "Gráfico de sedimentación",
+    "parallel": "Tabla de análisis paralelo",
+    "maxIter": "Máximo de iteraciones para convergencia:",
+    "formatSection": "Formato de presentación de coeficientes",
+    "sortBySize": "Ordenados por tamaño",
+    "suppress": "Suprimir coeficientes pequeños",
+    "suppressBelow": "Valor absoluto inferior a:"
   },
   "kmeans": {
     "title": "Análisis de conglomerados de K medias",
@@ -1740,7 +1774,62 @@
       "newVar": {
         "score": "Puntuación factorial {{name}}"
       },
-      "scoresSingular": "No se pudieron calcular las puntuaciones factoriales: la matriz de correlaciones es singular — algunas variables son perfectamente colineales."
+      "scoresSingular": "No se pudieron calcular las puntuaciones factoriales: la matriz de correlaciones es singular — algunas variables son perfectamente colineales.",
+      "descTitle": "Estadísticos descriptivos",
+      "analysisN": "N del análisis",
+      "corrTitle": "Matriz de correlaciones",
+      "determinantFootnote": "Determinante = {{name}}",
+      "antiImageTitle": "Matriz de correlaciones anti-imagen",
+      "antiImageFootnote": "Diagonal: medida de adecuación muestral (MSA) de cada ítem. Fuera de la diagonal: correlaciones parciales cambiadas de signo.",
+      "lowMsaNote": "Ítems con una medida de adecuación muestral inferior a .50: {{name}}. Son candidatos a eliminarse del análisis factorial.",
+      "antiImageSingular": "No se pudo calcular la matriz anti-imagen: la matriz de correlaciones es singular (algunas variables son perfectamente colineales).",
+      "polychoricFallback": "No se pudieron usar correlaciones policóricas (los ítems deben ser enteros con 10 categorías como máximo); se usaron correlaciones de Pearson.",
+      "polychoricNote": "El análisis usó la matriz de correlaciones policóricas (los ítems se tratan como versiones categorizadas de un rasgo continuo). Las puntuaciones factoriales se calculan a partir de las puntuaciones brutas estandarizadas.",
+      "parallelNone": "Según el análisis paralelo, ningún autovalor supera al de datos aleatorios; aun así se muestra un factor. Puede que los datos no tengan una estructura común.",
+      "tooManyFactors": "No se puede extraer el número de factores pedido con tantas variables; se extrajeron {{name}} factores.",
+      "notConverged": "La extracción no convergió en {{name}} iteraciones; los resultados corresponden a la última iteración. Aumente el límite de iteraciones o extraiga menos factores.",
+      "heywood": "Variable(s) con comunalidad igual o mayor que 1 (caso Heywood): {{name}}. La solución puede no ser válida; cambie el número de factores o el método.",
+      "factorHdr": "Factor {{name}}",
+      "method": {
+        "pc": "Análisis de componentes principales",
+        "paf": "Factorización de ejes principales",
+        "ml": "Máxima verosimilitud",
+        "uls": "Mínimos cuadrados no ponderados",
+        "gls": "Mínimos cuadrados generalizados"
+      },
+      "rot": {
+        "varimax": "Varimax con normalización Kaiser",
+        "quartimax": "Quartimax con normalización Kaiser",
+        "equamax": "Equamax con normalización Kaiser",
+        "oblimin": "Oblimin directo",
+        "promax": "Promax"
+      },
+      "commFootnote": "Método de extracción: {{name}}. Las comunalidades iniciales son las correlaciones múltiples al cuadrado (SMC).",
+      "extrSSTotal": "Sumas de cargas al cuadrado de la extracción",
+      "extrSSPct": "% de varianza de la extracción",
+      "extrSSCum": "% acumulado de la extracción",
+      "parallelTitle": "Análisis paralelo",
+      "paObserved": "Autovalor observado",
+      "paMean": "Autovalor aleatorio (media)",
+      "paP95": "Autovalor aleatorio (percentil 95)",
+      "paDecision": "Decisión",
+      "paRetain": "Retener",
+      "paDrop": "Descartar",
+      "parallelFootnote": "Análisis paralelo de Horn: los autovalores de la matriz de correlaciones se compararon con los de {{p0}} conjuntos de datos normales aleatorios del mismo tamaño (n, número de variables). Se retienen los factores cuyo autovalor supera el percentil 95 aleatorio: {{p1}}.",
+      "screeTitle": "Gráfico de sedimentación",
+      "screeObserved": "Autovalor",
+      "screeParallel": "Análisis paralelo (percentil 95)",
+      "screeXComp": "Número de componente",
+      "screeXFactor": "Número de factor",
+      "factorMatrixTitle": "Matriz factorial",
+      "extractFootnote": "Método de extracción: {{p0}}. {{p1}} factor(es) extraído(s).",
+      "gofTitle": "Prueba de bondad de ajuste",
+      "rotatedFactorMatrixTitle": "Matriz factorial rotada",
+      "factorTransformMatrixTitle": "Matriz de transformación de los factores",
+      "rotFootnote": "Método de extracción: {{p0}}. Método de rotación: {{p1}}.",
+      "suppressNote": "Se ocultan las cargas con valor absoluto inferior a {{name}}.",
+      "lowLoadingNote": "Ítems sin ninguna carga de .30 o más en algún factor: {{name}}.",
+      "crossLoadingNote": "Ítems con cargas cruzadas (cargas superiores a .30 en dos factores, con menos de .10 de diferencia): {{name}}."
     },
     "kmeans": {
       "centersTitle": "Centros de los conglomerados finales",
@@ -2610,7 +2699,8 @@
     "levelJ": "(J) {{name}}",
     "accuracy": "Exactitud",
     "lrPositive": "LR+",
-    "lrNegative": "LR−"
+    "lrNegative": "LR−",
+    "factor": "Factor"
   },
   "mixed": {
     "title": "Modelos lineales mixtos",

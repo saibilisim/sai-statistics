@@ -540,10 +540,25 @@ function canonGlmUni(p: Params) {
 }
 function canonFactor(p: Params) {
   const opts = (p.options ?? {}) as Params
+  const fixed = opts.criterion === 'fixed'
   return {
     vars: namesOf(p, 'variables'),
     rotation: (opts.rotation as string) ?? 'none',
-    kmoBartlett: opts.kmoBartlett === true
+    kmoBartlett: opts.kmoBartlett === true,
+    extraction: (opts.extraction as string) ?? 'pc',
+    nFactors: fixed ? Number(opts.nFactors) : null,
+    minEigen: fixed ? null : Number(opts.minEigen ?? 1),
+    univariate: opts.univariate === true,
+    correlation: opts.correlation === true,
+    antiImage: opts.antiImage === true,
+    sortBySize: opts.sortBySize === true,
+    suppressBelow: (opts.suppressBelow as number | null | undefined) ?? null,
+    scree: opts.scree === true,
+    // No SPSS keyword exists for these — if selected, Paste cannot express the dialog.
+    unsayableSelected: [
+      opts.matrix === 'polychoric' ? 'polychoric' : '',
+      opts.criterion === 'parallel' || opts.parallel === true ? 'parallel' : ''
+    ].filter(Boolean)
   }
 }
 function canonDiscriminant(p: Params) {

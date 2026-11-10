@@ -168,7 +168,8 @@
     "btnEmMeans": "EM Ortalamaları",
     "btnContrasts": "Karşıtlıklar",
     "btnDisplay": "Görüntüle",
-    "btnPriors": "Önseller"
+    "btnPriors": "Önseller",
+    "btnExtraction": "Çıkarma"
   },
   "descriptives": {
     "title": "Betimleyici İstatistikler",
@@ -862,7 +863,40 @@
       "score1": "1. faktör skoru",
       "score2": "2. faktör skoru",
       "score3": "3. faktör skoru"
-    }
+    },
+    "quartimax": "Quartimax (dik)",
+    "equamax": "Equamax (dik)",
+    "extractionTitle": "Faktör Analizi: Çıkarma",
+    "optionsTitle": "Faktör Analizi: Seçenekler",
+    "statisticsSection": "İstatistikler",
+    "correlationSection": "Korelasyon Matrisi",
+    "univariate": "Tek değişkenli betimleyiciler",
+    "correlation": "Katsayılar ve determinant",
+    "antiImage": "Anti-imaj (madde bazında örneklem yeterliliği, MSA)",
+    "methodSection": "Yöntem",
+    "method": "Yöntem:",
+    "extract": {
+      "pc": "Temel bileşenler",
+      "paf": "Temel eksen faktörleme",
+      "ml": "En çok olabilirlik",
+      "uls": "Ağırlıksız en küçük kareler",
+      "gls": "Genelleştirilmiş en küçük kareler"
+    },
+    "analyzeSection": "Analiz Edilen Matris",
+    "matrixCorrelation": "Korelasyon matrisi (Pearson)",
+    "matrixPolychoric": "Polikorik korelasyon matrisi (Likert / sıralı maddeler)",
+    "extractSection": "Çıkarılacak Faktör Sayısı",
+    "criterionEigen": "Özdeğeri şundan büyük olanlar:",
+    "criterionFixed": "Sabit faktör sayısı:",
+    "criterionParallel": "Paralel analize göre (Horn)",
+    "displaySection": "Görüntüle",
+    "scree": "Yamaç birikinti (scree) grafiği",
+    "parallel": "Paralel analiz tablosu",
+    "maxIter": "Yakınsama için en çok yineleme:",
+    "formatSection": "Katsayı Görüntüleme Biçimi",
+    "sortBySize": "Büyüklüğe göre sırala",
+    "suppress": "Küçük katsayıları gizle",
+    "suppressBelow": "Mutlak değeri şundan küçükse:"
   },
   "kmeans": {
     "title": "K-Ortalamalar Kümeleme Analizi",
@@ -1740,7 +1774,62 @@
       "newVar": {
         "score": "{{name}}. faktör skoru"
       },
-      "scoresSingular": "Korelasyon matrisi tekil olduğu için faktör skorları hesaplanamadı — değişkenlerden bazıları tam doğrusal bağımlı."
+      "scoresSingular": "Korelasyon matrisi tekil olduğu için faktör skorları hesaplanamadı — değişkenlerden bazıları tam doğrusal bağımlı.",
+      "descTitle": "Betimleyici İstatistikler",
+      "analysisN": "Analiz N",
+      "corrTitle": "Korelasyon Matrisi",
+      "determinantFootnote": "Determinant = {{name}}",
+      "antiImageTitle": "Anti-imaj Korelasyon Matrisi",
+      "antiImageFootnote": "Köşegen: her maddenin örneklem yeterliliği ölçüsü (MSA). Köşegen dışı: kısmi korelasyonların negatifi.",
+      "lowMsaNote": "Örneklem yeterliliği (MSA) ,50'nin altında olan maddeler: {{name}}. Bu maddeler faktör analizinden çıkarılmaya adaydır.",
+      "antiImageSingular": "Anti-imaj matrisi hesaplanamadı: korelasyon matrisi tekil (bazı değişkenler tam doğrusal bağımlı).",
+      "polychoricFallback": "Polikorik korelasyon kullanılamadı (maddeler en çok 10 kategorili tam sayılar olmalı); Pearson korelasyonu kullanıldı.",
+      "polychoricNote": "Analiz polikorik korelasyon matrisi üzerinde yapıldı (maddeler sürekli bir özelliğin kategorilere bölünmüş hali kabul edildi). Faktör puanları standartlaştırılmış ham puanlardan hesaplanır.",
+      "parallelNone": "Paralel analize göre hiçbir faktörün özdeğeri rastgele verininkini aşmıyor; yine de bir faktör gösteriliyor. Veride ortak bir yapı olmayabilir.",
+      "tooManyFactors": "İstenen faktör sayısı bu değişken sayısıyla çıkarılamaz; {{name}} faktör çıkarıldı.",
+      "notConverged": "Çıkarma {{name}} yinelemede yakınsamadı; sonuçlar son yinelemeye aittir. Yineleme sayısını artırın ya da faktör sayısını azaltın.",
+      "heywood": "Ortak varyansı 1'e ulaşan ya da aşan değişken(ler) var (Heywood durumu): {{name}}. Çözüm geçersiz olabilir; faktör sayısını ya da yöntemi değiştirin.",
+      "factorHdr": "Faktör {{name}}",
+      "method": {
+        "pc": "Temel Bileşenler Analizi",
+        "paf": "Temel Eksen Faktörleme",
+        "ml": "En Çok Olabilirlik",
+        "uls": "Ağırlıksız En Küçük Kareler",
+        "gls": "Genelleştirilmiş En Küçük Kareler"
+      },
+      "rot": {
+        "varimax": "Kaiser Normalleştirmeli Varimax",
+        "quartimax": "Kaiser Normalleştirmeli Quartimax",
+        "equamax": "Kaiser Normalleştirmeli Equamax",
+        "oblimin": "Doğrudan Oblimin",
+        "promax": "Promax"
+      },
+      "commFootnote": "Çıkarma Yöntemi: {{name}}. Başlangıç ortak varyansları çoklu korelasyon karelerdir (SMC).",
+      "extrSSTotal": "Çıkarma Kareler Toplamı",
+      "extrSSPct": "Çıkarma % Varyans",
+      "extrSSCum": "Çıkarma Birikimli %",
+      "parallelTitle": "Paralel Analiz",
+      "paObserved": "Gözlenen özdeğer",
+      "paMean": "Rastgele özdeğer (ortalama)",
+      "paP95": "Rastgele özdeğer (95. yüzdelik)",
+      "paDecision": "Karar",
+      "paRetain": "Tut",
+      "paDrop": "Atla",
+      "parallelFootnote": "Horn'un paralel analizi: korelasyon matrisinin özdeğerleri, aynı büyüklükteki (n, değişken sayısı) {{p0}} rastgele normal veri setinin özdeğerleriyle karşılaştırıldı. Özdeğeri rastgele 95. yüzdeliği aşan faktörler tutulur: {{p1}}.",
+      "screeTitle": "Yamaç Birikinti Grafiği",
+      "screeObserved": "Özdeğer",
+      "screeParallel": "Paralel analiz (95. yüzdelik)",
+      "screeXComp": "Bileşen Numarası",
+      "screeXFactor": "Faktör Numarası",
+      "factorMatrixTitle": "Faktör Matrisi",
+      "extractFootnote": "Çıkarma Yöntemi: {{p0}}. {{p1}} faktör çıkarıldı.",
+      "gofTitle": "Uyum İyiliği Testi",
+      "rotatedFactorMatrixTitle": "Döndürülmüş Faktör Matrisi",
+      "factorTransformMatrixTitle": "Faktör Dönüşüm Matrisi",
+      "rotFootnote": "Çıkarma Yöntemi: {{p0}}. Döndürme Yöntemi: {{p1}}.",
+      "suppressNote": "Mutlak değeri {{name}}'dan küçük yükler gizlendi.",
+      "lowLoadingNote": "Hiçbir faktöre ,30 ya da daha yüksek yük vermeyen maddeler: {{name}}.",
+      "crossLoadingNote": "Binişik maddeler (iki faktöre ,30 üzeri ve aralarında ,10'dan az farkla yük veren): {{name}}."
     },
     "kmeans": {
       "centersTitle": "Nihai Küme Merkezleri",
@@ -2610,7 +2699,8 @@
     "levelJ": "(J) {{name}}",
     "accuracy": "Doğruluk",
     "lrPositive": "LR+",
-    "lrNegative": "LR−"
+    "lrNegative": "LR−",
+    "factor": "Faktör"
   },
   "mixed": {
     "title": "Doğrusal Karışık Modeller",

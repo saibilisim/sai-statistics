@@ -167,3 +167,64 @@ describe('chart options with a GRAPH keyword survive the paste', () => {
     )
   })
 })
+
+// Factor Analysis Paste: every option that has a FACTOR keyword must come
+// back from the pasted syntax as the same `options` the dialog sends.
+describe('FACTOR paste syntax round-trips the EFA options', () => {
+  const analysisRun = vi.fn().mockResolvedValue({ jobId: 'job-1' })
+  beforeEach(() => {
+    analysisRun.mockClear()
+    ;(globalThis as unknown as { window: Window }).window = {
+      api: { analysis: { run: analysisRun } }
+    } as unknown as Window
+    useDatasetStore.setState({ datasetId: 'ds-1', variables: [y, x, g, z] })
+  })
+  const options = async (syntax: string | null) => {
+    expect(syntax).toBeTruthy()
+    const log = await runSpssSyntax(syntax!)
+    expect(log.filter(e => e.level === 'error')).toEqual([])
+    return (analysisRun.mock.calls[0]?.[0] as { params: { options?: unknown } }).params.options
+  }
+  it('PAF, fixed factors, promax, sorted / blanked, descriptives and scree', async () => {
+    const s = buildSyntax.factorAnalysis([y, x, z], {
+      extraction: 'paf',
+      criterion: 'fixed',
+      nFactors: 2,
+      maxIter: 50,
+      rotation: 'promax',
+      univariate: true,
+      correlation: true,
+      kmoBartlett: true,
+      antiImage: true,
+      sortBySize: true,
+      suppressBelow: 0.3,
+      scree: true
+    })
+    expect(s).toContain('/EXTRACTION PAF')
+    expect(s).toContain('/CRITERIA FACTORS(2) ITERATE(50)')
+    expect(s).toContain('/FORMAT SORT BLANK(0.3)')
+    expect(await options(s)).toEqual({
+      rotation: 'promax',
+      kmoBartlett: true,
+      extraction: 'paf',
+      criterion: 'fixed',
+      nFactors: 2,
+      maxIter: 50,
+      univariate: true,
+      correlation: true,
+      antiImage: true,
+      sortBySize: true,
+      suppressBelow: 0.3,
+      scree: true
+    })
+  })
+  it('defaults keep the original two-key payload', async () => {
+    expect(
+      await options(buildSyntax.factorAnalysis([y, x], { rotation: 'none', kmoBartlett: false }))
+    ).toEqual({ rotation: 'none', kmoBartlett: false })
+  })
+  it('equamax and a custom eigenvalue threshold', async () => {
+    const s = buildSyntax.factorAnalysis([y, x, z], { rotation: 'equamax', minEigen: 0.7 })
+    expect(await options(s)).toEqual({ rotation: 'equamax', kmoBartlett: false, minEigen: 0.7 })
+  })
+})

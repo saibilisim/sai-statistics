@@ -168,7 +168,8 @@
     "btnEmMeans": "EM Means",
     "btnContrasts": "Contrasts",
     "btnDisplay": "Display",
-    "btnPriors": "Priors"
+    "btnPriors": "Priors",
+    "btnExtraction": "Extraction"
   },
   "descriptives": {
     "title": "Descriptives",
@@ -862,7 +863,40 @@
       "score1": "Factor score 1",
       "score2": "Factor score 2",
       "score3": "Factor score 3"
-    }
+    },
+    "quartimax": "Quartimax (orthogonal)",
+    "equamax": "Equamax (orthogonal)",
+    "extractionTitle": "Factor Analysis: Extraction",
+    "optionsTitle": "Factor Analysis: Options",
+    "statisticsSection": "Statistics",
+    "correlationSection": "Correlation Matrix",
+    "univariate": "Univariate descriptives",
+    "correlation": "Coefficients and determinant",
+    "antiImage": "Anti-image (per-item sampling adequacy, MSA)",
+    "methodSection": "Method",
+    "method": "Method:",
+    "extract": {
+      "pc": "Principal components",
+      "paf": "Principal axis factoring",
+      "ml": "Maximum likelihood",
+      "uls": "Unweighted least squares",
+      "gls": "Generalized least squares"
+    },
+    "analyzeSection": "Analyze",
+    "matrixCorrelation": "Correlation matrix (Pearson)",
+    "matrixPolychoric": "Polychoric correlation matrix (Likert / ordinal items)",
+    "extractSection": "Extract",
+    "criterionEigen": "Based on eigenvalue greater than:",
+    "criterionFixed": "Fixed number of factors:",
+    "criterionParallel": "Based on parallel analysis (Horn)",
+    "displaySection": "Display",
+    "scree": "Scree plot",
+    "parallel": "Parallel analysis table",
+    "maxIter": "Maximum iterations for convergence:",
+    "formatSection": "Coefficient Display Format",
+    "sortBySize": "Sorted by size",
+    "suppress": "Suppress small coefficients",
+    "suppressBelow": "Absolute value below:"
   },
   "kmeans": {
     "title": "K-Means Cluster Analysis",
@@ -1740,7 +1774,62 @@
       "newVar": {
         "score": "Factor score {{name}}"
       },
-      "scoresSingular": "Factor scores could not be computed: the correlation matrix is singular — some variables are perfectly collinear."
+      "scoresSingular": "Factor scores could not be computed: the correlation matrix is singular — some variables are perfectly collinear.",
+      "descTitle": "Descriptive Statistics",
+      "analysisN": "Analysis N",
+      "corrTitle": "Correlation Matrix",
+      "determinantFootnote": "Determinant = {{name}}",
+      "antiImageTitle": "Anti-image Correlation Matrix",
+      "antiImageFootnote": "Diagonal: each item's Measure of Sampling Adequacy (MSA). Off-diagonal: negative partial correlations.",
+      "lowMsaNote": "Items with a Measure of Sampling Adequacy below .50: {{name}}. They are candidates for removal from the factor analysis.",
+      "antiImageSingular": "The anti-image matrix could not be computed: the correlation matrix is singular (some variables are perfectly collinear).",
+      "polychoricFallback": "Polychoric correlations could not be used (items must be integers with at most 10 categories); Pearson correlations were used.",
+      "polychoricNote": "The analysis used the polychoric correlation matrix (items treated as categorized versions of a continuous trait). Factor scores are computed from the standardized raw scores.",
+      "parallelNone": "By parallel analysis no factor's eigenvalue exceeds that of random data; one factor is shown anyway. The data may have no common structure.",
+      "tooManyFactors": "The requested number of factors cannot be extracted from this many variables; {{name}} factors were extracted.",
+      "notConverged": "Extraction did not converge in {{name}} iterations; results are from the last iteration. Raise the iteration limit or extract fewer factors.",
+      "heywood": "Variable(s) with a communality of 1 or more (Heywood case): {{name}}. The solution may be invalid; change the number of factors or the method.",
+      "factorHdr": "Factor {{name}}",
+      "method": {
+        "pc": "Principal Component Analysis",
+        "paf": "Principal Axis Factoring",
+        "ml": "Maximum Likelihood",
+        "uls": "Unweighted Least Squares",
+        "gls": "Generalized Least Squares"
+      },
+      "rot": {
+        "varimax": "Varimax with Kaiser Normalization",
+        "quartimax": "Quartimax with Kaiser Normalization",
+        "equamax": "Equamax with Kaiser Normalization",
+        "oblimin": "Direct Oblimin",
+        "promax": "Promax"
+      },
+      "commFootnote": "Extraction Method: {{name}}. Initial communalities are squared multiple correlations (SMC).",
+      "extrSSTotal": "Extraction Sums of Squared Loadings",
+      "extrSSPct": "Extraction % of Variance",
+      "extrSSCum": "Extraction Cumulative %",
+      "parallelTitle": "Parallel Analysis",
+      "paObserved": "Observed eigenvalue",
+      "paMean": "Random eigenvalue (mean)",
+      "paP95": "Random eigenvalue (95th percentile)",
+      "paDecision": "Decision",
+      "paRetain": "Retain",
+      "paDrop": "Drop",
+      "parallelFootnote": "Horn's parallel analysis: the eigenvalues of the correlation matrix were compared with those of {{p0}} random normal data sets of the same size (n, number of variables). Factors whose eigenvalue exceeds the random 95th percentile are retained: {{p1}}.",
+      "screeTitle": "Scree Plot",
+      "screeObserved": "Eigenvalue",
+      "screeParallel": "Parallel analysis (95th percentile)",
+      "screeXComp": "Component Number",
+      "screeXFactor": "Factor Number",
+      "factorMatrixTitle": "Factor Matrix",
+      "extractFootnote": "Extraction Method: {{p0}}. {{p1}} factor(s) extracted.",
+      "gofTitle": "Goodness-of-fit Test",
+      "rotatedFactorMatrixTitle": "Rotated Factor Matrix",
+      "factorTransformMatrixTitle": "Factor Transformation Matrix",
+      "rotFootnote": "Extraction Method: {{p0}}. Rotation Method: {{p1}}.",
+      "suppressNote": "Loadings with an absolute value below {{name}} are suppressed.",
+      "lowLoadingNote": "Items with no loading of .30 or more on any factor: {{name}}.",
+      "crossLoadingNote": "Cross-loading items (loading above .30 on two factors, less than .10 apart): {{name}}."
     },
     "kmeans": {
       "centersTitle": "Final Cluster Centers",
@@ -2610,7 +2699,8 @@
     "levelJ": "(J) {{name}}",
     "accuracy": "Accuracy",
     "lrPositive": "LR+",
-    "lrNegative": "LR−"
+    "lrNegative": "LR−",
+    "factor": "Factor"
   },
   "mixed": {
     "title": "Linear Mixed Models",

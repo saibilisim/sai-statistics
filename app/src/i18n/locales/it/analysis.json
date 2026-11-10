@@ -168,7 +168,8 @@
     "btnEmMeans": "Medie marginali",
     "btnContrasts": "Contrasti",
     "btnDisplay": "Visualizza",
-    "btnPriors": "A priori"
+    "btnPriors": "A priori",
+    "btnExtraction": "Estrazione"
   },
   "descriptives": {
     "title": "Descrittive",
@@ -862,7 +863,40 @@
       "score1": "Punteggio fattoriale 1",
       "score2": "Punteggio fattoriale 2",
       "score3": "Punteggio fattoriale 3"
-    }
+    },
+    "quartimax": "Quartimax (ortogonale)",
+    "equamax": "Equamax (ortogonale)",
+    "extractionTitle": "Analisi fattoriale: Estrazione",
+    "optionsTitle": "Analisi fattoriale: Opzioni",
+    "statisticsSection": "Statistiche",
+    "correlationSection": "Matrice di correlazione",
+    "univariate": "Descrittive univariate",
+    "correlation": "Coefficienti e determinante",
+    "antiImage": "Anti-immagine (adeguatezza campionaria per item, MSA)",
+    "methodSection": "Metodo",
+    "method": "Metodo:",
+    "extract": {
+      "pc": "Componenti principali",
+      "paf": "Fattorizzazione dell'asse principale",
+      "ml": "Massima verosimiglianza",
+      "uls": "Minimi quadrati non ponderati",
+      "gls": "Minimi quadrati generalizzati"
+    },
+    "analyzeSection": "Analizza",
+    "matrixCorrelation": "Matrice di correlazione (Pearson)",
+    "matrixPolychoric": "Matrice di correlazione policorica (item Likert / ordinali)",
+    "extractSection": "Estrai",
+    "criterionEigen": "In base agli autovalori maggiori di:",
+    "criterionFixed": "Numero fisso di fattori:",
+    "criterionParallel": "In base all'analisi parallela (Horn)",
+    "displaySection": "Visualizza",
+    "scree": "Grafico decrescente (scree plot)",
+    "parallel": "Tabella dell'analisi parallela",
+    "maxIter": "Numero massimo di iterazioni per la convergenza:",
+    "formatSection": "Formato di visualizzazione dei coefficienti",
+    "sortBySize": "Ordinati per dimensione",
+    "suppress": "Nascondi coefficienti piccoli",
+    "suppressBelow": "Valore assoluto inferiore a:"
   },
   "kmeans": {
     "title": "Analisi cluster K-Medie",
@@ -1740,7 +1774,62 @@
       "newVar": {
         "score": "Punteggio fattoriale {{name}}"
       },
-      "scoresSingular": "Impossibile calcolare i punteggi fattoriali: la matrice di correlazione è singolare — alcune variabili sono perfettamente collineari."
+      "scoresSingular": "Impossibile calcolare i punteggi fattoriali: la matrice di correlazione è singolare — alcune variabili sono perfettamente collineari.",
+      "descTitle": "Statistiche descrittive",
+      "analysisN": "N dell'analisi",
+      "corrTitle": "Matrice di correlazione",
+      "determinantFootnote": "Determinante = {{name}}",
+      "antiImageTitle": "Matrice di correlazione anti-immagine",
+      "antiImageFootnote": "Diagonale: misura di adeguatezza campionaria (MSA) di ogni item. Fuori diagonale: correlazioni parziali con segno invertito.",
+      "lowMsaNote": "Item con misura di adeguatezza campionaria inferiore a .50: {{name}}. Sono candidati all'esclusione dall'analisi fattoriale.",
+      "antiImageSingular": "Impossibile calcolare la matrice anti-immagine: la matrice di correlazione è singolare (alcune variabili sono perfettamente collineari).",
+      "polychoricFallback": "Non è stato possibile usare le correlazioni policoriche (gli item devono essere interi con al massimo 10 categorie); sono state usate le correlazioni di Pearson.",
+      "polychoricNote": "L'analisi ha usato la matrice di correlazione policorica (item trattati come versioni categorizzate di un tratto continuo). I punteggi fattoriali sono calcolati dai punteggi grezzi standardizzati.",
+      "parallelNone": "Secondo l'analisi parallela nessun autovalore supera quello di dati casuali; viene comunque mostrato un fattore. I dati potrebbero non avere una struttura comune.",
+      "tooManyFactors": "Il numero di fattori richiesto non può essere estratto da così poche variabili; sono stati estratti {{name}} fattori.",
+      "notConverged": "L'estrazione non è giunta a convergenza in {{name}} iterazioni; i risultati sono quelli dell'ultima iterazione. Aumenta il limite di iterazioni o estrai meno fattori.",
+      "heywood": "Variabile/i con comunalità pari o superiore a 1 (caso di Heywood): {{name}}. La soluzione potrebbe non essere valida; cambia il numero di fattori o il metodo.",
+      "factorHdr": "Fattore {{name}}",
+      "method": {
+        "pc": "Analisi delle componenti principali",
+        "paf": "Fattorizzazione dell'asse principale",
+        "ml": "Massima verosimiglianza",
+        "uls": "Minimi quadrati non ponderati",
+        "gls": "Minimi quadrati generalizzati"
+      },
+      "rot": {
+        "varimax": "Varimax con normalizzazione di Kaiser",
+        "quartimax": "Quartimax con normalizzazione di Kaiser",
+        "equamax": "Equamax con normalizzazione di Kaiser",
+        "oblimin": "Oblimin diretto",
+        "promax": "Promax"
+      },
+      "commFootnote": "Metodo di estrazione: {{name}}. Le comunalità iniziali sono i quadrati delle correlazioni multiple (SMC).",
+      "extrSSTotal": "Somme dei quadrati delle saturazioni (estrazione)",
+      "extrSSPct": "% di varianza (estrazione)",
+      "extrSSCum": "% cumulata (estrazione)",
+      "parallelTitle": "Analisi parallela",
+      "paObserved": "Autovalore osservato",
+      "paMean": "Autovalore casuale (media)",
+      "paP95": "Autovalore casuale (95° percentile)",
+      "paDecision": "Decisione",
+      "paRetain": "Mantieni",
+      "paDrop": "Scarta",
+      "parallelFootnote": "Analisi parallela di Horn: gli autovalori della matrice di correlazione sono stati confrontati con quelli di {{p0}} insiemi di dati normali casuali della stessa dimensione (n, numero di variabili). Sono mantenuti i fattori il cui autovalore supera il 95° percentile casuale: {{p1}}.",
+      "screeTitle": "Grafico decrescente degli autovalori",
+      "screeObserved": "Autovalore",
+      "screeParallel": "Analisi parallela (95° percentile)",
+      "screeXComp": "Numero di componente",
+      "screeXFactor": "Numero di fattore",
+      "factorMatrixTitle": "Matrice fattoriale",
+      "extractFootnote": "Metodo di estrazione: {{p0}}. {{p1}} fattore/i estratto/i.",
+      "gofTitle": "Test di bontà dell'adattamento",
+      "rotatedFactorMatrixTitle": "Matrice fattoriale ruotata",
+      "factorTransformMatrixTitle": "Matrice di trasformazione dei fattori",
+      "rotFootnote": "Metodo di estrazione: {{p0}}. Metodo di rotazione: {{p1}}.",
+      "suppressNote": "Le saturazioni con valore assoluto inferiore a {{name}} sono nascoste.",
+      "lowLoadingNote": "Item senza alcuna saturazione di .30 o più su un fattore: {{name}}.",
+      "crossLoadingNote": "Item con saturazioni incrociate (saturazioni superiori a .30 su due fattori, con meno di .10 di differenza): {{name}}."
     },
     "kmeans": {
       "centersTitle": "Centri finali dei cluster",
@@ -2610,7 +2699,8 @@
     "levelJ": "(J) {{name}}",
     "accuracy": "Accuratezza",
     "lrPositive": "LR+",
-    "lrNegative": "LR−"
+    "lrNegative": "LR−",
+    "factor": "Fattore"
   },
   "mixed": {
     "title": "Modelli misti lineari",

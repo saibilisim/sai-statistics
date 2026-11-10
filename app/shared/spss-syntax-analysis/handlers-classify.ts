@@ -69,7 +69,12 @@ export async function runQuickCluster(
   return [dispatchedToOutput('QUICK CLUSTER', resolved)]
 }
 
-/** FACTOR VARIABLES=varlist [/ROTATION=VARIMAX|OBLIMIN|PROMAX|NOROTATE] [/PRINT=...KMO...] */
+/**
+ * FACTOR VARIABLES=varlist [/PRINT=UNIVARIATE CORRELATION KMO AIC ...]
+ *   [/FORMAT SORT BLANK(x)] [/PLOT EIGEN] [/CRITERIA FACTORS(n)|MINEIGEN(x) ITERATE(n)]
+ *   [/EXTRACTION PC|PAF|ML|ULS|GLS]
+ *   [/ROTATION VARIMAX|QUARTIMAX|EQUAMAX|OBLIMIN|PROMAX|NOROTATE]
+ */
 export async function runFactor(
   st: Statement,
   ctx: AnalysisDispatchCtx
@@ -78,15 +83,43 @@ export async function runFactor(
   if (unknown.length) return [unknownVarsError(unknown)]
   if (resolved.length < 2) return [{ level: 'error', key: 'terminal.log.needTwoVars' }]
   const rotWords = parseSubcommand(st.body, 'ROTATION') || []
-  const rotation: 'none' | 'varimax' | 'oblimin' | 'promax' = rotWords.includes('VARIMAX')
-    ? 'varimax'
-    : rotWords.includes('OBLIMIN')
-      ? 'oblimin'
-      : rotWords.includes('PROMAX')
-        ? 'promax'
-        : 'none'
+  const rotation =
+    (['varimax', 'quartimax', 'equamax', 'oblimin', 'promax'] as const).find(r =>
+      rotWords.includes(r.toUpperCase())
+    ) ?? 'none'
   const printWords = parseSubcommand(st.body, 'PRINT') || []
   const kmoBartlett = printWords.includes('KMO')
+  const extWords = parseSubcommand(st.body, 'EXTRACTION') || []
+  const extraction =
+    (['paf', 'ml', 'uls', 'gls'] as const).find(m => extWords.includes(m.toUpperCase())) ?? 'pc'
+  // CRITERIA / FORMAT keywords carry their value in parentheses: FACTORS(2).
+  const critText = (parseSubcommand(st.body, 'CRITERIA') || []).join(' ')
+  const formatText = (parseSubcommand(st.body, 'FORMAT') || []).join(' ')
+  const kwNum = (text: string, kw: string): number | null => {
+    const m = new RegExp(`${kw}\\s*\\(\\s*([0-9.]+)\\s*\\)`).exec(text)
+    return m ? Number(m[1]) : null
+  }
+  const nFactors = kwNum(critText, 'FACTORS')
+  const minEigen = kwNum(critText, 'MINEIGEN')
+  const iterate = kwNum(critText, 'ITERATE')
+  const blank = kwNum(formatText, 'BLANK')
+  // Beyond rotation/kmoBartlett only what the statement actually says is
+  // sent, so a plain FACTOR keeps its original payload.
+  const options: Record<string, unknown> = { rotation, kmoBartlett }
+  if (extraction !== 'pc') options.extraction = extraction
+  if (nFactors !== null) {
+    options.criterion = 'fixed'
+    options.nFactors = nFactors
+  } else if (minEigen !== null && minEigen !== 1) {
+    options.minEigen = minEigen
+  }
+  if (iterate !== null && extraction !== 'pc') options.maxIter = iterate
+  if (printWords.includes('UNIVARIATE')) options.univariate = true
+  if (printWords.includes('CORRELATION')) options.correlation = true
+  if (printWords.includes('AIC')) options.antiImage = true
+  if (formatText.includes('SORT')) options.sortBySize = true
+  if (blank !== null) options.suppressBelow = blank
+  if ((parseSubcommand(st.body, 'PLOT') || []).includes('EIGEN')) options.scree = true
 
   await ctx.runAnalysis({
     analysisId: 'factor',
@@ -94,7 +127,7 @@ export async function runFactor(
     params: {
       variables: resolved.map(v => v.colId),
       varNames: Object.fromEntries(resolved.map(v => [v.colId, v.name])),
-      options: { rotation, kmoBartlett }
+      options
     }
   })
   return [dispatchedToOutput('FACTOR', resolved)]
@@ -174,6 +207,9 @@ export async function runRoc(st: Statement, ctx: AnalysisDispatchCtx): Promise<S
       options: {
         direction,
         coordinates,
+        // Youden's optimal cut-off has no SPSS keyword; the dialogs show it by
+        // default, so a pasted ROC command produces the same output as OK.
+        youden: true,
         plotCurve: plotWords ? !plotWords.includes('NONE') : true,
         diagonal: plotWords ? plotWords.some(w => w.includes('REFERENCE')) : true,
         seCi: printWords ? printWords.includes('SE') : true,

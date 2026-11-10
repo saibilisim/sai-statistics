@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2026 SAI Bilişim
 // SPDX-License-Identifier: AGPL-3.0-only
 import { buildMultinomialSyntax } from './multinomial-syntax'
+import type { FactorOptionParams } from '../analyses/dimension/factor-options'
 /**
  * spss-syntax.ts — Faz T1 SPSS Syntax dispatcher (Renderer half).
  *
@@ -2868,16 +2869,36 @@ export const buildSyntax = {
     )
   },
 
-  factorAnalysis: (
-    vars: NamedVar[],
-    options?: { rotation: 'none' | 'varimax' | 'oblimin' | 'promax'; kmoBartlett: boolean }
-  ): string | null => {
+  factorAnalysis: (vars: NamedVar[], options?: Partial<FactorOptionParams>): string | null => {
     if (vars.length < 2) return null
-    const rot = (options?.rotation ?? 'none').toUpperCase()
+    const o = options ?? {}
+    const rot = (o.rotation ?? 'none').toUpperCase()
+    const print = [
+      o.univariate ? 'UNIVARIATE' : '',
+      'INITIAL',
+      o.correlation ? 'CORRELATION DET' : '',
+      o.kmoBartlett ? 'KMO' : '',
+      o.antiImage ? 'AIC' : '',
+      'EXTRACTION ROTATION'
+    ].filter(Boolean)
+    const format = [
+      o.sortBySize ? 'SORT' : '',
+      o.suppressBelow != null ? `BLANK(${String(o.suppressBelow)})` : ''
+    ].filter(Boolean)
+    // Parallel analysis and polychoric correlations have no SPSS keyword, so
+    // a run using them cannot be fully written as syntax (the factor count of
+    // a parallel run falls back to the eigenvalue rule here).
+    const crit =
+      o.criterion === 'fixed'
+        ? `FACTORS(${String(o.nFactors ?? 1)})`
+        : `MINEIGEN(${String(o.minEigen ?? 1)})`
     return (
       `FACTOR /VARIABLES=${names(vars)}\n  /MISSING LISTWISE\n  /ANALYSIS ${names(vars)}` +
-      `\n  /PRINT INITIAL${options?.kmoBartlett ? ' KMO' : ''} EXTRACTION ROTATION` +
-      '\n  /CRITERIA MINEIGEN(1) ITERATE(25)\n  /EXTRACTION PC' +
+      `\n  /PRINT ${print.join(' ')}` +
+      (format.length ? `\n  /FORMAT ${format.join(' ')}` : '') +
+      (o.scree ? '\n  /PLOT EIGEN' : '') +
+      `\n  /CRITERIA ${crit} ITERATE(${String(o.maxIter ?? 25)})` +
+      `\n  /EXTRACTION ${(o.extraction ?? 'pc').toUpperCase()}` +
       `\n  /ROTATION ${rot === 'NONE' ? 'NOROTATE' : rot}\n  /METHOD=CORRELATION.`
     )
   },
