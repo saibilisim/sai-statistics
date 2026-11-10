@@ -731,6 +731,7 @@
         "options": {
           "direction": "larger",
           "coordinates": false,
+          "youden": true,
           "plotCurve": true,
           "diagonal": true,
           "seCi": true,
@@ -1735,6 +1736,7 @@
         "options": {
           "direction": "larger",
           "ciLevel": 0.95,
+          "youden": true,
           "cutoff": "include",
           "distribution": "free",
           "userMissingValid": false,

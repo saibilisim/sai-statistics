@@ -644,6 +644,7 @@
         "options": {
           "direction": "larger",
           "coordinates": false,
+          "youden": true,
           "plotCurve": false,
           "diagonal": false,
           "seCi": true,

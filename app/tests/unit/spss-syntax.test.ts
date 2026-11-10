@@ -1306,6 +1306,7 @@ describe('runSpssSyntax — Faz T3 statistical-command expansion', () => {
           options: {
             direction: 'larger',
             coordinates: true,
+            youden: true,
             plotCurve: true,
             diagonal: false,
             seCi: false,

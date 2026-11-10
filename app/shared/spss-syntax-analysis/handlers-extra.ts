@@ -296,6 +296,9 @@ export async function runRocAnalysis(
       options: {
         direction,
         ciLevel: ciM ? Number(ciM[1]) / 100 : 0.95,
+        // Youden's optimal cut-off has no SPSS keyword; the dialogs show it by
+        // default, so a pasted ROC command produces the same output as OK.
+        youden: true,
         cutoff: critWords.some(w => w.includes('CUTOFF=EXCLUDE')) ? 'exclude' : 'include',
         distribution: critWords.some(w => w.includes('DISTRIBUTION=NEGEXPO')) ? 'negexpo' : 'free',
         userMissingValid: /\bUSERMISSING\s*=\s*INCLUDE\b/i.test(st.body),
