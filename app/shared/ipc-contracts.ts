@@ -768,6 +768,7 @@ export const MENU_CHANNELS = [
   'menu:analyze:glm-multivariate',
   'menu:analyze:glm-repeated',
   'menu:analyze:factor',
+  'menu:analyze:cfa',
   'menu:analyze:kmeans',
   'menu:analyze:hierarchical',
   'menu:analyze:discriminant',

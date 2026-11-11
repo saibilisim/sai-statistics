@@ -694,6 +694,12 @@ export function buildMenu(win: BrowserWindow): void {
               click: () => {
                 win.webContents.send('menu:analyze:factor')
               }
+            },
+            {
+              label: t.analyze.cfa,
+              click: () => {
+                win.webContents.send('menu:analyze:cfa')
+              }
             }
           ]
         },

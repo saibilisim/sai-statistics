@@ -57,6 +57,7 @@ export const ANALYSIS_ID_TO_CHANNEL: Record<string, string> = {
   glmMulti: 'menu:analyze:glm-multivariate',
   glmRep: 'menu:analyze:glm-repeated',
   factor: 'menu:analyze:factor',
+  cfa: 'menu:analyze:cfa',
   kmeans: 'menu:analyze:kmeans',
   hier: 'menu:analyze:hierarchical',
   discriminant: 'menu:analyze:discriminant',

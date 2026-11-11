@@ -105,6 +105,7 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
         setShowGlmMultiDialog,
         setShowGlmRepDialog,
         setShowFactorDialog,
+        setShowCfaDialog,
         setShowKMeansDialog,
         setShowHierDialog,
         setShowDiscriminantDialog,
@@ -612,6 +613,10 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
         }
         case 'menu:analyze:factor': {
           setShowFactorDialog(true)
+          break
+        }
+        case 'menu:analyze:cfa': {
+          setShowCfaDialog(true)
           break
         }
         case 'menu:analyze:kmeans': {

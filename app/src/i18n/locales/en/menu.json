@@ -170,6 +170,7 @@
     "tree": "Tree...",
     "dimensionReduction": "Dimension Reduction",
     "factorAnalysis": "Factor...",
+    "cfa": "Confirmatory Factor Analysis...",
     "correlate": "Correlate",
     "bivariate": "Bivariate...",
     "partial": "Partial...",

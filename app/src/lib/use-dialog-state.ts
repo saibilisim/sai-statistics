@@ -82,6 +82,7 @@ export function useDialogState() {
   const [showGlmMultiDialog, setShowGlmMultiDialog] = useState(false)
   const [showGlmRepDialog, setShowGlmRepDialog] = useState(false)
   const [showFactorDialog, setShowFactorDialog] = useState(false)
+  const [showCfaDialog, setShowCfaDialog] = useState(false)
   const [showKMeansDialog, setShowKMeansDialog] = useState(false)
   const [showHierDialog, setShowHierDialog] = useState(false)
   const [showDiscriminantDialog, setShowDiscriminantDialog] = useState(false)
@@ -176,6 +177,7 @@ export function useDialogState() {
       setShowGlmMultiDialog,
       setShowGlmRepDialog,
       setShowFactorDialog,
+      setShowCfaDialog,
       setShowKMeansDialog,
       setShowHierDialog,
       setShowDiscriminantDialog,
@@ -272,6 +274,7 @@ export function useDialogState() {
     showGlmMultiDialog,
     showGlmRepDialog,
     showFactorDialog,
+    showCfaDialog,
     showKMeansDialog,
     showHierDialog,
     showDiscriminantDialog,

@@ -100,6 +100,16 @@
       "use": "Factor Analysis: KMO, Bartlett, Promax"
     },
     {
+      "r": "GPArotation",
+      "conda": "r-gparotation",
+      "use": "Factor Analysis: oblimin, quartimax, equamax rotations"
+    },
+    {
+      "r": "lavaan",
+      "conda": "r-lavaan",
+      "use": "Confirmatory Factor Analysis, measurement invariance"
+    },
+    {
       "r": "nortest",
       "conda": "r-nortest",
       "use": "Lilliefors-corrected K-S (Normality)"

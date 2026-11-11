@@ -52,6 +52,7 @@ import { UnivariateDialog } from '../analyses/glm/UnivariateDialog'
 import { MultivariateDialog } from '../analyses/glm/MultivariateDialog'
 import { RepeatedMeasuresDialog } from '../analyses/glm/RepeatedMeasuresDialog'
 import { FactorDialog } from '../analyses/dimension/FactorDialog'
+import { CfaDialog } from '../analyses/dimension/CfaDialog'
 import { KMeansDialog } from '../analyses/classify/KMeansDialog'
 import { HierarchicalDialog } from '../analyses/classify/HierarchicalDialog'
 import { DiscriminantDialog } from '../analyses/classify/DiscriminantDialog'
@@ -159,6 +160,7 @@ export function AppDialogs({ state }: { state: DialogState }) {
     showGlmMultiDialog,
     showGlmRepDialog,
     showFactorDialog,
+    showCfaDialog,
     showKMeansDialog,
     showHierDialog,
     showDiscriminantDialog,
@@ -251,6 +253,7 @@ export function AppDialogs({ state }: { state: DialogState }) {
     setShowGlmMultiDialog,
     setShowGlmRepDialog,
     setShowFactorDialog,
+    setShowCfaDialog,
     setShowKMeansDialog,
     setShowHierDialog,
     setShowDiscriminantDialog,
@@ -746,6 +749,13 @@ export function AppDialogs({ state }: { state: DialogState }) {
         <FactorDialog
           onClose={() => {
             setShowFactorDialog(false)
+          }}
+        />
+      )}
+      {showCfaDialog && (
+        <CfaDialog
+          onClose={() => {
+            setShowCfaDialog(false)
           }}
         />
       )}

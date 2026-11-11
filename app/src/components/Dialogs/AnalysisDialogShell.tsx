@@ -33,6 +33,8 @@ import styles from './AnalysisDialogShell.module.css'
 export interface FieldDef {
   key: string
   labelKey: string
+  /** User text shown instead of t(labelKey) — e.g. a factor name the user typed. */
+  label?: string
   /** If true, zone accepts only one variable (replaced on transfer). Default: multi */
   single?: boolean
   /** Optional filter — only matching variables can be dropped in this field */
@@ -103,6 +105,9 @@ export interface AnalysisDialogShellProps {
   onSubmit: (assignments: Record<string, Variable[]>) => void
   onCancel: () => void
   onReset?: () => void
+  /** Field key → colIds to start with, overriding Dialog Recall and role hints.
+   *  Read on mount only: change the shell's React `key` to apply a new one. */
+  initialAssignments?: Record<string, string[]>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -417,7 +422,8 @@ export function AnalysisDialogShell({
   canSubmit,
   onSubmit,
   onCancel,
-  onReset
+  onReset,
+  initialAssignments
 }: AnalysisDialogShellProps) {
   const { t } = useTranslation(['common', 'analysis'])
   const uid = useId()
@@ -435,6 +441,15 @@ export function AnalysisDialogShell({
   // computed lazily on mount, not re-applied afterwards.
   const [assignments, setAssignments] = useState<Record<string, Variable[]>>(() => {
     const initial: Record<string, Variable[]> = Object.fromEntries(fieldDefs.map(f => [f.key, []]))
+    const resolve = (colIds: readonly string[]) =>
+      colIds
+        .map(id => variables.find(v => v.colId === id))
+        .filter((v): v is Variable => v !== undefined)
+
+    if (initialAssignments) {
+      for (const f of fieldDefs) initial[f.key] = resolve(initialAssignments[f.key] ?? [])
+      return initial
+    }
 
     const recalled = analysisId
       ? useAnalysisHistoryStore.getState().lastFor(analysisId, useDatasetStore.getState().datasetId)
@@ -496,12 +511,10 @@ export function AnalysisDialogShell({
   const [sourceQuery, setSourceQuery] = useState('')
   const [measureFilter, setMeasureFilter] = useState<MeasureFilter>('all')
 
-  // Variables currently assigned to any field (used to exclude from source list)
-  const assignedColIds = new Set(
-    Object.values(assignments)
-      .flat()
-      .map(v => v.colId)
-  )
+  // Variables currently assigned to any field (used to exclude from source list).
+  // Counted over the current fieldDefs: a dialog whose fields come and go
+  // (CFA's factor boxes) must get a removed field's variables back.
+  const assignedColIds = new Set(fieldDefs.flatMap(f => assignments[f.key] ?? []).map(v => v.colId))
 
   // Source list = all unassigned variables that survive the search + filter
   const normalizedQuery = sourceQuery.trim().toLowerCase()
@@ -672,7 +685,7 @@ export function AnalysisDialogShell({
       .map(f => {
         const picked = assignments[f.key] ?? []
         if (picked.length === 0) return null
-        const label: string = (t(f.labelKey as never) as string).replace(/:+$/, '').trim()
+        const label: string = (f.label ?? t(f.labelKey as never)).replace(/:+$/, '').trim()
         return `${label}: ${picked.map(v => v.name).join(', ')}`
       })
       .filter((s): s is string => s !== null)
@@ -844,7 +857,9 @@ export function AnalysisDialogShell({
                     </div>
 
                     <div className={styles.fieldGroup}>
-                      <div className={styles.fieldLabel}>{t(field.labelKey as never)}</div>
+                      <div className={styles.fieldLabel}>
+                        {field.label ?? t(field.labelKey as never)}
+                      </div>
                       <div
                         className={cx(
                           styles.fieldZone,
@@ -852,7 +867,7 @@ export function AnalysisDialogShell({
                           isActive && styles.active
                         )}
                         role="listbox"
-                        aria-label={t(field.labelKey as never)}
+                        aria-label={field.label ?? t(field.labelKey as never)}
                         onClick={() => {
                           setActiveField(field.key)
                         }}
