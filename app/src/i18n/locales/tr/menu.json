@@ -215,7 +215,16 @@
     "bayesPairedT": "Eşleştirilmiş Örneklem T Testi...",
     "bayesAnova": "Tek Yönlü ANOVA...",
     "bayesRegression": "Doğrusal Regresyon...",
-    "bayesCorrelation": "Pearson Korelasyonu..."
+    "bayesCorrelation": "Pearson Korelasyonu...",
+    "itemAnalysis": "Madde Analizi...",
+    "likertItems": "Likert Madde Betimlemesi...",
+    "scaleReport": "Ölçek Puanı Raporu...",
+    "harman": "Harman Tek Faktör Testi...",
+    "testRetest": "Test-Tekrar Test Güvenilirliği...",
+    "lawshe": "Kapsam Geçerliği (Lawshe)...",
+    "doe": "Deney Tasarımı",
+    "doeCreate": "Tasarım Oluştur...",
+    "doeAnalyze": "Tasarımı Analiz Et..."
   },
   "graphs": {
     "label": "Grafikler",

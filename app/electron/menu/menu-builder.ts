@@ -854,9 +854,69 @@ export function buildMenu(win: BrowserWindow): void {
               }
             },
             {
+              label: t.analyze.itemAnalysis,
+              click: () => {
+                win.webContents.send('menu:analyze:item-analysis')
+              }
+            },
+            {
+              label: t.analyze.likertItems,
+              click: () => {
+                win.webContents.send('menu:analyze:likert-items')
+              }
+            },
+            {
+              label: t.analyze.scaleReport,
+              click: () => {
+                win.webContents.send('menu:analyze:scale-report')
+              }
+            },
+            {
+              label: t.analyze.harman,
+              click: () => {
+                win.webContents.send('menu:analyze:harman')
+              }
+            },
+            {
+              label: t.analyze.testRetest,
+              click: () => {
+                win.webContents.send('menu:analyze:test-retest')
+              }
+            },
+            {
+              label: t.analyze.lawshe,
+              click: () => {
+                win.webContents.send('menu:analyze:lawshe')
+              }
+            },
+            {
+              label: t.analyze.cfa,
+              click: () => {
+                win.webContents.send('menu:analyze:cfa')
+              }
+            },
+            { type: 'separator' },
+            {
               label: t.analyze.mds,
               click: () => {
                 win.webContents.send('menu:analyze:mds')
+              }
+            }
+          ]
+        },
+        {
+          label: t.analyze.doe,
+          submenu: [
+            {
+              label: t.analyze.doeCreate,
+              click: () => {
+                win.webContents.send('menu:analyze:doe-create')
+              }
+            },
+            {
+              label: t.analyze.doeAnalyze,
+              click: () => {
+                win.webContents.send('menu:analyze:doe-analyze')
               }
             }
           ]

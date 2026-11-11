@@ -215,7 +215,16 @@
     "bayesPairedT": "Paired Samples T Test...",
     "bayesAnova": "One-Way ANOVA...",
     "bayesRegression": "Linear Regression...",
-    "bayesCorrelation": "Pearson Correlation..."
+    "bayesCorrelation": "Pearson Correlation...",
+    "itemAnalysis": "Item Analysis...",
+    "likertItems": "Likert Item Descriptives...",
+    "scaleReport": "Scale Scores Report...",
+    "harman": "Harman's Single-Factor Test...",
+    "testRetest": "Test-Retest Reliability...",
+    "lawshe": "Content Validity (Lawshe)...",
+    "doe": "Design of Experiments",
+    "doeCreate": "Create Design...",
+    "doeAnalyze": "Analyze Design..."
   },
   "graphs": {
     "label": "Graphs",

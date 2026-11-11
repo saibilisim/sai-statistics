@@ -83,6 +83,14 @@ export function useDialogState() {
   const [showGlmRepDialog, setShowGlmRepDialog] = useState(false)
   const [showFactorDialog, setShowFactorDialog] = useState(false)
   const [showCfaDialog, setShowCfaDialog] = useState(false)
+  const [showItemAnalysisDialog, setShowItemAnalysisDialog] = useState(false)
+  const [showLikertItemsDialog, setShowLikertItemsDialog] = useState(false)
+  const [showScaleReportDialog, setShowScaleReportDialog] = useState(false)
+  const [showHarmanDialog, setShowHarmanDialog] = useState(false)
+  const [showTestRetestDialog, setShowTestRetestDialog] = useState(false)
+  const [showLawsheDialog, setShowLawsheDialog] = useState(false)
+  const [showDoeCreateDialog, setShowDoeCreateDialog] = useState(false)
+  const [showDoeAnalyzeDialog, setShowDoeAnalyzeDialog] = useState(false)
   const [showKMeansDialog, setShowKMeansDialog] = useState(false)
   const [showHierDialog, setShowHierDialog] = useState(false)
   const [showDiscriminantDialog, setShowDiscriminantDialog] = useState(false)
@@ -178,6 +186,14 @@ export function useDialogState() {
       setShowGlmRepDialog,
       setShowFactorDialog,
       setShowCfaDialog,
+      setShowItemAnalysisDialog,
+      setShowLikertItemsDialog,
+      setShowScaleReportDialog,
+      setShowHarmanDialog,
+      setShowTestRetestDialog,
+      setShowLawsheDialog,
+      setShowDoeCreateDialog,
+      setShowDoeAnalyzeDialog,
       setShowKMeansDialog,
       setShowHierDialog,
       setShowDiscriminantDialog,
@@ -275,6 +291,14 @@ export function useDialogState() {
     showGlmRepDialog,
     showFactorDialog,
     showCfaDialog,
+    showItemAnalysisDialog,
+    showLikertItemsDialog,
+    showScaleReportDialog,
+    showHarmanDialog,
+    showTestRetestDialog,
+    showLawsheDialog,
+    showDoeCreateDialog,
+    showDoeAnalyzeDialog,
     showKMeansDialog,
     showHierDialog,
     showDiscriminantDialog,

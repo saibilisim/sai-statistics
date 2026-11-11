@@ -4,6 +4,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { buildSyntax, runSpssSyntax } from '../../src/lib/spss-syntax'
 import { useDatasetStore } from '../../src/store/dataset-store'
 import type { Variable } from '../../shared/data-types'
+import {
+  RELIABILITY_MODELS,
+  defaultReliabilityOptions,
+  reliabilityOptionParams
+} from '../../src/analyses/scale/reliability-options'
 
 const v = (colId: string, name: string): Variable => ({
   colId,
@@ -226,5 +231,60 @@ describe('FACTOR paste syntax round-trips the EFA options', () => {
   it('equamax and a custom eigenvalue threshold', async () => {
     const s = buildSyntax.factorAnalysis([y, x, z], { rotation: 'equamax', minEigen: 0.7 })
     expect(await options(s)).toEqual({ rotation: 'equamax', kmoBartlett: false, minEigen: 0.7 })
+  })
+})
+
+// Reliability Paste: the 2026-11 models and statistics must come back from
+// the pasted RELIABILITY command as exactly the options the dialog sends.
+describe('RELIABILITY paste syntax round-trips models, statistics and ICC', () => {
+  const analysisRun = vi.fn().mockResolvedValue({ jobId: 'job-1' })
+  beforeEach(() => {
+    analysisRun.mockClear()
+    ;(globalThis as unknown as { window: Window }).window = {
+      api: { analysis: { run: analysisRun } }
+    } as unknown as Window
+    useDatasetStore.setState({ datasetId: 'ds-1', variables: [y, x, g, z] })
+  })
+  const options = async (syntax: string | null) => {
+    expect(syntax).toBeTruthy()
+    const log = await runSpssSyntax(syntax!)
+    expect(log.filter(e => e.level === 'error')).toEqual([])
+    return (analysisRun.mock.calls[0]?.[0] as { params: { options?: unknown } }).params.options
+  }
+  it('strictly parallel model with Hotelling, Tukey, Friedman and an absolute-agreement ICC', async () => {
+    const o = {
+      ...defaultReliabilityOptions,
+      model: 'strict' as const,
+      interItemCorr: true,
+      hotelling: true,
+      tukey: true,
+      anova: 'friedman' as const,
+      icc: {
+        enabled: true,
+        model: 'random' as const,
+        type: 'absolute' as const,
+        ci: 90,
+        testValue: 0.2
+      }
+    }
+    const s = buildSyntax.reliability([y, x, z], o)
+    expect(s).toContain('/MODEL=STRICTPARALLEL')
+    expect(s).toContain('/ICC=MODEL(RANDOM) TYPE(ABSOLUTE) CIN=90 TESTVAL=0.2')
+    expect(await options(s)).toEqual(reliabilityOptionParams(o))
+  })
+  it('every model keyword maps back', async () => {
+    for (const model of RELIABILITY_MODELS) {
+      analysisRun.mockClear()
+      const o = { ...defaultReliabilityOptions, model }
+      expect(await options(buildSyntax.reliability([y, x, z], o))).toEqual(
+        reliabilityOptionParams(o)
+      )
+    }
+  })
+  it('a plain dialog run keeps the original two-key payload', async () => {
+    expect(await options(buildSyntax.reliability([y, x], defaultReliabilityOptions))).toEqual({
+      interItemCorr: false,
+      model: 'alpha'
+    })
   })
 })

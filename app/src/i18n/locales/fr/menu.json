@@ -215,7 +215,16 @@
     "bayesPairedT": "Test T pour échantillons appariés...",
     "bayesAnova": "ANOVA à un facteur...",
     "bayesRegression": "Régression linéaire...",
-    "bayesCorrelation": "Corrélation de Pearson..."
+    "bayesCorrelation": "Corrélation de Pearson...",
+    "itemAnalysis": "Analyse d'items...",
+    "likertItems": "Descriptifs des items de Likert...",
+    "scaleReport": "Rapport des scores d'échelle...",
+    "harman": "Test à facteur unique de Harman...",
+    "testRetest": "Fiabilité test-retest...",
+    "lawshe": "Validité de contenu (Lawshe)...",
+    "doe": "Plans d'expériences",
+    "doeCreate": "Créer un plan...",
+    "doeAnalyze": "Analyser le plan..."
   },
   "graphs": {
     "label": "Graphiques",

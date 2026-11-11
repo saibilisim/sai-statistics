@@ -215,7 +215,16 @@
     "bayesPairedT": "Teste t para Amostras Emparelhadas...",
     "bayesAnova": "ANOVA de Um Fator...",
     "bayesRegression": "Regressão Linear...",
-    "bayesCorrelation": "Correlação de Pearson..."
+    "bayesCorrelation": "Correlação de Pearson...",
+    "itemAnalysis": "Análise de itens...",
+    "likertItems": "Descritivas de itens Likert...",
+    "scaleReport": "Relatório de pontuações da escala...",
+    "harman": "Teste de fator único de Harman...",
+    "testRetest": "Fiabilidade teste-reteste...",
+    "lawshe": "Validade de conteúdo (Lawshe)...",
+    "doe": "Delineamento experimental",
+    "doeCreate": "Criar delineamento...",
+    "doeAnalyze": "Analisar delineamento..."
   },
   "graphs": {
     "label": "Gráficos",

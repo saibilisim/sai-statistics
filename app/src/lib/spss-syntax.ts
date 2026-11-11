@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { buildMultinomialSyntax } from './multinomial-syntax'
 import type { FactorOptionParams } from '../analyses/dimension/factor-options'
+import {
+  defaultReliabilityOptions,
+  reliabilityModelKeyword,
+  type ReliabilityOptions
+} from '../analyses/scale/reliability-options'
 /**
  * spss-syntax.ts — Faz T1 SPSS Syntax dispatcher (Renderer half).
  *
@@ -2635,18 +2640,26 @@ export const buildSyntax = {
     vars.length >= 2 ? `NPAR TESTS /FRIEDMAN=${names(vars)}${nparMethod(pMethod)}.` : null,
 
   // ── Scale / Correlate / Reports ────────────────────────────────────────
-  reliability: (
-    vars: NamedVar[],
-    options?: { interItemCorr: boolean; model: 'alpha' | 'split' }
-  ): string | null => {
+  reliability: (vars: NamedVar[], options?: Partial<ReliabilityOptions>): string | null => {
     if (vars.length < 2) return null
+    const o = { ...defaultReliabilityOptions, ...options }
     let syntax = `RELIABILITY /VARIABLES=${names(vars)}`
     // SPSS writes /SCALE(label)=ALL for the Paste of this dialog; the label is
     // cosmetic and our handler ignores it, so it is left out.
-    syntax += `\n  /MODEL=${options?.model === 'split' ? 'SPLIT' : 'ALPHA'}`
+    syntax += `\n  /MODEL=${reliabilityModelKeyword(o.model)}`
     // SCALE gives the item-total statistics the dialog always shows;
     // CORRELATIONS adds the inter-item matrix when the checkbox is on.
-    syntax += `\n  /STATISTICS=DESCRIPTIVE SCALE${options?.interItemCorr ? ' CORRELATIONS' : ''}`
+    const stats = ['DESCRIPTIVE', 'SCALE']
+    if (o.interItemCorr) stats.push('CORRELATIONS')
+    if (o.hotelling) stats.push('HOTELLING')
+    if (o.tukey) stats.push('TUKEY')
+    if (o.anova !== 'none') stats.push(o.anova === 'f' ? 'ANOVA' : o.anova.toUpperCase())
+    syntax += `\n  /STATISTICS=${stats.join(' ')}`
+    if (o.icc.enabled) {
+      const model = o.icc.model.toUpperCase()
+      const type = o.icc.model === 'oneway' ? '' : ` TYPE(${o.icc.type.toUpperCase()})`
+      syntax += `\n  /ICC=MODEL(${model})${type} CIN=${String(o.icc.ci)} TESTVAL=${String(o.icc.testValue)}`
+    }
     return syntax + '.'
   },
 

@@ -508,7 +508,12 @@ export async function runRatio(st: Statement, ctx: AnalysisDispatchCtx): Promise
   return [dispatchedToOutput('RATIO STATISTICS', g ? [n, d, g] : [n, d])]
 }
 
-/** RELIABILITY VARIABLES=varlist [/STATISTICS=...CORRELATIONS...] */
+/**
+ * RELIABILITY VARIABLES=varlist
+ *   [/MODEL=ALPHA|SPLIT|GUTTMAN|PARALLEL|STRICTPARALLEL|OMEGA]
+ *   [/STATISTICS=... CORRELATIONS HOTELLING TUKEY ANOVA|FRIEDMAN|COCHRAN]
+ *   [/ICC=MODEL(ONEWAY|MIXED|RANDOM) TYPE(CONSISTENCY|ABSOLUTE) CIN=n TESTVAL=x]
+ */
 export async function runReliability(
   st: Statement,
   ctx: AnalysisDispatchCtx
@@ -518,12 +523,44 @@ export async function runReliability(
   if (resolved.length === 0) return [{ level: 'error', key: 'terminal.log.noVariables' }]
   const statsWords = parseSubcommand(st.body, 'STATISTICS') || []
   const interItemCorr = statsWords.includes('CORRELATIONS') || statsWords.includes('ALL')
-  // /MODEL picks the reliability model, not a statistic: ALPHA (the default)
-  // or SPLIT, which cuts the scale in two and reports the halves' agreement.
-  // Anything else (GUTTMAN, PARALLEL, STRICTPARALLEL) is not implemented, so
-  // it falls back to ALPHA rather than being silently read as SPLIT.
+  // /MODEL picks the reliability model, not a statistic. An unknown word falls
+  // back to ALPHA rather than being silently read as something else.
   const modelWords = parseSubcommand(st.body, 'MODEL') || []
-  const model = modelWords.includes('SPLIT') ? 'split' : 'alpha'
+  const modelMap: [string, string][] = [
+    ['STRICTPARALLEL', 'strict'],
+    ['PARALLEL', 'parallel'],
+    ['SPLIT', 'split'],
+    ['GUTTMAN', 'guttman'],
+    ['OMEGA', 'omega']
+  ]
+  const model = modelMap.find(([w]) => modelWords.includes(w))?.[1] ?? 'alpha'
+  // Beyond the original two fields only what the statement says is sent, so a
+  // plain RELIABILITY keeps its long-standing payload.
+  const options: Record<string, unknown> = { interItemCorr, model }
+  if (statsWords.includes('HOTELLING')) options.hotelling = true
+  if (statsWords.includes('TUKEY')) options.tukey = true
+  const anova = statsWords.includes('FRIEDMAN')
+    ? 'friedman'
+    : statsWords.includes('COCHRAN')
+      ? 'cochran'
+      : statsWords.includes('ANOVA')
+        ? 'f'
+        : null
+  if (anova) options.anova = anova
+  const iccText = (parseSubcommand(st.body, 'ICC') || []).join(' ')
+  if (iccText) {
+    const iccModel = /MODEL\s*\(\s*(ONEWAY|MIXED|RANDOM)/.exec(iccText)?.[1] ?? 'MIXED'
+    const iccType = /TYPE\s*\(\s*(CONSISTENCY|ABSOLUTE)/.exec(iccText)?.[1] ?? 'CONSISTENCY'
+    const cin = /CIN\s*=?\s*([0-9.]+)/.exec(iccText)?.[1]
+    const testVal = /TESTVAL\s*=?\s*(-?[0-9.]+)/.exec(iccText)?.[1]
+    options.icc = {
+      enabled: true,
+      model: iccModel.toLowerCase(),
+      type: iccType.toLowerCase(),
+      ci: cin ? Number(cin) : 95,
+      testValue: testVal ? Number(testVal) : 0
+    }
+  }
 
   await ctx.runAnalysis({
     analysisId: 'reliability',
@@ -531,7 +568,7 @@ export async function runReliability(
     params: {
       variables: resolved.map(v => v.colId),
       varNames: Object.fromEntries(resolved.map(v => [v.colId, v.name])),
-      options: { interItemCorr, model }
+      options
     }
   })
   return [dispatchedToOutput('RELIABILITY', resolved)]

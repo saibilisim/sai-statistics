@@ -53,6 +53,14 @@ import { MultivariateDialog } from '../analyses/glm/MultivariateDialog'
 import { RepeatedMeasuresDialog } from '../analyses/glm/RepeatedMeasuresDialog'
 import { FactorDialog } from '../analyses/dimension/FactorDialog'
 import { CfaDialog } from '../analyses/dimension/CfaDialog'
+import { ItemAnalysisDialog } from '../analyses/scale/ItemAnalysisDialog'
+import { LikertItemsDialog } from '../analyses/scale/LikertItemsDialog'
+import { ScaleReportDialog } from '../analyses/scale/ScaleReportDialog'
+import { HarmanDialog } from '../analyses/scale/HarmanDialog'
+import { TestRetestDialog } from '../analyses/scale/TestRetestDialog'
+import { LawsheDialog } from '../analyses/scale/LawsheDialog'
+import { DoeDesignDialog } from '../analyses/doe/DoeDesignDialog'
+import { DoeAnalysisDialog } from '../analyses/doe/DoeAnalysisDialog'
 import { KMeansDialog } from '../analyses/classify/KMeansDialog'
 import { HierarchicalDialog } from '../analyses/classify/HierarchicalDialog'
 import { DiscriminantDialog } from '../analyses/classify/DiscriminantDialog'
@@ -161,6 +169,14 @@ export function AppDialogs({ state }: { state: DialogState }) {
     showGlmRepDialog,
     showFactorDialog,
     showCfaDialog,
+    showItemAnalysisDialog,
+    showLikertItemsDialog,
+    showScaleReportDialog,
+    showHarmanDialog,
+    showTestRetestDialog,
+    showLawsheDialog,
+    showDoeCreateDialog,
+    showDoeAnalyzeDialog,
     showKMeansDialog,
     showHierDialog,
     showDiscriminantDialog,
@@ -254,6 +270,14 @@ export function AppDialogs({ state }: { state: DialogState }) {
     setShowGlmRepDialog,
     setShowFactorDialog,
     setShowCfaDialog,
+    setShowItemAnalysisDialog,
+    setShowLikertItemsDialog,
+    setShowScaleReportDialog,
+    setShowHarmanDialog,
+    setShowTestRetestDialog,
+    setShowLawsheDialog,
+    setShowDoeCreateDialog,
+    setShowDoeAnalyzeDialog,
     setShowKMeansDialog,
     setShowHierDialog,
     setShowDiscriminantDialog,
@@ -756,6 +780,62 @@ export function AppDialogs({ state }: { state: DialogState }) {
         <CfaDialog
           onClose={() => {
             setShowCfaDialog(false)
+          }}
+        />
+      )}
+      {showItemAnalysisDialog && (
+        <ItemAnalysisDialog
+          onClose={() => {
+            setShowItemAnalysisDialog(false)
+          }}
+        />
+      )}
+      {showLikertItemsDialog && (
+        <LikertItemsDialog
+          onClose={() => {
+            setShowLikertItemsDialog(false)
+          }}
+        />
+      )}
+      {showScaleReportDialog && (
+        <ScaleReportDialog
+          onClose={() => {
+            setShowScaleReportDialog(false)
+          }}
+        />
+      )}
+      {showHarmanDialog && (
+        <HarmanDialog
+          onClose={() => {
+            setShowHarmanDialog(false)
+          }}
+        />
+      )}
+      {showTestRetestDialog && (
+        <TestRetestDialog
+          onClose={() => {
+            setShowTestRetestDialog(false)
+          }}
+        />
+      )}
+      {showLawsheDialog && (
+        <LawsheDialog
+          onClose={() => {
+            setShowLawsheDialog(false)
+          }}
+        />
+      )}
+      {showDoeCreateDialog && (
+        <DoeDesignDialog
+          onClose={() => {
+            setShowDoeCreateDialog(false)
+          }}
+        />
+      )}
+      {showDoeAnalyzeDialog && (
+        <DoeAnalysisDialog
+          onClose={() => {
+            setShowDoeAnalyzeDialog(false)
           }}
         />
       )}

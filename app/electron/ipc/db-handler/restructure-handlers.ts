@@ -5,6 +5,7 @@ import type { FileOpenResult } from '../../../shared/ipc-contracts'
 import {
   AggregateRequestSchema,
   TransposeRequestSchema,
+  CreateDatasetRequestSchema,
   MergeAddCasesRequestSchema,
   MergeAddVariablesRequestSchema,
   RestructureWideToLongRequestSchema
@@ -285,6 +286,66 @@ export function registerRestructureHandlers(): void {
       )
 
       log.info(`Transpose created new dataset ${newDatasetId} from ${req.datasetId}`)
+      return { dataset: newDataset, variables }
+    }
+  )
+
+  // A new dataset from renderer-built columns (Design of Experiments › Create
+  // Design). Values are bound as parameters, never spliced into SQL; column
+  // names are sanitized and uniqued, and the table uses colIds as its column
+  // names so a user-typed name never reaches the DDL.
+  handleSerialized(
+    IPC.DATA_CREATE_DATASET,
+    CreateDatasetRequestSchema,
+    async (req): Promise<FileOpenResult> => {
+      const conn = await getDbConnection()
+      const used: string[] = []
+      const variables: Variable[] = req.columns.map((c, i) => {
+        const name = makeUniqueVariableName(sanitizeVariableName(c.name, i + 1), used)
+        used.push(name)
+        return VariableSchema.parse({
+          colId: `col_${String(i + 1)}`,
+          name,
+          label: c.label,
+          type: c.type,
+          width: c.type === 'string' ? 20 : 8,
+          decimals: c.type === 'string' ? 0 : c.decimals,
+          valueLabels: c.valueLabels,
+          missing: null,
+          columns: c.type === 'string' ? 20 : 8,
+          align: c.type === 'string' ? 'left' : 'right',
+          measure: c.measure,
+          role: 'input'
+        })
+      })
+      const newDatasetId = `ds_${String(Date.now())}`
+      const tempTableName = `temp_create_${newDatasetId}`
+      const colDefs = variables
+        .map(v => `"${v.colId}" ${v.type === 'string' ? 'VARCHAR' : 'DOUBLE'}`)
+        .join(', ')
+      await conn.runAndReadAll(`CREATE TABLE ${tempTableName} (${colDefs})`)
+      const nRows = req.columns[0]?.values.length ?? 0
+      const insertSql = `INSERT INTO ${tempTableName} VALUES (${variables.map(() => '?').join(', ')})`
+      const prepared = await conn.prepare(insertSql)
+      for (let r = 0; r < nRows; r++) {
+        prepared.bind(
+          req.columns.map((c, i) => {
+            const v = c.values[r] ?? null
+            if (v === null) return null
+            return variables[i]?.type === 'string' ? String(v) : Number(v)
+          })
+        )
+        await prepared.run()
+      }
+      const newDataset = await loadDatasetIntoDb(
+        newDatasetId,
+        req.name,
+        null,
+        variables,
+        tempTableName,
+        variables.map(v => v.colId)
+      )
+      log.info(`Created dataset ${newDatasetId} (${String(nRows)} rows) from renderer columns`)
       return { dataset: newDataset, variables }
     }
   )

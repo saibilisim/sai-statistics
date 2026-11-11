@@ -133,6 +133,7 @@ export const IPC = {
   DATA_AGGREGATE: 'data:aggregate',
   // Transpose (Data menu): rows ↔ variables → a new dataset.
   DATA_TRANSPOSE: 'data:transpose',
+  DATA_CREATE_DATASET: 'data:create-dataset',
   // Merge Files (Data menu): both take an already-imported second dataset id
   // (loaded via file:import) and produce a new merged dataset.
   DATA_MERGE_ADD_CASES: 'data:merge-add-cases',
@@ -769,6 +770,14 @@ export const MENU_CHANNELS = [
   'menu:analyze:glm-repeated',
   'menu:analyze:factor',
   'menu:analyze:cfa',
+  'menu:analyze:item-analysis',
+  'menu:analyze:likert-items',
+  'menu:analyze:scale-report',
+  'menu:analyze:harman',
+  'menu:analyze:test-retest',
+  'menu:analyze:lawshe',
+  'menu:analyze:doe-create',
+  'menu:analyze:doe-analyze',
   'menu:analyze:kmeans',
   'menu:analyze:hierarchical',
   'menu:analyze:discriminant',

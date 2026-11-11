@@ -106,6 +106,14 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
         setShowGlmRepDialog,
         setShowFactorDialog,
         setShowCfaDialog,
+        setShowItemAnalysisDialog,
+        setShowLikertItemsDialog,
+        setShowScaleReportDialog,
+        setShowHarmanDialog,
+        setShowTestRetestDialog,
+        setShowLawsheDialog,
+        setShowDoeCreateDialog,
+        setShowDoeAnalyzeDialog,
         setShowKMeansDialog,
         setShowHierDialog,
         setShowDiscriminantDialog,
@@ -617,6 +625,38 @@ export function useMenuCommands(actions: DialogActions): MenuCommandDispatcher {
         }
         case 'menu:analyze:cfa': {
           setShowCfaDialog(true)
+          break
+        }
+        case 'menu:analyze:item-analysis': {
+          setShowItemAnalysisDialog(true)
+          break
+        }
+        case 'menu:analyze:likert-items': {
+          setShowLikertItemsDialog(true)
+          break
+        }
+        case 'menu:analyze:scale-report': {
+          setShowScaleReportDialog(true)
+          break
+        }
+        case 'menu:analyze:harman': {
+          setShowHarmanDialog(true)
+          break
+        }
+        case 'menu:analyze:test-retest': {
+          setShowTestRetestDialog(true)
+          break
+        }
+        case 'menu:analyze:lawshe': {
+          setShowLawsheDialog(true)
+          break
+        }
+        case 'menu:analyze:doe-create': {
+          setShowDoeCreateDialog(true)
+          break
+        }
+        case 'menu:analyze:doe-analyze': {
+          setShowDoeAnalyzeDialog(true)
           break
         }
         case 'menu:analyze:kmeans': {

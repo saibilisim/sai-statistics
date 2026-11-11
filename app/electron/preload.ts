@@ -3,7 +3,7 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { IPC, MENU_CHANNELS } from '@shared/ipc-contracts'
 import type { Variable, CustomStyles } from '@shared/data-types'
-import type { FileSaveDataRequest } from '@shared/ipc-schemas'
+import type { CreateDatasetRequest, FileSaveDataRequest } from '@shared/ipc-schemas'
 import type {
   FileOpenResult,
   DataSliceResult,
@@ -292,6 +292,8 @@ const api = {
     }): Promise<FileOpenResult> => ipcRenderer.invoke(IPC.DATA_AGGREGATE, req),
     transpose: (req: { datasetId: string; nameColId: string | null }): Promise<FileOpenResult> =>
       ipcRenderer.invoke(IPC.DATA_TRANSPOSE, req),
+    createDataset: (req: CreateDatasetRequest): Promise<FileOpenResult> =>
+      ipcRenderer.invoke(IPC.DATA_CREATE_DATASET, req),
     // Merge Files — `datasetIdB` must already be loaded via file.import().
     mergeAddCases: (req: { datasetIdA: string; datasetIdB: string }): Promise<FileOpenResult> =>
       ipcRenderer.invoke(IPC.DATA_MERGE_ADD_CASES, req),

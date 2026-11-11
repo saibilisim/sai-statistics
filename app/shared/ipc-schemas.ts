@@ -256,6 +256,33 @@ export const TransposeRequestSchema = z.object({
 })
 export type TransposeRequest = z.infer<typeof TransposeRequestSchema>
 
+// Create a new dataset from columns built in the renderer (Design of
+// Experiments › Create Design writes the randomized plan this way). Values are
+// plain cells; names are sanitized and made unique in Main. Bounded so a
+// renderer cannot ask Main to build an arbitrarily large table.
+export const CreateDatasetRequestSchema = z
+  .object({
+    name: z.string().min(1).max(120),
+    columns: z
+      .array(
+        z.object({
+          name: z.string().min(1).max(64),
+          label: z.string().max(256).default(''),
+          type: z.enum(['numeric', 'string']),
+          measure: z.enum(['scale', 'ordinal', 'nominal']),
+          decimals: z.number().int().min(0).max(16).default(0),
+          valueLabels: z.record(z.string().max(64), z.string().max(256)).default({}),
+          values: z.array(z.union([z.number(), z.string().max(256), z.null()])).max(100000)
+        })
+      )
+      .min(1)
+      .max(64)
+  })
+  .refine(r => r.columns.every(c => c.values.length === r.columns[0]?.values.length), {
+    message: 'All columns must have the same number of rows'
+  })
+export type CreateDatasetRequest = z.input<typeof CreateDatasetRequestSchema>
+
 // Merge Files > Add Cases (SPSS Data > Merge Files > Add Cases): stack rows
 // from a second, already-imported dataset onto the active one — variables
 // matched by name (case-insensitive) keep the active dataset's own

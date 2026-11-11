@@ -215,6 +215,7 @@ const PLAN = [
   P('5/6/5', 'Analiz > Sınıflandır > ROC Eğrisi', 'dialog', { ch: 'menu:analyze:roc' }),
   P('5/6/6', 'Analiz > Sınıflandır > ROC Analizi', 'dialog', { ch: 'menu:analyze:roc-analysis' }),
   P('5/7/0', 'Analiz > Boyut İndirgeme > Faktör Analizi', 'dialog', { ch: 'menu:analyze:factor' }),
+  P('5/7/1', 'Analiz > Boyut İndirgeme > DFA', 'dialog', { ch: 'menu:analyze:cfa' }),
   P('5/8/0', 'Analiz > Korelasyon > İki Değişkenli', 'dialog', {
     ch: 'menu:analyze:correlate-bivariate'
   }),
@@ -254,23 +255,38 @@ const PLAN = [
   P('5/11/1', 'Analiz > Sağkalım > Cox Regresyon', 'dialog', { ch: 'menu:analyze:survival-cox' }),
   P('5/11/2', 'Analiz > Sağkalım > Yaşam Tabloları', 'dialog', { ch: 'menu:analyze:life-tables' }),
   P('5/12/0', 'Analiz > Ölçek > Güvenirlik Analizi', 'dialog', { ch: 'menu:analyze:reliability' }),
-  P('5/12/1', 'Analiz > Ölçek > Çok Boyutlu Ölçekleme', 'dialog', { ch: 'menu:analyze:mds' }),
-  P('5/13/0', 'Analiz > Bayesci > Tek Örneklem t', 'dialog', {
+  P('5/12/1', 'Analiz > Ölçek > Madde Analizi', 'dialog', { ch: 'menu:analyze:item-analysis' }),
+  P('5/12/2', 'Analiz > Ölçek > Likert Madde Betimlemesi', 'dialog', {
+    ch: 'menu:analyze:likert-items'
+  }),
+  P('5/12/3', 'Analiz > Ölçek > Ölçek Puanı Raporu', 'dialog', { ch: 'menu:analyze:scale-report' }),
+  P('5/12/4', 'Analiz > Ölçek > Harman', 'dialog', { ch: 'menu:analyze:harman' }),
+  P('5/12/5', 'Analiz > Ölçek > Test-Tekrar Test', 'dialog', { ch: 'menu:analyze:test-retest' }),
+  P('5/12/6', 'Analiz > Ölçek > Lawshe', 'dialog', { ch: 'menu:analyze:lawshe' }),
+  P('5/12/7', 'Analiz > Ölçek > DFA (kısayol)', 'dialog', { ch: 'menu:analyze:cfa' }),
+  P('5/12/9', 'Analiz > Ölçek > Çok Boyutlu Ölçekleme', 'dialog', { ch: 'menu:analyze:mds' }),
+  P('5/13/0', 'Analiz > Deney Tasarımı > Tasarım Oluştur', 'dialog', {
+    ch: 'menu:analyze:doe-create'
+  }),
+  P('5/13/1', 'Analiz > Deney Tasarımı > Tasarımı Analiz Et', 'dialog', {
+    ch: 'menu:analyze:doe-analyze'
+  }),
+  P('5/14/0', 'Analiz > Bayesci > Tek Örneklem t', 'dialog', {
     ch: 'menu:analyze:bayes-ttest-onesample'
   }),
-  P('5/13/1', 'Analiz > Bayesci > Bağımsız t', 'dialog', {
+  P('5/14/1', 'Analiz > Bayesci > Bağımsız t', 'dialog', {
     ch: 'menu:analyze:bayes-ttest-independent'
   }),
-  P('5/13/2', 'Analiz > Bayesci > Eşleştirilmiş t', 'dialog', {
+  P('5/14/2', 'Analiz > Bayesci > Eşleştirilmiş t', 'dialog', {
     ch: 'menu:analyze:bayes-ttest-paired'
   }),
-  P('5/13/3', 'Analiz > Bayesci > ANOVA', 'dialog', { ch: 'menu:analyze:bayes-anova' }),
-  P('5/13/4', 'Analiz > Bayesci > Regresyon', 'dialog', { ch: 'menu:analyze:bayes-regression' }),
-  P('5/13/5', 'Analiz > Bayesci > Korelasyon', 'dialog', { ch: 'menu:analyze:bayes-correlation' }),
-  P('5/14', 'Analiz > Çoklu Yanıt', 'dialog', { ch: 'menu:analyze:multiple-response' }),
-  P('5/15', 'Analiz > Kayıp Değerler', 'dialog', { ch: 'menu:analyze:missing-values' }),
-  P('5/16', 'Analiz > Çoklu Atama', 'dialog', { ch: 'menu:analyze:mi' }),
-  P('5/17', 'Analiz > Güç Analizi', 'dialog', { ch: 'menu:analyze:power' }),
+  P('5/14/3', 'Analiz > Bayesci > ANOVA', 'dialog', { ch: 'menu:analyze:bayes-anova' }),
+  P('5/14/4', 'Analiz > Bayesci > Regresyon', 'dialog', { ch: 'menu:analyze:bayes-regression' }),
+  P('5/14/5', 'Analiz > Bayesci > Korelasyon', 'dialog', { ch: 'menu:analyze:bayes-correlation' }),
+  P('5/15', 'Analiz > Çoklu Yanıt', 'dialog', { ch: 'menu:analyze:multiple-response' }),
+  P('5/16', 'Analiz > Kayıp Değerler', 'dialog', { ch: 'menu:analyze:missing-values' }),
+  P('5/17', 'Analiz > Çoklu Atama', 'dialog', { ch: 'menu:analyze:mi' }),
+  P('5/18', 'Analiz > Güç Analizi', 'dialog', { ch: 'menu:analyze:power' }),
 
   P('6/0', 'Grafikler > Grafik Oluşturucu', 'disabled'),
   P('6/2', 'Grafikler > Saçılım', 'dialog', { ch: 'menu:graphs:scatter' }),

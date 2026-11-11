@@ -2,7 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # reliability.R — Reliability Analysis (Cronbach's alpha, SPSS-style).
 #
-# Params: variables (item colIds), varNames.
+# Params: variables (item colIds), varNames, options:
+#   model          "alpha" (default) | "split" | "guttman" | "parallel" | "strict" | "omega"
+#   interItemCorr  inter-item correlation matrix
+#   hotelling, tukey   Hotelling's T² / Tukey's nonadditivity (bool)
+#   anova          "none" | "f" | "friedman" | "cochran"   cases x items ANOVA table
+#   icc            { enabled, model: oneway|random|mixed, type: consistency|absolute,
+#                    ci (percent), testValue }
+# The 2026-11 models and statistics live in _reliability_models.R.
 # Output: "Reliability Statistics" (Cronbach's Alpha, N of Items [+ Std. Error,
 #         95% CI when the `psych` package is available — SPSS 27+ parity]) +
 #         "Item-Total Statistics" (Scale Mean / Variance if Item Deleted,
@@ -24,6 +31,7 @@ suppressPackageStartupMessages(library(jsonlite))
                          simplifyVector = FALSE)
 source(file.path(.params_raw$rScriptsDir, "_bootstrap.R"))
 params <- read_params(); df <- load_data(params)
+source(file.path(.params_raw$rScriptsDir, "_reliability_models.R"))
 
 tryCatch({
   progress(10L, "progress.loading")
@@ -136,6 +144,124 @@ tryCatch({
     )
   }
 
+  extra_note <- character(0)
+
+  # ── Further models (2026-11): Guttman, parallel, strictly parallel, omega ──
+  model <- if (is.null(opts$model)) "alpha" else opts$model
+  r4 <- function(x) if (is.finite(x)) round(x, 4) else NULL
+  model_tables <- list()
+  extra_warn <- character(0)
+  if (model == "guttman") {
+    {
+      L <- rel_guttman(mat)
+      model_tables <- list(list(
+        titleKey = "output.reliability.guttmanTitle",
+        columns = list("output.col.statistic", "output.col.value"),
+        rows = c(lapply(1:6, function(i) list(paste0("output.reliability.lambda", i), r4(L[i]))),
+                 list(list("output.col.nItems", as.integer(k)))),
+        footnoteKey = "output.reliability.guttmanFootnote"))
+    }
+  } else if (model %in% c("parallel", "strict")) {
+    P <- rel_parallel(mat, model == "strict")
+    model_tables <- list(
+      list(titleKey = "output.reliability.fitTitle",
+           columns = list("output.col.statistic", "output.col.value"),
+           rows = list(list("output.col.chiSquare", r4(P$chi)), list("output.col.df", as.integer(P$df)),
+                       list("output.col.sig", r4(P$p)),
+                       list("output.reliability.logDetUnconstrained", r4(P$ld_s)),
+                       list("output.reliability.logDetConstrained", r4(P$ld_c))),
+           footnoteKey = "output.reliability.fitFootnote"),
+      list(titleKey = if (model == "strict") "output.reliability.strictStatsTitle"
+                      else "output.reliability.parallelStatsTitle",
+           columns = list("output.col.statistic", "output.col.value"),
+           rows = c(if (model == "strict") list(list("output.reliability.commonMean", r4(P$mean))) else list(),
+                    list(list("output.reliability.commonVariance", r4(P$v)),
+                         list("output.reliability.trueVariance", r4(P$true)),
+                         list("output.reliability.errorVariance", r4(P$error)),
+                         list("output.reliability.commonCorr", r4(P$r)),
+                         list("output.reliability.scaleReliability", r4(P$rel)))),
+           footnoteKey = "output.reliability.mlFootnote"))
+  } else if (model == "omega") {
+    O <- rel_omega(mat)
+    if (is.null(O)) extra_warn <- c(extra_warn, "output.reliability.omegaFailed") else
+      model_tables <- list(list(
+        titleKey = "output.reliability.omegaTitle",
+        columns = list("output.reliability.omega", "output.col.cronbachAlpha", "output.col.nItems"),
+        rows = list(list(r4(O$omega), r4(alpha), as.integer(k))),
+        footnoteKey = "output.reliability.omegaFootnote"))
+  }
+
+  # ── Statistics: Hotelling's T², ANOVA table (F / Friedman / Cochran), ICC ──
+  stat_tables <- list()
+  tw <- rel_twoway(mat)
+  if (isTRUE(opts$hotelling)) {
+    if (n <= k) extra_warn <- c(extra_warn, "output.reliability.hotellingN") else {
+      h <- tryCatch(rel_hotelling(mat), error = function(e) NULL)
+      if (!is.null(h)) stat_tables <- c(stat_tables, list(list(
+        titleKey = "output.reliability.hotellingTitle",
+        columns = list("output.reliability.hotellingT2", "output.col.f", "output.col.df1",
+                       "output.col.df2", "output.col.sig"),
+        rows = list(list(r4(h[1]), r4(h[2]), as.integer(h[3]), as.integer(h[4]), r4(h[5]))),
+        footnoteKey = NULL)))
+    }
+  }
+  anova_kind <- if (is.null(opts$anova)) "none" else opts$anova
+  if (anova_kind == "cochran" && !all(mat %in% c(0, 1))) {
+    extra_warn <- c(extra_warn, "output.reliability.cochranBinary"); anova_kind <- "f"
+  }
+  want_tukey <- isTRUE(opts$tukey)
+  if (anova_kind != "none" || want_tukey) {
+    dfr <- tw$n - 1; dfc <- tw$k - 1; dfe <- dfr * dfc; dfw <- tw$n * dfc
+    Fc <- tw$ms_c / tw$ms_e
+    tk <- if (want_tukey) rel_tukey(tw, mat) else NULL
+    test_cells <- switch(anova_kind,
+      friedman = { fr <- stats::friedman.test(mat); list("output.reliability.friedmanChi", r4(unname(fr$statistic)), r4(fr$p.value)) },
+      cochran = { cq <- rel_cochran(mat); list("output.reliability.cochranQ", r4(cq[1]), r4(cq[3])) },
+      list("F", r4(Fc), r4(stats::pf(Fc, dfc, dfe, lower.tail = FALSE))))
+    row <- function(lbl, ss, df, ms = NULL, stat = NULL, p = NULL)
+      list(lbl, r4(ss), as.integer(df), if (is.null(ms)) NULL else r4(ms), stat, p)
+    rows <- list(
+      row("output.reliability.betweenPeople", tw$ss_r, dfr, tw$ms_r),
+      row("output.reliability.withinPeople", tw$ss_w, dfw, tw$ss_w / dfw),
+      row("output.reliability.betweenItems", tw$ss_c, dfc, tw$ms_c, test_cells[[2]], test_cells[[3]]),
+      row("output.reliability.residual", tw$ss_e, dfe, tw$ms_e))
+    if (!is.null(tk)) rows <- c(rows, list(
+      row("output.reliability.nonadditivity", tk$ss_n, 1, tk$ss_n, r4(tk$F), r4(tk$p)),
+      row("output.reliability.balance", tk$ss_b, tk$df_b, tk$ss_b / tk$df_b)))
+    rows <- c(rows, list(row("output.col.total", tw$ss_t, tw$n * tw$k - 1, tw$ss_t / (tw$n * tw$k - 1))))
+    stat_tables <- c(stat_tables, list(list(
+      titleKey = "output.reliability.anovaTitle",
+      columns = list("output.col.source", "output.col.sumSq", "output.col.df",
+                     "output.col.mS", test_cells[[1]], "output.col.sig"),
+      rows = rows,
+      footnoteKey = paste0("output.reliability.anovaFootnote:", format(round(tw$g, 4), nsmall = 4)))))
+    if (!is.null(tk)) extra_note <- paste0("output.reliability.tukeyPower:", format(round(tk$power, 4), nsmall = 4))
+  }
+  icc_opt <- opts$icc
+  if (is.list(icc_opt) && isTRUE(icc_opt$enabled)) {
+    im <- if (is.null(icc_opt$model)) "mixed" else icc_opt$model
+    it <- if (is.null(icc_opt$type)) "consistency" else icc_opt$type
+    if (!im %in% c("oneway", "random", "mixed")) im <- "mixed"
+    if (!it %in% c("consistency", "absolute")) it <- "consistency"
+    ci_lvl <- suppressWarnings(as.numeric(icc_opt$ci)); if (!length(ci_lvl) || is.na(ci_lvl)) ci_lvl <- 95
+    tv <- suppressWarnings(as.numeric(icc_opt$testValue)); if (!length(tv) || is.na(tv)) tv <- 0
+    I <- rel_icc(tw, im, it, ci_lvl / 100, tv)
+    irow <- function(lbl, v) list(lbl, r4(v[1]), r4(v[2]), r4(v[3]), r4(v[4]),
+                                  as.integer(v[5]), if (abs(v[6] - round(v[6])) < 1e-9) as.integer(v[6]) else r4(v[6]), r4(v[7]))
+    stat_tables <- c(stat_tables, list(list(
+      titleKey = "output.reliability.iccTitle",
+      columns = list("output.col.statistic", "output.reliability.icc",
+                     paste0("output.reliability.iccLower:", ci_lvl),
+                     paste0("output.reliability.iccUpper:", ci_lvl),
+                     "output.reliability.iccF", "output.col.df1", "output.col.df2", "output.col.sig"),
+      rows = list(irow("output.reliability.iccSingle", I$single),
+                  irow("output.reliability.iccAverage", I$average)),
+      footnoteKey = paste0("output.reliability.iccFootnote:",
+                           paste0("output.reliability.iccModel_", im), "|",
+                           if (im == "oneway") "output.reliability.iccType_none"
+                           else paste0("output.reliability.iccType_", it), "|", format(tv)))))
+  }
+
   # Split-half asked for but not produced: say so. Each half needs at least two
   # items for its own alpha, so a scale of three cannot be split, and silence
   # here would look like the option had simply been ignored.
@@ -158,9 +284,10 @@ tryCatch({
     footnoteKey = NULL)
 
   progress(100L, "progress.done")
-  sai_output(warnings = warn_keys, tables = c(
+  sai_output(warnings = c(warn_keys, extra_warn), notes = extra_note, tables = c(
     list(cps_table),
     if (is.null(split_table)) list() else list(split_table),
+    model_tables,
     list(
     list(titleKey = "output.reliability.statsTitle",
          columns = stats_cols,
@@ -177,5 +304,6 @@ tryCatch({
          rows = list(list(round(mean(total), 4), round(var(total), 4),
                           round(sd(total), 4), as.integer(k))),
          footnoteKey = NULL)),
-    if (is.null(corr_table)) list() else list(corr_table)))
+    if (is.null(corr_table)) list() else list(corr_table),
+    stat_tables))
 }, error = function(e) sai_error(conditionMessage(e)))
