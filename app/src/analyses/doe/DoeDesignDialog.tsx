@@ -66,6 +66,10 @@ export function DoeDesignDialog({ onClose }: { onClose: () => void }) {
     seed: Number(seed),
     responseName: response.trim()
   }
+  const repsKey =
+    design === 'rcbd' || design === 'splitplot' || (design === 'factorial' && blocked)
+      ? 'analysis:doe.blocks'
+      : 'analysis:doe.replicates'
   const specErr = designSpecError(spec)
   const size = specErr ? 0 : designSize(spec)
 
@@ -174,19 +178,14 @@ export function DoeDesignDialog({ onClose }: { onClose: () => void }) {
       ))}
       {design !== 'latin' && (
         <div className={styles.conditionRow}>
-          <span className={styles.condLabel}>
-            {t(
-              design === 'rcbd' || design === 'splitplot' || (design === 'factorial' && blocked)
-                ? 'analysis:doe.blocks'
-                : 'analysis:doe.replicates'
-            )}
-          </span>
+          <span className={styles.condLabel}>{t(repsKey)}</span>
           <input
             type="number"
             min="1"
             max="100"
             className={styles.condInput}
             value={reps}
+            aria-label={t(repsKey)}
             onChange={e => {
               setReps(e.target.value)
             }}
@@ -211,6 +210,7 @@ export function DoeDesignDialog({ onClose }: { onClose: () => void }) {
           className={styles.condInput}
           value={response}
           maxLength={40}
+          aria-label={t('analysis:doe.responseName')}
           onChange={e => {
             setResponse(e.target.value)
           }}
@@ -222,6 +222,7 @@ export function DoeDesignDialog({ onClose }: { onClose: () => void }) {
           type="number"
           className={styles.condInput}
           value={seed}
+          aria-label={t('analysis:doe.seed')}
           onChange={e => {
             setSeed(e.target.value)
           }}
