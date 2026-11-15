@@ -269,8 +269,18 @@ export function translateOutputKey(key: string, t: TFunction): string {
   return call(key, { defaultValue: key })
 }
 
-/** An axis title or trace name R wrote as an output key, e.g. "output.col.frequency". */
-const PLOT_TEXT_KEY = /^output\.col\.\w+$/
+/**
+ * An axis title or trace name R wrote as an output key: "output.col.frequency",
+ * "output.factor.screeXComp", or one with a parameter, "output.factor.compHdr:1".
+ * Only output.col.* used to match, so every other key — the factor scree
+ * plot's axis and trace names among them — reached the chart untranslated. A
+ * string that merely looks like a key but has no translation comes back
+ * unchanged (translateOutputKey's default is the key itself).
+ */
+const PLOT_TEXT_KEY = /^output\.\w+\.[\w.]+(:.*)?$/
+
+/** Plotly axes that carry a title: 2D axes, and a 3D scene's axes. */
+const AXIS_KEY = /^[xyz]axis\d*$/
 
 /**
  * Plotly figure with R's output-key axis titles and trace names translated.
@@ -287,22 +297,42 @@ export function localizePlotFigure<T>(figure: T, t: TFunction): T {
     typeof s === 'string' && PLOT_TEXT_KEY.test(s) ? translateOutputKey(s, t) : s
   let changed = false
 
-  let layout = fig.layout
-  if (typeof layout === 'object' && layout !== null) {
-    const next: Record<string, unknown> = { ...(layout as Record<string, unknown>) }
-    for (const [k, axis] of Object.entries(next)) {
-      if (!/^[xy]axis\d*$/.test(k) || typeof axis !== 'object' || axis === null) continue
+  // Translate the axis titles of one layout-like object (the layout itself,
+  // or a 3D scene); returns the same object when nothing changed.
+  const localizeAxes = (obj: Record<string, unknown>): Record<string, unknown> => {
+    let out = obj
+    for (const [k, axis] of Object.entries(obj)) {
+      if (!AXIS_KEY.test(k) || typeof axis !== 'object' || axis === null) continue
       const title = (axis as { title?: unknown }).title
+      let nextAxis: unknown = axis
       if (typeof title === 'string') {
         const text = tr(title)
-        if (text !== title) next[k] = { ...axis, title: text }
+        if (text !== title) nextAxis = { ...axis, title: text }
       } else if (typeof title === 'object' && title !== null) {
         const raw = (title as { text?: unknown }).text
         const text = tr(raw)
-        if (text !== raw) next[k] = { ...axis, title: { ...title, text } }
+        if (text !== raw) nextAxis = { ...axis, title: { ...title, text } }
       }
-      if (next[k] !== axis) changed = true
+      if (nextAxis !== axis) {
+        if (out === obj) out = { ...obj }
+        out[k] = nextAxis
+      }
     }
+    return out
+  }
+
+  let layout = fig.layout
+  if (typeof layout === 'object' && layout !== null) {
+    let next = localizeAxes(layout as Record<string, unknown>)
+    for (const [k, scene] of Object.entries(next)) {
+      if (!/^scene\d*$/.test(k) || typeof scene !== 'object' || scene === null) continue
+      const s = localizeAxes(scene as Record<string, unknown>)
+      if (s !== scene) {
+        if (next === layout) next = { ...next }
+        next[k] = s
+      }
+    }
+    if (next !== layout) changed = true
     layout = next
   }
 

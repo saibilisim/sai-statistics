@@ -7,8 +7,11 @@
  *   2. ROC Curve with the Youden optimal cut-off table and its bootstrap CI;
  *   3. Crosstabs with the column-proportions z-test.
  * Each run must succeed, render every new table, and leak no raw output.* /
- * analysis.* key into the DOM. Finally the Factor dialog's new Extraction
- * sub-dialog is opened from the menu and must list the five methods.
+ * analysis.* key into the DOM. A second factor run covers the SPSS-complete
+ * options (image factoring of a covariance matrix, pairwise deletion, oblimin
+ * delta, Bartlett score coefficients, correlation-matrix extras, loading
+ * plot). Finally the Factor dialog's Extraction sub-dialog must list the
+ * seven methods and its Scores sub-dialog the three score methods.
  *
  * Needs no external fixture: a synthetic CSV is written here.
  */
@@ -152,6 +155,56 @@ async function main() {
   const pm = efa?.result?.tables?.find(t => t.titleKey === 'output.factor.patternMatrixTitle')
   check(pm && pm.columns.length === 3, 'parallel analysis kept two factors')
 
+  // ── 1b. EFA with the SPSS-complete options ───────────────────────────────
+  // Image factoring of the covariance matrix, pairwise deletion, oblimin with
+  // a delta, Bartlett score coefficients, the extra correlation-matrix tables
+  // and the loading plot.
+  const efa2 = await run('factor', 'factor.R', {
+    variables: items.map(n => col[n]),
+    varNames: Object.fromEntries(items.map(n => [col[n], n])),
+    options: {
+      extraction: 'image',
+      matrix: 'covariance',
+      missing: 'pairwise',
+      criterion: 'fixed',
+      nFactors: 2,
+      rotation: 'oblimin',
+      delta: -0.2,
+      loadingPlot: true,
+      sigLevels: true,
+      determinant: true,
+      inverse: true,
+      reproduced: true,
+      antiImage: true,
+      scoreMethod: 'bartlett',
+      scoreCoef: true
+    }
+  })
+  check(
+    efa2 && !efa2.error && efa2.result?.success,
+    `EFA (image, covariance) succeeded (${efa2?.error ?? ''})`
+  )
+  const efa2T = titles(efa2)
+  for (const k of [
+    'output.factor.sigTitle',
+    'output.factor.determinantTitle',
+    'output.factor.inverseTitle',
+    'output.factor.antiImageCovTitle',
+    'output.factor.reproducedTitle',
+    'output.factor.residualTitle',
+    'output.factor.factorScoreCoefTitle',
+    'output.factor.factorScoreCovTitle',
+    'output.factor.patternMatrixTitle'
+  ]) {
+    check(efa2T.includes(k), `EFA option table ${k}`)
+  }
+  const fm2 = efa2?.result?.tables?.find(t => t.titleKey === 'output.factor.factorMatrixTitle')
+  check(fm2 && fm2.columns.length === 5, 'covariance analysis: raw + rescaled loading columns')
+  check(
+    (efa2?.result?.plots ?? []).some(p => p.titleKey === 'output.factor.factorPlotRotTitle'),
+    'loading plot in rotated space'
+  )
+
   // ── 2. ROC with Youden ───────────────────────────────────────────────────
   const roc = await run('roc', 'roc.R', {
     variables: [col.score],
@@ -196,7 +249,7 @@ async function main() {
   })
   check(dom.leaks.length === 0, `no raw keys in output (${dom.leaks.join(', ')})`)
   check(dom.youden && dom.parallel && dom.colProp, 'new tables rendered with translated titles')
-  check(dom.plots >= 2, `plots rendered (${String(dom.plots)})`)
+  check(dom.plots >= 3, `plots rendered (${String(dom.plots)})`)
   await win.screenshot({ path: path.join(__dirname, '..', '..', 'e2e-efa-youden-colprop.png') })
 
   // ── Factor dialog: Extraction sub-dialog ─────────────────────────────────
@@ -215,12 +268,38 @@ async function main() {
   await win.waitForTimeout(500)
   const methods = await win.evaluate(
     () =>
-      Array.from(document.querySelectorAll('select')).find(s => s.options.length === 5)?.options
+      Array.from(document.querySelectorAll('select')).find(s => s.options.length === 7)?.options
         .length ?? 0
   )
   check(opened.button, 'Extraction button in the Factor dialog')
-  check(methods === 5, `Extraction method list has five methods (${String(methods)})`)
+  check(methods === 7, `Extraction method list has seven methods (${String(methods)})`)
   await win.screenshot({ path: path.join(__dirname, '..', '..', 'e2e-efa-dialog.png') })
+
+  // ── Factor dialog: Scores sub-dialog ─────────────────────────────────────
+  // Close the Extraction sub-dialog (Cancel), then open Scores.
+  await win.evaluate(() => {
+    const cancel = Array.from(document.querySelectorAll('button')).filter(b =>
+      /^(Cancel|İptal)$/.test(b.textContent?.trim() ?? '')
+    )
+    cancel[cancel.length - 1]?.click()
+  })
+  await win.waitForTimeout(400)
+  const scoresBtn = await win.evaluate(() => {
+    const btn = Array.from(document.querySelectorAll('button')).find(b =>
+      /^(Scores|Puanlar)/.test(b.textContent?.trim() ?? '')
+    )
+    btn?.click()
+    return Boolean(btn)
+  })
+  await win.waitForTimeout(500)
+  const scoreRadios = await win.evaluate(
+    () =>
+      Array.from(document.querySelectorAll('input[type="radio"]')).filter(r =>
+        /Bartlett|Anderson|Regres/.test(r.closest('label')?.textContent ?? '')
+      ).length
+  )
+  check(scoresBtn, 'Scores button in the Factor dialog')
+  check(scoreRadios === 3, `Scores sub-dialog offers three methods (${String(scoreRadios)})`)
 
   check(pageErrors.length === 0, `no page errors (${pageErrors.join(' | ')})`)
   await app.close()

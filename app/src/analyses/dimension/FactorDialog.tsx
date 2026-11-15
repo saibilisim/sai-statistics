@@ -4,10 +4,12 @@
  * Factor Analysis dialog — SPSS-style.
  * Analyze → Dimension Reduction → Factor
  *
- * Sub-dialogs as in SPSS: Descriptives, Extraction (method, matrix, number of
- * factors, scree plot), Rotation, Options (sorted / suppressed loadings) and
- * New Variables (regression factor scores). Beyond SPSS: polychoric matrix for
- * Likert items and Horn's parallel analysis.
+ * Sub-dialogs as in SPSS: Descriptives, Extraction (seven methods,
+ * correlation / covariance matrix, number of factors, scree plot), Rotation
+ * (delta, kappa, loading plot), Scores (regression / Bartlett /
+ * Anderson-Rubin, coefficient matrix), Options (missing values, sorted /
+ * suppressed loadings) and New Variables (the saved factor scores). Beyond
+ * SPSS: polychoric matrix for Likert items and Horn's parallel analysis.
  */
 
 import { useId, useState } from 'react'
@@ -28,11 +30,14 @@ import { cleanNewVarSelection, type NewVarSelection } from '@/lib/new-var-names'
 import { buildSyntax } from '../../lib/spss-syntax'
 import { cx } from '../../lib/cx'
 import {
+  COVARIANCE_EXTRACTIONS,
   defaultFactorOptions,
   factorOptionParams,
   type FactorExtraction,
+  type FactorMissing,
   type FactorOptions,
-  type FactorRotation
+  type FactorRotation,
+  type FactorScoreMethod
 } from './factor-options'
 
 /* Regression-method factor scores, one column per retained factor. Three
@@ -45,7 +50,7 @@ const FACTOR_NEW_VARS: NewVarSlot[] = [
   { key: 'score3', labelKey: 'analysis:factor.newVar.score3', defaultName: 'fac3' }
 ]
 
-const EXTRACTIONS: FactorExtraction[] = ['pc', 'paf', 'ml', 'uls', 'gls']
+const EXTRACTIONS: FactorExtraction[] = ['pc', 'uls', 'gls', 'ml', 'paf', 'alpha', 'image']
 const ROTATIONS: FactorRotation[] = ['none', 'varimax', 'quartimax', 'equamax', 'oblimin', 'promax']
 const ROTATION_LABEL: Record<FactorRotation, string> = {
   none: 'analysis:factor.rotationNone',
@@ -89,6 +94,7 @@ function Radio<V extends string>(props: {
   current: V
   onSelect: (v: V) => void
   label: string
+  disabled?: boolean
   children?: React.ReactNode
 }) {
   return (
@@ -96,6 +102,7 @@ function Radio<V extends string>(props: {
       <input
         type="radio"
         name={props.name}
+        disabled={props.disabled}
         checked={props.current === props.value}
         onChange={() => {
           props.onSelect(props.value)
@@ -111,12 +118,17 @@ function Radio<V extends string>(props: {
 //  Descriptives sub-dialog
 // ─────────────────────────────────────────────────────────────
 
-function DescriptivesContent(props: SubProps) {
+type BoolKey = {
+  [K in keyof FactorOptions]: FactorOptions[K] extends boolean ? K : never
+}[keyof FactorOptions]
+
+/** A checkbox bound to one boolean option; its label is analysis:factor.<key>. */
+function useCheck(local: FactorOptions, set: ReturnType<typeof useLocalOptions>['set']) {
   const { t } = useTranslation(['common', 'analysis'])
-  const { local, set } = useLocalOptions(props.options)
-  const check = (key: 'univariate' | 'correlation' | 'kmoBartlett' | 'antiImage') => (
+  return (key: BoolKey, disabled = false) => (
     <CheckOption
       checked={local[key]}
+      disabled={disabled}
       onChange={v => {
         set(key, v)
       }}
@@ -124,15 +136,25 @@ function DescriptivesContent(props: SubProps) {
       {t(`analysis:factor.${key}`)}
     </CheckOption>
   )
+}
+
+function DescriptivesContent(props: SubProps) {
+  const { local, set } = useLocalOptions(props.options)
+  const check = useCheck(local, set)
   return (
     <>
       <OptionSection titleKey="analysis:factor.statisticsSection" grid={false}>
         {check('univariate')}
+        {check('initialSolution')}
       </OptionSection>
-      <OptionSection titleKey="analysis:factor.correlationSection" grid={false}>
+      <OptionSection titleKey="analysis:factor.correlationSection">
         {check('correlation')}
-        {check('kmoBartlett')}
+        {check('inverse')}
+        {check('sigLevels')}
+        {check('reproduced')}
+        {check('determinant')}
         {check('antiImage')}
+        {check('kmoBartlett')}
       </OptionSection>
       <Footer {...props} local={local} />
     </>
@@ -147,6 +169,9 @@ function ExtractionContent(props: SubProps) {
   const { t } = useTranslation(['common', 'analysis'])
   const id = useId()
   const { local, set } = useLocalOptions(props.options)
+  const check = useCheck(local, set)
+  const covOk = COVARIANCE_EXTRACTIONS.includes(local.extraction)
+  const isCov = local.matrix === 'covariance' && covOk
   const numInput = (key: 'minEigen' | 'nFactors' | 'maxIter', disabled: boolean, label: string) => (
     <input
       type="number"
@@ -169,7 +194,12 @@ function ExtractionContent(props: SubProps) {
           <select
             value={local.extraction}
             onChange={e => {
-              set('extraction', e.target.value as FactorExtraction)
+              const m = e.target.value as FactorExtraction
+              set('extraction', m)
+              // SPSS factors a covariance matrix only with PC, PAF and image.
+              if (!COVARIANCE_EXTRACTIONS.includes(m) && local.matrix === 'covariance') {
+                set('matrix', 'correlation')
+              }
             }}
             className="numField numField--select"
           >
@@ -201,6 +231,16 @@ function ExtractionContent(props: SubProps) {
           }}
           label={t('analysis:factor.matrixPolychoric')}
         />
+        <Radio
+          name={`${id}-matrix`}
+          value="covariance"
+          current={local.matrix}
+          disabled={!covOk}
+          onSelect={v => {
+            set('matrix', v)
+          }}
+          label={t('analysis:factor.matrixCovariance')}
+        />
       </OptionSection>
 
       <OptionSection titleKey="analysis:factor.extractSection" grid={false}>
@@ -214,6 +254,7 @@ function ExtractionContent(props: SubProps) {
           label={t('analysis:factor.criterionEigen')}
         >
           {numInput('minEigen', local.criterion !== 'eigen', t('analysis:factor.criterionEigen'))}
+          {isCov && t('analysis:factor.timesMeanEigen')}
         </Radio>
         <Radio
           name={`${id}-crit`}
@@ -238,14 +279,8 @@ function ExtractionContent(props: SubProps) {
       </OptionSection>
 
       <OptionSection titleKey="analysis:factor.displaySection" grid={false}>
-        <CheckOption
-          checked={local.scree}
-          onChange={v => {
-            set('scree', v)
-          }}
-        >
-          {t('analysis:factor.scree')}
-        </CheckOption>
+        {check('unrotated')}
+        {check('scree')}
         <CheckOption
           checked={local.parallel || local.criterion === 'parallel'}
           disabled={local.criterion === 'parallel'}
@@ -276,9 +311,31 @@ function RotationContent(props: SubProps) {
   const { t } = useTranslation(['common', 'analysis'])
   const id = useId()
   const { local, set } = useLocalOptions(props.options)
+  const check = useCheck(local, set)
+  const numField = (
+    key: 'delta' | 'kappa' | 'rotationMaxIter',
+    disabled: boolean,
+    label: string
+  ) => (
+    <label className={cx(shellStyles.checkRow, shellStyles.checkRowIndent)}>
+      {label}
+      <input
+        type="number"
+        step={key === 'delta' ? 0.1 : 1}
+        min={key === 'delta' ? undefined : 1}
+        max={key === 'delta' ? 0.8 : undefined}
+        value={local[key]}
+        disabled={disabled}
+        onChange={e => {
+          set(key, e.target.value)
+        }}
+        className="numField"
+      />
+    </label>
+  )
   return (
     <>
-      <OptionSection titleKey="analysis:factor.rotationTitle">
+      <OptionSection titleKey="analysis:factor.methodSection">
         {ROTATIONS.map(r => (
           <Radio
             key={r}
@@ -292,6 +349,55 @@ function RotationContent(props: SubProps) {
           />
         ))}
       </OptionSection>
+      <OptionSection grid={false}>
+        {numField('delta', local.rotation !== 'oblimin', t('analysis:factor.delta'))}
+        {numField('kappa', local.rotation !== 'promax', t('analysis:factor.kappa'))}
+      </OptionSection>
+      <OptionSection titleKey="analysis:factor.displaySection" grid={false}>
+        {check('rotatedSolution', local.rotation === 'none')}
+        {check('loadingPlot')}
+      </OptionSection>
+      <OptionSection grid={false}>
+        {numField(
+          'rotationMaxIter',
+          local.rotation === 'none' || local.rotation === 'promax',
+          t('analysis:factor.maxIter')
+        )}
+      </OptionSection>
+      <Footer {...props} local={local} />
+    </>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Scores sub-dialog (method + coefficient matrix; saving is New Variables)
+// ─────────────────────────────────────────────────────────────
+
+const SCORE_METHODS: FactorScoreMethod[] = ['regression', 'bartlett', 'anderson']
+
+function ScoresContent(props: SubProps) {
+  const { t } = useTranslation(['common', 'analysis'])
+  const id = useId()
+  const { local, set } = useLocalOptions(props.options)
+  const check = useCheck(local, set)
+  return (
+    <>
+      <OptionSection titleKey="analysis:factor.methodSection" grid={false}>
+        {SCORE_METHODS.map(m => (
+          <Radio
+            key={m}
+            name={`${id}-score`}
+            value={m}
+            current={local.scoreMethod}
+            onSelect={v => {
+              set('scoreMethod', v)
+            }}
+            label={t(`analysis:factor.scoreMethod.${m}`)}
+          />
+        ))}
+        <p className={shellStyles.hintText}>{t('analysis:factor.scoresSaveHint')}</p>
+      </OptionSection>
+      <OptionSection grid={false}>{check('scoreCoef')}</OptionSection>
       <Footer {...props} local={local} />
     </>
   )
@@ -301,11 +407,28 @@ function RotationContent(props: SubProps) {
 //  Options sub-dialog (coefficient display format)
 // ─────────────────────────────────────────────────────────────
 
+const MISSING_MODES: FactorMissing[] = ['listwise', 'pairwise', 'mean']
+
 function OptionsContent(props: SubProps) {
   const { t } = useTranslation(['common', 'analysis'])
+  const id = useId()
   const { local, set } = useLocalOptions(props.options)
   return (
     <>
+      <OptionSection titleKey="analysis:factor.missingSection" grid={false}>
+        {MISSING_MODES.map(m => (
+          <Radio
+            key={m}
+            name={`${id}-missing`}
+            value={m}
+            current={local.missing}
+            onSelect={v => {
+              set('missing', v)
+            }}
+            label={t(`analysis:factor.missing.${m}`)}
+          />
+        ))}
+      </OptionSection>
       <OptionSection titleKey="analysis:factor.formatSection" grid={false}>
         <CheckOption
           checked={local.sortBySize}
@@ -387,6 +510,7 @@ export function FactorDialog({ onClose }: { onClose: () => void }) {
       ExtractionContent
     ),
     sub('rotation', 'analysis:shell.btnRotation', 'analysis:factor.rotationTitle', RotationContent),
+    sub('scores', 'analysis:factor.btnScores', 'analysis:factor.scoresTitle', ScoresContent),
     sub('options', 'analysis:shell.btnOptions', 'analysis:factor.optionsTitle', OptionsContent),
     {
       key: 'newVars',

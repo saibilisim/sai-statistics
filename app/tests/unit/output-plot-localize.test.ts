@@ -41,6 +41,25 @@ describe('localizePlotFigure', () => {
     expect(fig.layout.yaxis.title.text).toBe('output.col.frequency')
   })
 
+  it('translates any output key, with parameters, and 3D scene axes', () => {
+    // The factor scree plot's keys are output.factor.*, which the old
+    // output.col-only rule left as raw keys on the chart.
+    const fig = {
+      data: [{ type: 'scatter', name: 'output.factor.screeObserved' }],
+      layout: {
+        xaxis: { title: { text: 'output.factor.screeXComp' } },
+        scene: { zaxis: { title: { text: 'output.factor.compHdr:3' } }, aspectmode: 'cube' }
+      }
+    }
+    const out = localizePlotFigure(fig, t)
+    expect(out.data[0]?.name).toBe(trAnalysis.output.factor.screeObserved)
+    expect(out.layout.xaxis.title.text).toBe(trAnalysis.output.factor.screeXComp)
+    // (this test's t() does not interpolate, so the template comes back)
+    expect(out.layout.scene.zaxis.title.text).toBe(trAnalysis.output.factor.compHdr)
+    expect(out.layout.scene.aspectmode).toBe('cube')
+    expect(fig.layout.scene.zaxis.title.text).toBe('output.factor.compHdr:3')
+  })
+
   it('returns the same object when nothing is a key', () => {
     const fig = { data: [{ name: 'score' }], layout: { yaxis: { title: { text: 'Count' } } } }
     expect(localizePlotFigure(fig, t)).toBe(fig)

@@ -2885,19 +2885,27 @@ export const buildSyntax = {
   factorAnalysis: (vars: NamedVar[], options?: Partial<FactorOptionParams>): string | null => {
     if (vars.length < 2) return null
     const o = options ?? {}
-    const rot = (o.rotation ?? 'none').toUpperCase()
+    const rotation = o.rotation ?? 'none'
+    const rotated = rotation !== 'none'
     const print = [
       o.univariate ? 'UNIVARIATE' : '',
-      'INITIAL',
-      o.correlation ? 'CORRELATION DET' : '',
-      o.kmoBartlett ? 'KMO' : '',
+      o.initialSolution !== false ? 'INITIAL' : '',
+      o.correlation ? 'CORRELATION' : '',
+      o.sigLevels ? 'SIG' : '',
+      o.determinant ? 'DET' : '',
+      o.inverse ? 'INV' : '',
+      o.reproduced ? 'REPR' : '',
       o.antiImage ? 'AIC' : '',
-      'EXTRACTION ROTATION'
+      o.kmoBartlett ? 'KMO' : '',
+      o.unrotated !== false ? 'EXTRACTION' : '',
+      rotated && o.rotatedSolution !== false ? 'ROTATION' : '',
+      o.scoreCoef ? 'FSCORE' : ''
     ].filter(Boolean)
     const format = [
       o.sortBySize ? 'SORT' : '',
       o.suppressBelow != null ? `BLANK(${String(o.suppressBelow)})` : ''
     ].filter(Boolean)
+    const plot = [o.scree ? 'EIGEN' : '', o.loadingPlot ? 'ROTATION' : ''].filter(Boolean)
     // Parallel analysis and polychoric correlations have no SPSS keyword, so
     // a run using them cannot be fully written as syntax (the factor count of
     // a parallel run falls back to the eigenvalue rule here).
@@ -2905,14 +2913,36 @@ export const buildSyntax = {
       o.criterion === 'fixed'
         ? `FACTORS(${String(o.nFactors ?? 1)})`
         : `MINEIGEN(${String(o.minEigen ?? 1)})`
+    const missing = { listwise: 'LISTWISE', pairwise: 'PAIRWISE', mean: 'MEANSUB' }[
+      o.missing ?? 'listwise'
+    ]
+    // The second /CRITERIA (before /ROTATION) is the rotation's own, as SPSS
+    // pastes it: iterations plus DELTA for direct oblimin.
+    const rotCrit = rotated
+      ? `\n  /CRITERIA ITERATE(${String(o.rotationMaxIter ?? 1000)})` +
+        (rotation === 'oblimin' ? ` DELTA(${String(o.delta ?? 0)})` : '')
+      : ''
+    const rotKw =
+      rotation === 'none'
+        ? 'NOROTATE'
+        : rotation === 'promax'
+          ? `PROMAX(${String(o.kappa ?? 4)})`
+          : rotation.toUpperCase()
+    const extKw = o.extraction === 'alpha' ? 'ALPHA' : (o.extraction ?? 'pc').toUpperCase()
+    const save = o.scoreMethod && o.scoreMethod !== 'regression' ? o.scoreMethod : null
     return (
-      `FACTOR /VARIABLES=${names(vars)}\n  /MISSING LISTWISE\n  /ANALYSIS ${names(vars)}` +
+      `FACTOR /VARIABLES=${names(vars)}\n  /MISSING ${missing}\n  /ANALYSIS ${names(vars)}` +
       `\n  /PRINT ${print.join(' ')}` +
       (format.length ? `\n  /FORMAT ${format.join(' ')}` : '') +
-      (o.scree ? '\n  /PLOT EIGEN' : '') +
+      (plot.length ? `\n  /PLOT ${plot.join(' ')}` : '') +
       `\n  /CRITERIA ${crit} ITERATE(${String(o.maxIter ?? 25)})` +
-      `\n  /EXTRACTION ${(o.extraction ?? 'pc').toUpperCase()}` +
-      `\n  /ROTATION ${rot === 'NONE' ? 'NOROTATE' : rot}\n  /METHOD=CORRELATION.`
+      `\n  /EXTRACTION ${extKw}` +
+      rotCrit +
+      `\n  /ROTATION ${rotKw}` +
+      // Factor scores are written by the New Variables panel; /SAVE only
+      // records a non-default score method for the coefficient matrix.
+      (save ? `\n  /SAVE ${save === 'bartlett' ? 'BART' : 'AR'}(ALL)` : '') +
+      `\n  /METHOD=${o.matrix === 'covariance' ? 'COVARIANCE' : 'CORRELATION'}.`
     )
   },
 

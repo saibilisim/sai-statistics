@@ -121,7 +121,7 @@ test_that("factor with rotation=none (default) is unaffected — no rotated tabl
 })
 
 # ── Oblique rotation (Oblimin/Promax) — B4 extension ────────────────────────
-# Oracle: GPArotation::oblimin() / psych::Promax() called directly, not the
+# Oracle: GPArotation::oblimin() / stats::promax() called directly, not the
 # script's own logic — validates wiring, not the packages' own math. Checks
 # the key invariant every oblique implementation must satisfy: communality
 # reconstructed from Pattern * Structure equals the pre-rotation communality
@@ -129,7 +129,7 @@ test_that("factor with rotation=none (default) is unaffected — no rotated tabl
 # The sign of a factor is arbitrary: flipping a whole column of the pattern
 # matrix (and the matching row and column of Phi) describes the same solution.
 # factor.R therefore reflects each factor so its dominant loading is positive,
-# which is the convention SPSS prints. GPArotation and psych::Promax do not,
+# which is the convention SPSS prints. GPArotation and stats::promax do not,
 # so a raw element-by-element comparison fails on the convention rather than
 # on the mathematics — as it did the moment `psych` was reinstalled and these
 # two tests stopped being skipped.
@@ -175,7 +175,8 @@ test_that("factor rotation=oblimin: Pattern/Structure/Phi match GPArotation dire
   R <- cor(mat); e <- eigen(R, symmetric = TRUE)
   retain <- which(e$values > 1)
   load <- e$vectors[, retain, drop = FALSE] %*% diag(sqrt(e$values[retain]), length(retain))
-  ob <- GPArotation::oblimin(load)
+  # Kaiser normalization, as SPSS ("Oblimin with Kaiser Normalization").
+  ob <- GPArotation::oblimin(load, normalize = TRUE)
   .r <- reflect_reference(unclass(ob$loadings), ob$Phi)
   ref_pattern <- .r$pattern; ref_phi <- .r$phi
   ref_structure <- ref_pattern %*% ref_phi
@@ -205,7 +206,7 @@ test_that("factor rotation=oblimin: Pattern/Structure/Phi match GPArotation dire
   }
 })
 
-test_that("factor rotation=promax: Pattern/Structure/Phi match psych::Promax directly", {
+test_that("factor rotation=promax: Pattern/Structure/Phi match stats::promax directly", {
   skip_needs <- !requireNamespace("psych", quietly = TRUE) || !requireNamespace("GPArotation", quietly = TRUE)
   if (skip_needs) {
     cat("  (skipped: psych/GPArotation not installed)\n")
@@ -229,8 +230,11 @@ test_that("factor rotation=promax: Pattern/Structure/Phi match psych::Promax dir
   R <- cor(mat); e <- eigen(R, symmetric = TRUE)
   retain <- which(e$values > 1)
   load <- e$vectors[, retain, drop = FALSE] %*% diag(sqrt(e$values[retain]), length(retain))
-  pm <- psych::Promax(load)
-  .r <- reflect_reference(unclass(pm$loadings), pm$Phi)
+  # stats::promax: Kaiser-normalized varimax, then the power-4 target (SPSS's
+  # "Promax with Kaiser Normalization"); psych::Promax skips the normalization.
+  pm <- stats::promax(load)
+  ui <- solve(pm$rotmat)
+  .r <- reflect_reference(unclass(pm$loadings), ui %*% t(ui))
   ref_pattern <- .r$pattern; ref_phi <- .r$phi
 
   pat_table <- find_table(result, "output.factor.patternMatrixTitle")

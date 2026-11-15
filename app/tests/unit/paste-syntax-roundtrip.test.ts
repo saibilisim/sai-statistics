@@ -228,6 +228,70 @@ describe('FACTOR paste syntax round-trips the EFA options', () => {
       await options(buildSyntax.factorAnalysis([y, x], { rotation: 'none', kmoBartlett: false }))
     ).toEqual({ rotation: 'none', kmoBartlett: false })
   })
+  it('alpha / image, covariance, pairwise, display switches, delta, kappa and scores', async () => {
+    const s = buildSyntax.factorAnalysis([y, x, z], {
+      extraction: 'image',
+      matrix: 'covariance',
+      missing: 'pairwise',
+      initialSolution: false,
+      unrotated: false,
+      rotation: 'oblimin',
+      delta: -0.4,
+      rotationMaxIter: 300,
+      loadingPlot: true,
+      sigLevels: true,
+      determinant: true,
+      inverse: true,
+      reproduced: true,
+      scoreMethod: 'bartlett',
+      scoreCoef: true
+    })
+    expect(s).toContain('/MISSING PAIRWISE')
+    expect(s).toContain(
+      '/EXTRACTION IMAGE\n  /CRITERIA ITERATE(300) DELTA(-0.4)\n  /ROTATION OBLIMIN'
+    )
+    expect(s).toContain('/PLOT ROTATION')
+    expect(s).toContain('/SAVE BART(ALL)')
+    expect(s).toContain('/METHOD=COVARIANCE.')
+    expect(await options(s)).toEqual({
+      rotation: 'oblimin',
+      kmoBartlett: false,
+      extraction: 'image',
+      maxIter: 25,
+      loadingPlot: true,
+      sigLevels: true,
+      determinant: true,
+      inverse: true,
+      reproduced: true,
+      scoreCoef: true,
+      initialSolution: false,
+      unrotated: false,
+      missing: 'pairwise',
+      matrix: 'covariance',
+      rotationMaxIter: 300,
+      delta: -0.4,
+      scoreMethod: 'bartlett'
+    })
+  })
+  it('promax kappa, alpha factoring and mean substitution', async () => {
+    const s = buildSyntax.factorAnalysis([y, x, z], {
+      extraction: 'alpha',
+      rotation: 'promax',
+      kappa: 3,
+      missing: 'mean',
+      scoreMethod: 'anderson'
+    })
+    expect(s).toContain('/ROTATION PROMAX(3)')
+    expect(await options(s)).toEqual({
+      rotation: 'promax',
+      kmoBartlett: false,
+      extraction: 'alpha',
+      maxIter: 25,
+      missing: 'mean',
+      kappa: 3,
+      scoreMethod: 'anderson'
+    })
+  })
   it('equamax and a custom eigenvalue threshold', async () => {
     const s = buildSyntax.factorAnalysis([y, x, z], { rotation: 'equamax', minEigen: 0.7 })
     expect(await options(s)).toEqual({ rotation: 'equamax', kmoBartlett: false, minEigen: 0.7 })

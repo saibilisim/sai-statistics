@@ -70,10 +70,15 @@ export async function runQuickCluster(
 }
 
 /**
- * FACTOR VARIABLES=varlist [/PRINT=UNIVARIATE CORRELATION KMO AIC ...]
- *   [/FORMAT SORT BLANK(x)] [/PLOT EIGEN] [/CRITERIA FACTORS(n)|MINEIGEN(x) ITERATE(n)]
- *   [/EXTRACTION PC|PAF|ML|ULS|GLS]
- *   [/ROTATION VARIMAX|QUARTIMAX|EQUAMAX|OBLIMIN|PROMAX|NOROTATE]
+ * FACTOR VARIABLES=varlist [/MISSING LISTWISE|PAIRWISE|MEANSUB]
+ *   [/PRINT=INITIAL EXTRACTION ROTATION UNIVARIATE CORRELATION SIG DET INV REPR
+ *     AIC KMO FSCORE DEFAULT ALL]
+ *   [/FORMAT SORT BLANK(x)] [/PLOT EIGEN ROTATION]
+ *   [/CRITERIA FACTORS(n)|MINEIGEN(x) ITERATE(n)]
+ *   [/EXTRACTION PC|PAF|ML|ULS|GLS|ALPHA|IMAGE]
+ *   [/CRITERIA ITERATE(n) DELTA(d)]
+ *   [/ROTATION VARIMAX|QUARTIMAX|EQUAMAX|OBLIMIN|PROMAX(k)|NOROTATE]
+ *   [/SAVE REG|BART|AR(...)] [/METHOD=CORRELATION|COVARIANCE]
  */
 export async function runFactor(
   st: Statement,
@@ -85,18 +90,29 @@ export async function runFactor(
   const rotWords = parseSubcommand(st.body, 'ROTATION') || []
   const rotation =
     (['varimax', 'quartimax', 'equamax', 'oblimin', 'promax'] as const).find(r =>
-      rotWords.includes(r.toUpperCase())
+      // PROMAX carries its kappa as PROMAX(4).
+      rotWords.some(w => w === r.toUpperCase() || w.startsWith(`${r.toUpperCase()}(`))
     ) ?? 'none'
   const printWords = parseSubcommand(st.body, 'PRINT') || []
   const kmoBartlett = printWords.includes('KMO')
   const extWords = parseSubcommand(st.body, 'EXTRACTION') || []
   const extraction =
-    (['paf', 'ml', 'uls', 'gls'] as const).find(m => extWords.includes(m.toUpperCase())) ?? 'pc'
+    (['paf', 'ml', 'uls', 'gls', 'alpha', 'image'] as const).find(m =>
+      extWords.includes(m.toUpperCase())
+    ) ?? 'pc'
   // CRITERIA / FORMAT keywords carry their value in parentheses: FACTORS(2).
+  // SPSS reads /CRITERIA positionally: the one before /EXTRACTION sets the
+  // extraction, a second one before /ROTATION the rotation (ITERATE, DELTA).
   const critText = (parseSubcommand(st.body, 'CRITERIA') || []).join(' ')
+  const rotIdx = st.body.search(/\/ROTATION\b/i)
+  const extIdx = st.body.search(/\/EXTRACTION\b/i)
+  const rotCritText =
+    rotIdx > extIdx && extIdx >= 0
+      ? (parseSubcommand(st.body.slice(extIdx, rotIdx), 'CRITERIA') || []).join(' ')
+      : ''
   const formatText = (parseSubcommand(st.body, 'FORMAT') || []).join(' ')
   const kwNum = (text: string, kw: string): number | null => {
-    const m = new RegExp(`${kw}\\s*\\(\\s*([0-9.]+)\\s*\\)`).exec(text)
+    const m = new RegExp(`${kw}\\s*\\(\\s*(-?[0-9.]+)\\s*\\)`).exec(text)
     return m ? Number(m[1]) : null
   }
   const nFactors = kwNum(critText, 'FACTORS')
@@ -119,7 +135,58 @@ export async function runFactor(
   if (printWords.includes('AIC')) options.antiImage = true
   if (formatText.includes('SORT')) options.sortBySize = true
   if (blank !== null) options.suppressBelow = blank
-  if ((parseSubcommand(st.body, 'PLOT') || []).includes('EIGEN')) options.scree = true
+  const plotWords = parseSubcommand(st.body, 'PLOT') || []
+  if (plotWords.includes('EIGEN')) options.scree = true
+  if (plotWords.includes('ROTATION')) options.loadingPlot = true
+
+  // Descriptives and display. When /PRINT names any of INITIAL / EXTRACTION /
+  // ROTATION it is managing the display, and a missing one turns that part
+  // off (what the dialog pastes). A /PRINT of statistics only (`/PRINT=KMO`)
+  // adds them to the usual output instead of hiding it — strict SPSS would
+  // print the KMO table alone, which no one writing that line expects here.
+  const all = printWords.includes('ALL')
+  const has = (kw: string) => all || printWords.includes(kw)
+  if (has('SIG')) options.sigLevels = true
+  if (has('DET')) options.determinant = true
+  if (has('INV')) options.inverse = true
+  if (has('REPR')) options.reproduced = true
+  if (has('FSCORE')) options.scoreCoef = true
+  if (all)
+    Object.assign(options, {
+      univariate: true,
+      correlation: true,
+      antiImage: true,
+      kmoBartlett: true
+    })
+  const managesDisplay = ['INITIAL', 'EXTRACTION', 'ROTATION'].some(kw => printWords.includes(kw))
+  if (managesDisplay && !all && !printWords.includes('DEFAULT')) {
+    if (!printWords.includes('INITIAL')) options.initialSolution = false
+    if (!printWords.includes('EXTRACTION')) options.unrotated = false
+    if (rotation !== 'none' && !printWords.includes('ROTATION')) options.rotatedSolution = false
+  }
+
+  const missingWords = parseSubcommand(st.body, 'MISSING') || []
+  if (missingWords.includes('PAIRWISE')) options.missing = 'pairwise'
+  else if (missingWords.includes('MEANSUB')) options.missing = 'mean'
+  if ((parseSubcommand(st.body, 'METHOD') || []).includes('COVARIANCE')) {
+    options.matrix = 'covariance'
+  }
+
+  // SPSS counts rotation iterations as sweeps of pairwise planar rotations;
+  // factor.R's GPA rotations count gradient steps, which need more. SPSS's own
+  // default (25) therefore does not carry over and leaves our default (1000)
+  // in place; any other value is the user's explicit choice and is kept.
+  const rotIterate = kwNum(rotCritText, 'ITERATE')
+  if (rotIterate !== null && rotIterate !== 25 && rotIterate !== 1000 && rotation !== 'none') {
+    options.rotationMaxIter = rotIterate
+  }
+  const delta = kwNum(rotCritText || critText, 'DELTA')
+  if (delta !== null && delta !== 0 && rotation === 'oblimin') options.delta = delta
+  const kappa = kwNum(rotWords.join(' '), 'PROMAX')
+  if (kappa !== null && kappa !== 4 && rotation === 'promax') options.kappa = kappa
+  const saveWords = (parseSubcommand(st.body, 'SAVE') || []).join(' ')
+  if (/\bBART/.test(saveWords)) options.scoreMethod = 'bartlett'
+  else if (/\bAR\b|\bAR\(/.test(saveWords)) options.scoreMethod = 'anderson'
 
   await ctx.runAnalysis({
     analysisId: 'factor',
