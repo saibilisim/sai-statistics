@@ -1,5 +1,5 @@
 {
-  "appId": "com.sai.statistics",
+  "appId": "com.saibilisim.saistatistics",
   "productName": "SAI Statistics",
   "copyright": "Copyright © 2026 SAI",
   "directories": {
@@ -95,6 +95,7 @@
     }
   },
   "nsis": {
+    "guid": "36e6f395-f83d-544d-a402-aadd934d992e",
     "uninstallDisplayName": "SAI Statistics",
     "license": "resources/legal/LICENSE.txt",
     "oneClick": false,

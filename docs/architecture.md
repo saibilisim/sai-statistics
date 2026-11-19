@@ -449,7 +449,9 @@ Sistemde Rscript var mı? (PATH)
 
 ## 10. Build ve Dağıtım
 
-Yapılandırma: `app/electron-builder.json` (`appId` `com.sai.statistics`). Her platform kendi gömülü
+Yapılandırma: `app/electron-builder.json` (`appId` `com.saibilisim.saistatistics`; Windows kurulum
+GUID'i `nsis.guid` ile eski `com.sai.statistics` kimliğinden türeyen değere sabit — eski kurulumların
+üstüne yükseltme bozulmasın diye). Her platform kendi gömülü
 R'ını `extraResources` ile `r-runtime/` olarak paketler (`resources/r-runtime-win` · `r-runtime-mac` ·
 `r-runtime`; üretimi README → "Packaging installers").
 
