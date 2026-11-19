@@ -3,42 +3,54 @@
   "releases": [
     {
       "version": "0.3.1",
-      "date": "2026-11-02",
+      "date": "2026-11-19",
       "notes": {
         "tr": [
+          "Faktör Analizi'ne temel eksen ve en çok olabilirlik gibi çıkarma yöntemleri, Likert maddeleri için polikorik korelasyon, paralel analiz, yeni döndürmeler ve faktör puanları eklendi. Yeni Doğrulayıcı Faktör Analizi uyum indeksleri, CR/AVE ve ölçme değişmezliği veriyor.",
+          "Yeni Ölçek menüsü: Madde Analizi, Likert Madde Betimlemesi, Ölçek Puanı Raporu, Harman Tek Faktör Testi, Test-Tekrar Test Güvenilirliği ve Kapsam Geçerliği (Lawshe). Güvenilirlik Analizi'ne McDonald omega ve sınıf içi korelasyon eklendi.",
+          "Yeni Deney Tasarımı menüsüyle rastgele deney planı oluşturup analiz edebilirsiniz. ROC Eğrisi Youden indeksine göre en iyi kesim noktasını buluyor, Çapraz Tablolar sütun oranlarını z-testiyle karşılaştırıyor.",
           "Frekans tablosu ve çubuk/pasta grafiği artık değer etiketlerini gösteriyor (ör. 1 yerine \"Memnun değil\"); grafik de tablonun sırasını izliyor.",
-          "Grafiklerdeki \"Frekans\" gibi eksen başlıkları artık arayüz dilinde; ekranda ve Word, Excel, PDF, HTML dışa aktarımında.",
-          "Grafikler menüsündeki grafikler Çıktı'da düzgün başlıkla görünüyor; tek serili grafiklerde fazladan \"trace 0\" açıklaması çıkmıyor.",
+          "Grafiklerdeki \"Frekans\" gibi eksen başlıkları artık arayüz dilinde, ekranda ve tüm dışa aktarımlarda; Grafikler menüsündeki grafikler Çıktı'da düzgün başlıkla görünüyor.",
           "R beklenmedik biçimde durursa iç kod yerine ne yapılacağını söyleyen anlaşılır bir mesaj gösteriliyor."
         ],
         "en": [
+          "Factor Analysis adds principal axis, maximum likelihood and other extraction methods, polychoric correlations for Likert items, parallel analysis, more rotations and factor scores. The new Confirmatory Factor Analysis reports fit indices, CR/AVE and measurement invariance.",
+          "New Scale menu: Item Analysis, Likert Item Descriptives, Scale Scores Report, Harman's Single-Factor Test, Test-Retest Reliability and Content Validity (Lawshe). Reliability Analysis adds McDonald's omega and the intraclass correlation.",
+          "The new Design of Experiments menu creates randomized experimental plans and analyzes them. ROC Curve finds the optimal cut-off by the Youden index, and Crosstabs can compare column proportions with a z-test.",
           "The frequency table and its bar/pie chart now show value labels (e.g. \"Dissatisfied\" instead of 2), and the chart follows the table's order.",
-          "Axis titles such as \"Frequency\" now appear in your interface language, on screen and in Word, Excel, PDF and HTML exports.",
-          "Charts from the Graphs menu now get a proper title in Output, and single-series charts no longer show a stray \"trace 0\" legend.",
+          "Axis titles such as \"Frequency\" now appear in your interface language, on screen and in every export, and charts from the Graphs menu get a proper title in Output.",
           "If R stops unexpectedly you now see a clear message saying what to do, instead of an internal code."
         ],
         "es": [
+          "El Análisis factorial añade ejes principales, máxima verosimilitud y otros métodos de extracción, correlación policórica para ítems Likert, análisis paralelo, más rotaciones y puntuaciones. El nuevo Análisis factorial confirmatorio da índices de ajuste, CR/AVE e invarianza.",
+          "Nuevo menú Escala: Análisis de ítems, Descriptivos de ítems Likert, Informe de puntuaciones de escala, Prueba de un factor de Harman, Fiabilidad test-retest y Validez de contenido (Lawshe). El Análisis de fiabilidad añade omega de McDonald y correlación intraclase.",
+          "El nuevo menú Diseño de experimentos crea planes experimentales aleatorizados y los analiza. La Curva ROC encuentra el punto de corte óptimo según el índice de Youden, y Tablas de contingencia compara proporciones de columna con una prueba z.",
           "La tabla de frecuencias y su gráfico de barras/sectores muestran ahora las etiquetas de valor (p. ej. \"Insatisfecho\" en lugar de 2), y el gráfico sigue el orden de la tabla.",
-          "Los títulos de eje como \"Frecuencia\" aparecen ahora en el idioma de la interfaz, en pantalla y al exportar a Word, Excel, PDF y HTML.",
-          "Los gráficos del menú Gráficos tienen ahora un título correcto en Resultados, y los gráficos de una sola serie ya no muestran una leyenda \"trace 0\" sobrante.",
+          "Los títulos de eje como \"Frecuencia\" aparecen ahora en el idioma de la interfaz, en pantalla y en todas las exportaciones, y los gráficos del menú Gráficos tienen un título correcto en Resultados.",
           "Si R se detiene inesperadamente, ahora aparece un mensaje claro que indica qué hacer, en lugar de un código interno."
         ],
         "fr": [
+          "L'analyse factorielle ajoute axes principaux, maximum de vraisemblance, corrélation polychorique pour items de Likert, analyse parallèle, rotations et scores. La nouvelle Analyse factorielle confirmatoire donne ajustement, CR/AVE et invariance.",
+          "Nouveau menu Échelle : Analyse d'items, Descriptifs des items de Likert, Rapport des scores d'échelle, Test à facteur unique de Harman, Fiabilité test-retest et Validité de contenu (Lawshe). L'Analyse de fiabilité ajoute l'oméga de McDonald et la corrélation intraclasse.",
+          "Le nouveau menu Plans d'expériences crée des plans expérimentaux randomisés et les analyse. La Courbe ROC trouve le seuil optimal selon l'indice de Youden, et les Tableaux croisés comparent les proportions de colonne par un test z.",
           "Le tableau des effectifs et son diagramme en barres/secteurs affichent désormais les étiquettes de valeur (par ex. « Insatisfait » au lieu de 2), et le graphique suit l'ordre du tableau.",
-          "Les titres d'axe comme « Effectif » s'affichent désormais dans la langue de l'interface, à l'écran comme dans les exports Word, Excel, PDF et HTML.",
-          "Les graphiques du menu Graphiques ont désormais un vrai titre dans les Résultats, et les graphiques à une seule série n'affichent plus de légende « trace 0 » superflue.",
+          "Les titres d'axe comme « Effectif » s'affichent désormais dans la langue de l'interface, à l'écran et dans tous les exports, et les graphiques du menu Graphiques ont un vrai titre dans les Résultats.",
           "Si R s'arrête de façon inattendue, un message clair indique désormais quoi faire, au lieu d'un code interne."
         ],
         "pt": [
+          "A Análise fatorial acrescenta eixos principais, máxima verosimilhança e outros métodos de extração, correlação policórica para itens Likert, análise paralela, mais rotações e pontuações. A nova Análise fatorial confirmatória dá índices de ajuste, CR/AVE e invariância.",
+          "Novo menu Escala: Análise de itens, Descritivas de itens Likert, Relatório de pontuações da escala, Teste de fator único de Harman, Fiabilidade teste-reteste e Validade de conteúdo (Lawshe). A Análise de Confiabilidade acrescenta o ómega de McDonald e a correlação intraclasse.",
+          "O novo menu Delineamento experimental cria planos experimentais aleatorizados e analisa-os. A Curva ROC encontra o ponto de corte ótimo pelo índice de Youden, e as Tabelas de Contingência comparam proporções de coluna com um teste z.",
           "A tabela de frequências e o seu gráfico de barras/setores mostram agora os rótulos de valor (p. ex. \"Insatisfeito\" em vez de 2), e o gráfico segue a ordem da tabela.",
-          "Os títulos de eixo como \"Frequência\" aparecem agora no idioma da interface, no ecrã e nas exportações para Word, Excel, PDF e HTML.",
-          "Os gráficos do menu Gráficos têm agora um título correto nos Resultados, e os gráficos de uma só série já não mostram uma legenda \"trace 0\" a mais.",
+          "Os títulos de eixo como \"Frequência\" aparecem agora no idioma da interface, no ecrã e em todas as exportações, e os gráficos do menu Gráficos têm um título correto nos Resultados.",
           "Se o R parar inesperadamente, aparece agora uma mensagem clara a indicar o que fazer, em vez de um código interno."
         ],
         "it": [
+          "L'analisi fattoriale aggiunge assi principali, massima verosimiglianza e altri metodi di estrazione, correlazione policorica per item Likert, analisi parallela, più rotazioni e punteggi. La nuova Analisi fattoriale confermativa fornisce indici di adattamento, CR/AVE e invarianza.",
+          "Nuovo menu Scala: Analisi degli item, Descrittive degli item Likert, Rapporto dei punteggi di scala, Test a fattore singolo di Harman, Affidabilità test-retest e Validità di contenuto (Lawshe). L'Analisi di affidabilità aggiunge l'omega di McDonald e la correlazione intraclasse.",
+          "Il nuovo menu Disegno sperimentale crea piani sperimentali randomizzati e li analizza. La Curva ROC trova il cut-off ottimale con l'indice di Youden, e le Tavole di contingenza confrontano le proporzioni di colonna con un test z.",
           "La tabella delle frequenze e il relativo grafico a barre/torta mostrano ora le etichette dei valori (ad es. \"Insoddisfatto\" invece di 2), e il grafico segue l'ordine della tabella.",
-          "I titoli degli assi come \"Frequenza\" compaiono ora nella lingua dell'interfaccia, a schermo e nelle esportazioni Word, Excel, PDF e HTML.",
-          "I grafici del menu Grafici hanno ora un titolo corretto nell'Output, e i grafici a serie singola non mostrano più una legenda \"trace 0\" superflua.",
+          "I titoli degli assi come \"Frequenza\" compaiono ora nella lingua dell'interfaccia, a schermo e in tutte le esportazioni, e i grafici del menu Grafici hanno un titolo corretto nell'Output.",
           "Se R si arresta in modo imprevisto, ora compare un messaggio chiaro che dice cosa fare, invece di un codice interno."
         ]
       }
