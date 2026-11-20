@@ -148,6 +148,11 @@
       "height": 380
     }
   },
+  "mas": {
+    "hardenedRuntime": false,
+    "entitlements": "resources/mas/entitlements.mas.plist",
+    "entitlementsInherit": "resources/mas/entitlements.mas.inherit.plist"
+  },
   "linux": {
     "target": ["AppImage", "deb", "rpm"],
     "icon": "resources/icons/icon.png",

@@ -44,7 +44,7 @@
  *   index.ts (bu dosya)— ai:* IPC handler kaydı (registerAiBridgeHandlers)
  */
 
-import { ipcMain, type WebContents } from 'electron'
+import { BrowserWindow, ipcMain, type WebContents } from 'electron'
 import { randomUUID } from 'crypto'
 import log from 'electron-log'
 import { IPC } from '../../../shared/ipc-contracts'
@@ -84,6 +84,7 @@ import {
   consumeDeleteReauth
 } from './credentials'
 import { performGoogleLogin } from './google-login'
+import { IAP_ENABLED, initAppleIap, listApplePacks, startApplePurchase } from './apple-iap'
 import { authErrorFromResponse, authErrorFromException, authErrorDetail } from './auth-errors'
 import { requireProviderConfig, checkReachable } from './provider-config'
 import { fetchAppConfig, fetchModelCatalog } from './app-config'
@@ -106,6 +107,13 @@ function notifyCreditsSpent(sender: WebContents): void {
 }
 
 export function registerAiBridgeHandlers(): void {
+  // MAS build: StoreKit queue listener; a credited purchase refreshes every
+  // window's balance (same push the login window uses).
+  initAppleIap(() => {
+    for (const w of BrowserWindow.getAllWindows()) {
+      if (!w.isDestroyed()) w.webContents.send(IPC.AI_ACCOUNT_CHANGED)
+    }
+  })
   // BYOK kaldırıldı (2026-10-16): eski sürümlerden kalan şifreli anahtar dosyasını sil.
   purgeLegacyApiKey()
 
@@ -514,6 +522,8 @@ export function registerAiBridgeHandlers(): void {
   // giriş kartını gösteriyor olur, bu kanal ayrıca hata üretmez).
   ipcMain.handle(IPC.AI_ACCOUNT_PACKS, async (event): Promise<AiCreditPack[]> => {
     validateSender(event)
+    // Mac App Store build: credits are sold through In-App Purchase (apple-iap.ts).
+    if (IAP_ENABLED) return listApplePacks()
     const token = await ensureFreshAccessToken()
     if (!token) return []
     try {
@@ -537,6 +547,7 @@ export function registerAiBridgeHandlers(): void {
     IPC.AI_ACCOUNT_CHECKOUT,
     AiCheckoutRequestSchema,
     async (req): Promise<AiCheckoutResult> => {
+      if (IAP_ENABLED) return startApplePurchase(req.variantId)
       const token = await ensureFreshAccessToken()
       if (!token) return { ok: false, error: 'not_logged_in' }
       try {
