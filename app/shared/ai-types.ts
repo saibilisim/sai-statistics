@@ -315,7 +315,11 @@ export const AiCreditPackSchema = z.object({
   usd: z.number(),
   // Tahsil edilecek tutar ve para birimi (2026-10-29): Türkiye kanalında
   // PayTR ile TL. Eski sunucu yanıtında yoksa usd/USD kullanılır.
-  currency: z.enum(['USD', 'TRY']).optional(),
+  // Mac App Store build: StoreKit's localized currency (any ISO 4217 code).
+  currency: z
+    .string()
+    .regex(/^[A-Z]{3}$/)
+    .optional(),
   price: z.number().optional(),
   // Kaç SAI Token yükleneceği — üst paketlerde hediye kredi yüzünden usd*100
   // ile birebir örtüşmez (örn. $20 pakette 2400 token = $24 değerinde bakiye).

@@ -1,6 +1,7 @@
 node_modules/
 out/
 dist/
+dist-mas/
 .DS_Store
 *.log
 

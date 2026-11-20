@@ -15,6 +15,7 @@ export default tseslint.config(
     ignores: [
       'out/**',
       'dist/**',
+      'dist-mas/**',
       'node_modules/**',
       'resources/r-runtime/**',
       'resources/r-runtime-win/**',
