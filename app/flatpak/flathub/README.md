@@ -1,6 +1,7 @@
 # Flathub submission — com.saibilisim.saistatistics
 
 Folder with the submission files for Flathub (`com.saibilisim.saistatistics`):
+
 - `com.saibilisim.saistatistics.yml`: Flatpak manifest
 - `com.saibilisim.saistatistics.desktop`: Desktop entry file
 - `com.saibilisim.saistatistics.metainfo.xml`: AppStream metadata file
@@ -62,6 +63,7 @@ Use `prepare-submission.sh` to stage the commit locally:
 This clones your fork of `flathub/flathub` (branch `new-pr`), copies the submission files, and creates a commit.
 
 ### Flathub PR Requirements:
+
 - **Human submission:** The PR description, checklists, and all review conversations on Flathub must be written directly by the maintainer. Fill in all checklist items in Flathub's PR template.
 - **Domain verification:** After initial acceptance, add verification token to `https://saibilisim.com/.well-known/org.flathub.VerifiedApps.txt` or configure GitHub organization verification.
 - **Screenshots:** Screenshots are served via HTTPS at 1280x800 and referenced in `com.saibilisim.saistatistics.metainfo.xml`.
