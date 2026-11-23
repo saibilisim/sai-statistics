@@ -2,7 +2,8 @@
 #
 # Asks every new contributor to sign CLA.md by commenting on their pull
 # request, and records the signature in the `cla-signatures` branch of this
-# repository (created on the first signature). The check runs as
+# repository. The action does not create that branch: it must already exist,
+# or every check fails with "Branch cla-signatures not found". The check runs as
 # pull_request_target so it can comment on PRs from forks; it never checks out
 # or runs the pull request's code.
 #
@@ -40,5 +41,5 @@ jobs:
           path-to-document: https://github.com/saibilisim/sai-statistics/blob/main/CLA.md
           path-to-signatures: signatures/version1/cla.json
           branch: cla-signatures
-          allowlist: saibilisim,dependabot[bot],github-actions[bot]
+          allowlist: dev-saibilisim,dependabot[bot],github-actions[bot]
           lock-pullrequest-aftermerge: false
