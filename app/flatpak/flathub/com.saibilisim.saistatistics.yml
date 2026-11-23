@@ -51,4 +51,3 @@ modules:
         path: com.saibilisim.saistatistics.metainfo.xml
       - type: file
         path: icon-512.png
-  
