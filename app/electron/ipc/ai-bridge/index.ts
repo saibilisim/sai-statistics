@@ -84,6 +84,7 @@ import {
   consumeDeleteReauth
 } from './credentials'
 import { performGoogleLogin } from './google-login'
+import { performAppleLogin } from './apple-login'
 import { IAP_ENABLED, initAppleIap, listApplePacks, startApplePurchase } from './apple-iap'
 import { authErrorFromResponse, authErrorFromException, authErrorDetail } from './auth-errors'
 import { requireProviderConfig, checkReachable } from './provider-config'
@@ -206,6 +207,21 @@ export function registerAiBridgeHandlers(): void {
     async (event): Promise<AiAccountAuthResult> => {
       validateSender(event)
       return performGoogleLogin('reauth')
+    }
+  )
+
+  // ai:account:apple-login / delete-reauth-apple — Sign in with Apple, same
+  // contract as the Google pair (reauth: same account required; success sets
+  // the one-shot delete flag the delete channel consumes).
+  ipcMain.handle(IPC.AI_ACCOUNT_APPLE_LOGIN, async (event): Promise<AiAccountAuthResult> => {
+    validateSender(event)
+    return performAppleLogin()
+  })
+  ipcMain.handle(
+    IPC.AI_ACCOUNT_DELETE_REAUTH_APPLE,
+    async (event): Promise<AiAccountAuthResult> => {
+      validateSender(event)
+      return performAppleLogin('reauth')
     }
   )
 

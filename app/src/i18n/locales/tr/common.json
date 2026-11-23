@@ -612,6 +612,7 @@
         "openLogin": "Giriş Yap / Üye Ol",
         "windowTitle": "SAI Hesabı",
         "googleLogin": "Google ile giriş yap",
+        "appleLogin": "Apple ile giriş yap",
         "googleComingSoon": "Yakında",
         "googleWaiting": "Tarayıcıda devam edin…",
         "success": "Başarılı! Pencere kapanıyor…",
@@ -656,9 +657,10 @@
           "emailChangeSent": "{{email}} adresine bir onay bağlantısı gönderdik. Bağlantıya tıkladığınızda adresiniz güncellenir.",
           "deleteWarning": "Bu işlem hesabınızı ve kalan kredilerinizi kalıcı olarak siler. Geri alınamaz.",
           "deleteConfirm": "Hesabımı sil",
-          "deleteGoogleOr": "veya Google ile bağlıysa",
+          "deleteOAuthOr": "veya Google ya da Apple ile bağlıysa",
           "deleteGoogleVerify": "Google ile doğrula",
-          "deleteGoogleVerified": "Google doğrulaması tamamlandı. Hesabınızı ve kalan kredilerinizi kalıcı olarak silmek istiyor musunuz?",
+          "deleteAppleVerify": "Apple ile doğrula",
+          "deleteOAuthVerified": "Doğrulama tamamlandı. Hesabınızı ve kalan kredilerinizi kalıcı olarak silmek istiyor musunuz?",
           "deleteGoogleConfirm": "Evet, hesabı sil",
           "dangerZone": "Tehlikeli bölge"
         },
@@ -678,13 +680,15 @@
           "storage_unavailable": "Oturum bu bilgisayarda güvenli biçimde saklanamadı (şifreleme kullanılamıyor).",
           "server_error": "Sunucuda bir hata oluştu. Kısa süre sonra tekrar deneyin.",
           "google_failed": "Google ile giriş tamamlanamadı. Tekrar deneyin.",
+          "apple_failed": "Apple ile giriş tamamlanamadı. Tekrar deneyin.",
           "unknown": "İşlem başarısız oldu, lütfen tekrar deneyin."
         },
         "terms": {
           "text": "{license}'ni kabul ediyorum; {privacy}'nı okudum.",
           "license": "Lisans Sözleşmesi",
           "privacy": "Gizlilik Politikası ve KVKK Aydınlatma Metni",
-          "googleNote": "Google ile devam ederek {license}'ni kabul etmiş ve {privacy}'nı okumuş olursunuz.",
+          "appleNote": "Apple ile devam ederek {license}'ni kabul etmiş ve {privacy}'nı okumuş olursunuz.",
+          "oauthNote": "Google veya Apple ile devam ederek {license}'ni kabul etmiş ve {privacy}'nı okumuş olursunuz.",
           "required": "Hesap oluşturmak için Lisans Sözleşmesi'ni kabul etmelisiniz."
         }
       },

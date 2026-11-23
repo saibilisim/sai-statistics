@@ -36,7 +36,7 @@ function googleCallbackHtml(ok: boolean): string {
   return `<!doctype html><html><head><meta charset="utf-8"><title>SAI Statistics</title></head><body style="font-family:sans-serif;padding:2rem;text-align:center;">${message}</body></html>`
 }
 
-async function fetchAccountEmail(token: string): Promise<string | null> {
+export async function fetchAccountEmail(token: string): Promise<string | null> {
   try {
     const res = await fetch(`${AI_SERVER_BASE_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },

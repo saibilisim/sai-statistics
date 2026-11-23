@@ -612,6 +612,7 @@
         "openLogin": "Entrar / Cadastrar-se",
         "windowTitle": "Conta SAI",
         "googleLogin": "Entrar com o Google",
+        "appleLogin": "Entrar com a Apple",
         "googleComingSoon": "Em breve",
         "googleWaiting": "Continue no navegador…",
         "success": "Sucesso! Fechando a janela…",
@@ -656,9 +657,10 @@
           "emailChangeSent": "Enviamos um link de confirmação para {{email}}. Seu endereço é atualizado assim que você clicar nele.",
           "deleteWarning": "Isto exclui permanentemente sua conta e os créditos restantes. Não pode ser desfeito.",
           "deleteConfirm": "Excluir minha conta",
-          "deleteGoogleOr": "ou, se vinculada ao Google",
+          "deleteOAuthOr": "ou, se vinculada ao Google ou à Apple",
           "deleteGoogleVerify": "Verificar com o Google",
-          "deleteGoogleVerified": "Verificação do Google concluída. Deseja excluir permanentemente sua conta e os créditos restantes?",
+          "deleteAppleVerify": "Verificar com a Apple",
+          "deleteOAuthVerified": "Verificação concluída. Deseja excluir permanentemente sua conta e os créditos restantes?",
           "deleteGoogleConfirm": "Sim, excluir minha conta",
           "dangerZone": "Zona de perigo"
         },
@@ -678,13 +680,15 @@
           "storage_unavailable": "A sessão não pôde ser armazenada com segurança neste computador (criptografia indisponível).",
           "server_error": "Ocorreu um erro no servidor. Tente novamente em instantes.",
           "google_failed": "Não foi possível concluir o login com o Google. Tente novamente.",
+          "apple_failed": "Não foi possível concluir o login com a Apple. Tente novamente.",
           "unknown": "A solicitação falhou, tente novamente."
         },
         "terms": {
           "text": "Aceito o {license} e li a {privacy}.",
           "license": "Contrato de Licença",
           "privacy": "Política de Privacidade",
-          "googleNote": "Ao continuar com o Google, você aceita o {license} e confirma que leu a {privacy}.",
+          "appleNote": "Ao continuar com a Apple, você aceita o {license} e confirma que leu a {privacy}.",
+          "oauthNote": "Ao continuar com o Google ou a Apple, você aceita o {license} e confirma que leu a {privacy}.",
           "required": "Você deve aceitar o Contrato de Licença para criar uma conta."
         }
       },

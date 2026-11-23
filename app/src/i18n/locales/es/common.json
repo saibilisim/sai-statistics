@@ -612,6 +612,7 @@
         "openLogin": "Iniciar sesión / Registrarse",
         "windowTitle": "Cuenta SAI",
         "googleLogin": "Iniciar sesión con Google",
+        "appleLogin": "Iniciar sesión con Apple",
         "googleComingSoon": "Próximamente",
         "googleWaiting": "Continúa en tu navegador…",
         "success": "¡Listo! Cerrando la ventana…",
@@ -656,9 +657,10 @@
           "emailChangeSent": "Enviamos un enlace de confirmación a {{email}}. Tu dirección se actualiza en cuanto hagas clic en él.",
           "deleteWarning": "Esto elimina permanentemente tu cuenta y los créditos restantes. No se puede deshacer.",
           "deleteConfirm": "Eliminar mi cuenta",
-          "deleteGoogleOr": "o, si está vinculada con Google",
+          "deleteOAuthOr": "o, si está vinculada con Google o Apple",
           "deleteGoogleVerify": "Verificar con Google",
-          "deleteGoogleVerified": "Verificación de Google completada. ¿Desea eliminar de forma permanente su cuenta y los créditos restantes?",
+          "deleteAppleVerify": "Verificar con Apple",
+          "deleteOAuthVerified": "Verificación completada. ¿Desea eliminar de forma permanente su cuenta y los créditos restantes?",
           "deleteGoogleConfirm": "Sí, eliminar mi cuenta",
           "dangerZone": "Zona de peligro"
         },
@@ -678,13 +680,15 @@
           "storage_unavailable": "La sesión no se pudo guardar de forma segura en este equipo (cifrado no disponible).",
           "server_error": "Se produjo un error en el servidor. Inténtalo de nuevo en breve.",
           "google_failed": "No se pudo completar el inicio de sesión con Google. Inténtalo de nuevo.",
+          "apple_failed": "No se pudo completar el inicio de sesión con Apple. Inténtalo de nuevo.",
           "unknown": "La solicitud falló, inténtalo de nuevo."
         },
         "terms": {
           "text": "Acepto el {license} y he leído la {privacy}.",
           "license": "Acuerdo de Licencia",
           "privacy": "Política de Privacidad",
-          "googleNote": "Al continuar con Google, acepta el {license} y confirma que ha leído la {privacy}.",
+          "appleNote": "Al continuar con Apple, acepta el {license} y confirma que ha leído la {privacy}.",
+          "oauthNote": "Al continuar con Google o Apple, acepta el {license} y confirma que ha leído la {privacy}.",
           "required": "Debe aceptar el Acuerdo de Licencia para crear una cuenta."
         }
       },

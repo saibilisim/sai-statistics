@@ -271,6 +271,9 @@ export const IPC = {
   // login/register ile aynı AiAccountAuthResult şeklini döner.
   AI_ACCOUNT_GOOGLE_LOGIN: 'ai:account:google-login',
   AI_ACCOUNT_DELETE_REAUTH_GOOGLE: 'ai:account:delete-reauth-google',
+  // Sign in with Apple (App Review 4.8; server: routes/auth-apple.ts).
+  AI_ACCOUNT_APPLE_LOGIN: 'ai:account:apple-login',
+  AI_ACCOUNT_DELETE_REAUTH_APPLE: 'ai:account:delete-reauth-apple',
   AI_ACCOUNT_LOGOUT: 'ai:account:logout',
   AI_ACCOUNT_STATUS: 'ai:account:status',
   // Kimlik girişi artık Preferences içine gömülü değil — ayrı, küçük bir

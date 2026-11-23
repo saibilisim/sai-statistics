@@ -612,6 +612,7 @@
         "openLogin": "Log In / Sign Up",
         "windowTitle": "SAI Account",
         "googleLogin": "Sign in with Google",
+        "appleLogin": "Sign in with Apple",
         "googleComingSoon": "Coming soon",
         "googleWaiting": "Continue in your browser…",
         "success": "Success! Closing window…",
@@ -656,9 +657,10 @@
           "emailChangeSent": "We sent a confirmation link to {{email}}. Your address updates once you click it.",
           "deleteWarning": "This permanently deletes your account and any remaining credits. This cannot be undone.",
           "deleteConfirm": "Delete my account",
-          "deleteGoogleOr": "or, if linked with Google",
+          "deleteOAuthOr": "or, if linked with Google or Apple",
           "deleteGoogleVerify": "Verify with Google",
-          "deleteGoogleVerified": "Google verification complete. Do you want to permanently delete your account and remaining credits?",
+          "deleteAppleVerify": "Verify with Apple",
+          "deleteOAuthVerified": "Verification complete. Do you want to permanently delete your account and remaining credits?",
           "deleteGoogleConfirm": "Yes, delete my account",
           "dangerZone": "Danger zone"
         },
@@ -678,13 +680,15 @@
           "storage_unavailable": "The session could not be stored securely on this computer (encryption unavailable).",
           "server_error": "A server error occurred. Please try again shortly.",
           "google_failed": "Google sign-in could not be completed. Please try again.",
+          "apple_failed": "Sign in with Apple could not be completed. Please try again.",
           "unknown": "The request failed, please try again."
         },
         "terms": {
           "text": "I accept the {license} and have read the {privacy}.",
           "license": "License Agreement",
           "privacy": "Privacy Policy",
-          "googleNote": "By continuing with Google, you accept the {license} and confirm you have read the {privacy}.",
+          "appleNote": "By continuing with Apple, you accept the {license} and confirm you have read the {privacy}.",
+          "oauthNote": "By continuing with Google or Apple, you accept the {license} and confirm you have read the {privacy}.",
           "required": "You must accept the License Agreement to create an account."
         }
       },

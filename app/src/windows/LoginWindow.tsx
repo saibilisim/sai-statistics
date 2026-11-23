@@ -6,7 +6,7 @@ import { useSettingsStore } from '../store/settings-store'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import { cx } from '../lib/cx'
 import { AI_GOOGLE_CLIENT_ID, AI_PASSWORD_MIN_LENGTH, checkPasswordPolicy } from '@shared/ai-types'
-import { BrandMark, GoogleIcon } from './LoginIcons'
+import { AppleIcon, BrandMark, GoogleIcon } from './LoginIcons'
 import styles from './LoginWindow.module.css'
 
 /**
@@ -53,6 +53,7 @@ export function LoginWindow() {
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [busy, setBusy] = useState(false)
   const [googleBusy, setGoogleBusy] = useState(false)
+  const [appleBusy, setAppleBusy] = useState(false)
   const [errorKey, setErrorKey] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [pendingEmail, setPendingEmail] = useState<string | null>(null)
@@ -177,6 +178,32 @@ export function LoginWindow() {
       })
       .finally(() => {
         setBusy(false)
+      })
+  }
+
+  // Sign in with Apple — same flow and result handling as Google (system
+  // browser, through our server; App Review 4.8 equivalent login option).
+  const handleAppleLogin = (): void => {
+    if (appleBusy || googleBusy) return
+    setAppleBusy(true)
+    resetFeedback()
+    void window.api.ai.account
+      .appleLogin()
+      .then(result => {
+        if (result.ok) {
+          setSuccess(true)
+          setTimeout(() => {
+            window.close()
+          }, 900)
+        } else {
+          setErrorKey(`ai.settings.account.error.${result.error ?? 'unknown'}`)
+        }
+      })
+      .catch(() => {
+        setErrorKey('ai.settings.account.error.unknown')
+      })
+      .finally(() => {
+        setAppleBusy(false)
       })
   }
 
@@ -462,13 +489,27 @@ export function LoginWindow() {
                     </button>
                   )}
 
-                  {/* Google ile giriş ilk kullanımda hesap da açar — onay kutusu
-                      yerine bu akışta kabul, düğmeye basılarak verilir. */}
-                  {AI_GOOGLE_CLIENT_ID && (
-                    <p className={styles.termsNote}>
-                      {renderLegalText('ai.settings.account.terms.googleNote')}
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    className={styles.googleBtn}
+                    disabled={appleBusy || googleBusy}
+                    onClick={handleAppleLogin}
+                  >
+                    <AppleIcon />
+                    {appleBusy
+                      ? t('ai.settings.account.googleWaiting')
+                      : t('ai.settings.account.appleLogin')}
+                  </button>
+
+                  {/* Google/Apple ile giriş ilk kullanımda hesap da açar — onay
+                      kutusu yerine bu akışta kabul, düğmeye basılarak verilir. */}
+                  <p className={styles.termsNote}>
+                    {renderLegalText(
+                      AI_GOOGLE_CLIENT_ID
+                        ? 'ai.settings.account.terms.oauthNote'
+                        : 'ai.settings.account.terms.appleNote'
+                    )}
+                  </p>
 
                   <div className={styles.switchRow}>
                     <button

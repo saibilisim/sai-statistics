@@ -359,6 +359,7 @@ export const AiAccountErrorCodeSchema = z.enum([
   'storage_unavailable', // safeStorage şifreleme yok → token saklanamaz
   'server_error', // 5xx
   'google_failed', // OAuth akışı tamamlanamadı (iptal/timeout/geçersiz callback)
+  'apple_failed', // Sign in with Apple akışı tamamlanamadı (iptal/timeout/geçersiz kod)
   'unknown'
 ])
 export type AiAccountErrorCode = z.infer<typeof AiAccountErrorCodeSchema>

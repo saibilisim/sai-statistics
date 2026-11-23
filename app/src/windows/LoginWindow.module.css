@@ -207,6 +207,11 @@
   transition: background 0.12s ease;
 }
 
+/* Google + Apple stacked: keep them apart like the other form rows. */
+.googleBtn + .googleBtn {
+  margin-top: var(--space-sm);
+}
+
 .googleBtn:hover:not(:disabled) {
   background: var(--color-bg-hover);
 }

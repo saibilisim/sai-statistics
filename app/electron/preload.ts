@@ -488,6 +488,11 @@ const api = {
         ipcRenderer.invoke(IPC.AI_ACCOUNT_DELETE_REAUTH_GOOGLE),
       googleLogin: (): Promise<AiAccountAuthResult> =>
         ipcRenderer.invoke(IPC.AI_ACCOUNT_GOOGLE_LOGIN),
+      // Sign in with Apple: same system-browser pattern, through our server.
+      appleLogin: (): Promise<AiAccountAuthResult> =>
+        ipcRenderer.invoke(IPC.AI_ACCOUNT_APPLE_LOGIN),
+      reauthAppleForDelete: (): Promise<AiAccountAuthResult> =>
+        ipcRenderer.invoke(IPC.AI_ACCOUNT_DELETE_REAUTH_APPLE),
       logout: (): Promise<boolean> => ipcRenderer.invoke(IPC.AI_ACCOUNT_LOGOUT),
       status: (): Promise<AiAccountStatus> => ipcRenderer.invoke(IPC.AI_ACCOUNT_STATUS),
       // Kimlik girişi ayrı bir pencerede (main.ts openLoginWindow) — bu yalnız

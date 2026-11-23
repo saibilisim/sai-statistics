@@ -382,14 +382,15 @@ function DeleteAccountDialog({ onClose, onDeleted }: DeleteAccountDialogProps) {
     }
   })
 
-  // Google ile bağlı hesap: önce sistem tarayıcısında yeniden Google girişi
-  // (Main aynı hesabı doğrular), sonra ayrı bir onay butonu çıkar.
-  const handleGoogleVerify = (): void => {
+  // Google/Apple ile bağlı hesap: önce sistem tarayıcısında yeniden giriş
+  // (Main aynı hesabı doğrular), sonra ayrı bir onay butonu çıkar. İki
+  // sağlayıcı da aynı tek kullanımlık silme bayrağını kurar.
+  const handleOAuthVerify = (provider: 'google' | 'apple'): void => {
     if (busy) return
     setBusy(true)
     setErrorKey(null)
-    void window.api.ai.account
-      .reauthGoogleForDelete()
+    const account = window.api.ai.account
+    void (provider === 'apple' ? account.reauthAppleForDelete() : account.reauthGoogleForDelete())
       .then(result => {
         if (result.ok) {
           setGoogleVerified(true)
@@ -486,7 +487,7 @@ function DeleteAccountDialog({ onClose, onDeleted }: DeleteAccountDialogProps) {
 
           <div className={styles.deleteMethod}>
             <span className={styles.deleteMethodLabel}>
-              {t('ai.settings.account.manage.deleteGoogleOr')}
+              {t('ai.settings.account.manage.deleteOAuthOr')}
             </span>
             {!googleVerified ? (
               <div className={styles.deleteMethodRow}>
@@ -494,15 +495,27 @@ function DeleteAccountDialog({ onClose, onDeleted }: DeleteAccountDialogProps) {
                   type="button"
                   className={dataStyles.btn}
                   disabled={busy}
-                  onClick={handleGoogleVerify}
+                  onClick={() => {
+                    handleOAuthVerify('google')
+                  }}
                 >
                   {t('ai.settings.account.manage.deleteGoogleVerify')}
+                </button>
+                <button
+                  type="button"
+                  className={dataStyles.btn}
+                  disabled={busy}
+                  onClick={() => {
+                    handleOAuthVerify('apple')
+                  }}
+                >
+                  {t('ai.settings.account.manage.deleteAppleVerify')}
                 </button>
               </div>
             ) : (
               <>
                 <p className={styles.dangerNote} role="status">
-                  {t('ai.settings.account.manage.deleteGoogleVerified')}
+                  {t('ai.settings.account.manage.deleteOAuthVerified')}
                 </p>
                 <div className={styles.deleteMethodRow}>
                   <button
