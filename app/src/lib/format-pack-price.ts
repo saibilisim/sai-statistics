@@ -8,10 +8,13 @@ import type { AiCreditPack } from '@shared/ai-types'
  */
 export function formatPackPrice(pack: AiCreditPack, locale: string): string {
   const currency = pack.currency ?? 'USD'
+  const amount = pack.price ?? pack.usd
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
-    maximumFractionDigits: currency === 'TRY' ? 0 : 2
-  }).format(pack.price ?? pack.usd)
+    // Whole amounts without decimals (399 TL, $10); App Store prices keep
+    // theirs ($9.99, ₺499,99) so the button shows what will be charged.
+    maximumFractionDigits: Number.isInteger(amount) ? 0 : 2
+  }).format(amount)
 }
