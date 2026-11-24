@@ -211,7 +211,7 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@be893c923ea9cf1cf7cd510fbdde27c7e18cbdcb # v4.1.0
         with:
-          miniforge-version: 12.15.0
+          miniforge-version: 26.9.4-2
           auto-activate-base: false
 
       - name: Install dependencies
