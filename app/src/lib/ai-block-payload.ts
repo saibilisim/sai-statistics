@@ -28,6 +28,7 @@ function keysOf(titleKey: string, result: AnalysisResult): Set<string> {
     keys.add(table.titleKey)
     for (const col of table.columns) keys.add(col)
     if (table.footnoteKey) keys.add(table.footnoteKey)
+    for (const k of table.footnoteKeys ?? []) keys.add(k)
     for (const row of table.rows) {
       for (const cell of row)
         if (typeof cell === 'string' && cell.startsWith('output.')) keys.add(cell)

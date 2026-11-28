@@ -1522,7 +1522,8 @@
       "rTableFootnote": "Critical value of r (r table), α = .05 {{p3}}: {{p0}} for N = {{p1}} (df = {{p2}}). A correlation larger than this in absolute value is significant.",
       "rTableFootnoteRange": "Critical value of r (r table), α = .05 {{p4}}: {{p0}} for N = {{p1}} up to {{p2}} for N = {{p3}}; each pair is judged by its own N.",
       "tailTwo": "two-tailed",
-      "tailOne": "one-tailed"
+      "tailOne": "one-tailed",
+      "sigFlag": "{{p0}}. Correlation is significant at the {{p1}} level ({{p2}})."
     },
     "regression": {
       "modelSummaryTitle": "Model Summary",

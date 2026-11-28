@@ -1522,7 +1522,8 @@
       "rTableFootnote": "Valeur critique de r (table de r), α = .05 {{p3}} : {{p0}} pour N = {{p1}} (ddl = {{p2}}). Une corrélation supérieure en valeur absolue est significative.",
       "rTableFootnoteRange": "Valeur critique de r (table de r), α = .05 {{p4}} : {{p0}} pour N = {{p1}} jusqu'à {{p2}} pour N = {{p3}} ; chaque paire est jugée selon son propre N.",
       "tailTwo": "bilatéral",
-      "tailOne": "unilatéral"
+      "tailOne": "unilatéral",
+      "sigFlag": "{{p0}}. La corrélation est significative au niveau {{p1}} ({{p2}})."
     },
     "regression": {
       "modelSummaryTitle": "Récapitulatif du modèle",

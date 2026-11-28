@@ -8,7 +8,10 @@ export const OutputTableSchema = z.object({
   titleKey: z.string(), // i18n key — Renderer çevirir
   columns: z.array(z.string()), // column i18n keys
   rows: z.array(z.array(z.union([z.string(), z.number(), z.null()]))),
-  footnoteKey: z.string().nullish() // R NULL → JSON null → optional in TS
+  footnoteKey: z.string().nullish(), // R NULL → JSON null → optional in TS
+  // Further footnotes, shown after footnoteKey in this order (e.g. the
+  // correlation significance-flag legend followed by the r-table value).
+  footnoteKeys: z.array(z.string()).nullish()
 })
 export type OutputTable = z.infer<typeof OutputTableSchema>
 

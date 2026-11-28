@@ -1522,7 +1522,8 @@
       "rTableFootnote": "Valor crítico de r (tabela r), α = .05 {{p3}}: {{p0}} para N = {{p1}} (gl = {{p2}}). Uma correlação maior em valor absoluto é significativa.",
       "rTableFootnoteRange": "Valor crítico de r (tabela r), α = .05 {{p4}}: {{p0}} para N = {{p1}} até {{p2}} para N = {{p3}}; cada par é avaliado pelo seu próprio N.",
       "tailTwo": "bilateral",
-      "tailOne": "unilateral"
+      "tailOne": "unilateral",
+      "sigFlag": "{{p0}}. A correlação é significativa no nível {{p1}} ({{p2}})."
     },
     "regression": {
       "modelSummaryTitle": "Resumo do Modelo",

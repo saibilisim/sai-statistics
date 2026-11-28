@@ -1522,7 +1522,8 @@
       "rTableFootnote": "Valore critico di r (tavola di r), α = .05 {{p3}}: {{p0}} per N = {{p1}} (gl = {{p2}}). Una correlazione maggiore in valore assoluto è significativa.",
       "rTableFootnoteRange": "Valore critico di r (tavola di r), α = .05 {{p4}}: {{p0}} per N = {{p1}} fino a {{p2}} per N = {{p3}}; ogni coppia è valutata con il proprio N.",
       "tailTwo": "a due code",
-      "tailOne": "a una coda"
+      "tailOne": "a una coda",
+      "sigFlag": "{{p0}}. La correlazione è significativa al livello {{p1}} ({{p2}})."
     },
     "regression": {
       "modelSummaryTitle": "Riepilogo del modello",

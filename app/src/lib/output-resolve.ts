@@ -162,6 +162,7 @@ export function resolveTable(
     edits.titleOverride ?? (table.titleKey ? translateOutputKey(table.titleKey, t) : null)
   const footnotes = [
     ...(table.footnoteKey ? [translateOutputKey(table.footnoteKey, t)] : []),
+    ...(table.footnoteKeys ?? []).map(k => translateOutputKey(k, t)),
     ...edits.footnotes
   ]
 

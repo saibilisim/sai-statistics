@@ -71,7 +71,18 @@ export function compactAnalysisResult(
         titleKey: text(table.titleKey),
         columns: table.columns.map(text),
         rows,
-        ...(table.footnoteKey ? { footnoteKey: text(table.footnoteKey) } : {}),
+        // Every footnote folds into the one footnoteKey field the server's
+        // prompt already knows, so the sai_prompt shape stays unchanged.
+        ...(table.footnoteKey || table.footnoteKeys?.length
+          ? {
+              footnoteKey: [
+                ...(table.footnoteKey ? [table.footnoteKey] : []),
+                ...(table.footnoteKeys ?? [])
+              ]
+                .map(text)
+                .join(' ')
+            }
+          : {}),
         ...(table.rows.length > MAX_TABLE_ROWS
           ? {
               rowsOmitted: `${String(table.rows.length - MAX_TABLE_ROWS)} more rows are shown in the Output tab but not here; do not guess their values.`

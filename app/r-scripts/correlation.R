@@ -182,12 +182,12 @@ tryCatch({
     # r table footnote (Pearson only — the critical value comes from the
     # t-test of Pearson's r). Pairwise deletion can give pairs different Ns,
     # each with its own critical value: then the footnote gives the range.
+    tail_key <- if (one_tailed) "output.correlate.tailOne" else "output.correlate.tailTwo"
     r_note <- NULL
     if (identical(m, "pearson") && k >= 2) {
       pair_n <- unlist(lapply(seq_len(k - 1), function(i) lapply((i + 1):k, function(j)
         sum(!is.na(mats[[i]]) & !is.na(mats[[j]])))))
       pair_n <- pair_n[pair_n >= 3]
-      tail_key <- if (one_tailed) "output.correlate.tailOne" else "output.correlate.tailTwo"
       if (length(pair_n) > 0) {
         lo <- min(pair_n); hi <- max(pair_n)
         r_note <- if (lo == hi) {
@@ -201,11 +201,24 @@ tryCatch({
       }
     }
 
+    # Significance-flag legend, as SPSS prints it: one line per flag level
+    # that actually occurs in this table, ** before *.
+    flag_cells <- unlist(lapply(out_rows, function(r) r[-(1:2)]))
+    flag_cells <- flag_cells[is.character(flag_cells)]
+    flag_notes <- c(
+      if (any(endsWith(flag_cells, "**")))
+        paste0("output.correlate.sigFlag:**|0.01|", tail_key),
+      if (any(endsWith(flag_cells, "*") & !endsWith(flag_cells, "**")))
+        paste0("output.correlate.sigFlag:*|0.05|", tail_key)
+    )
+    notes_all <- c(flag_notes, r_note)
+
     all_tables <- c(all_tables, list(list(
-      titleKey    = paste0("output.correlate.title:", method_name[[m]]),
-      columns     = as.list(unname(cols_hdr)),
-      rows        = out_rows,
-      footnoteKey = r_note
+      titleKey     = paste0("output.correlate.title:", method_name[[m]]),
+      columns      = as.list(unname(cols_hdr)),
+      rows         = out_rows,
+      footnoteKey  = if (length(notes_all) > 0) notes_all[1] else NULL,
+      footnoteKeys = if (length(notes_all) > 1) as.list(notes_all[-1]) else NULL
     )))
   }
 

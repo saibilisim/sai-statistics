@@ -1522,7 +1522,8 @@
       "rTableFootnote": "r'nin kritik değeri (r tablosu), α = .05 {{p3}}: N = {{p1}} için {{p0}} (sd = {{p2}}). Mutlak değeri bundan büyük korelasyon anlamlıdır.",
       "rTableFootnoteRange": "r'nin kritik değeri (r tablosu), α = .05 {{p4}}: N = {{p1}} için {{p0}}, N = {{p3}} için {{p2}}; her çift kendi N'ine göre değerlendirilir.",
       "tailTwo": "çift yönlü",
-      "tailOne": "tek yönlü"
+      "tailOne": "tek yönlü",
+      "sigFlag": "{{p0}}. Korelasyon {{p1}} düzeyinde anlamlıdır ({{p2}})."
     },
     "regression": {
       "modelSummaryTitle": "Model Özeti",

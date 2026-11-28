@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /* E2E: the "r table" (critical r) footnotes reach the Output.
  *
- * Runs Bivariate Correlations (Pearson, score/income/age) and Reliability
+ * Runs Bivariate Correlations (Pearson, q1–q3) and Reliability
  * Analysis (q1–q5) from the real menu channels against the real R engine and
  * checks that the Pearson table and the Item-Total Statistics table carry
- * their r-table footnote, rendered in the UI language with the tail word
- * translated and no raw output.* key left in the page. The critical values
+ * their r-table footnote, and the Pearson table its significance-flag legend
+ * (the q items correlate, so ** cells are certain), rendered in the UI
+ * language with the tail word translated and no raw output.* key left. The critical values
  * themselves are checked in tests/r-validation/test-r-table-footnote-2026-11.R.
  *
  * Data: tests/spss-parity/data.csv.
@@ -24,9 +25,9 @@ const SCENARIOS = [
     id: 'pearson-r-table',
     channel: 'menu:analyze:correlate-bivariate',
     vars: [
-      ['score', 0],
-      ['income', 0],
-      ['age', 0]
+      ['q1', 0],
+      ['q2', 0],
+      ['q3', 0]
     ],
     table: 'output.correlate.title:Pearson',
     footnote: /^output\.correlate\.rTableFootnote(Range)?:/,
@@ -106,15 +107,15 @@ async function main() {
       fails.push(`${scn.id}: no result (${JSON.stringify(block?.error ?? null)})`)
       continue
     }
-    const fk = await win.evaluate(
-      key =>
-        window.__SAI_TEST__.useOutputStore
-          .getState()
-          .blocks[0]?.result?.tables?.find(tb => tb.titleKey === key)?.footnoteKey ?? null,
-      scn.table
-    )
-    if (!fk || !scn.footnote.test(fk)) fails.push(`${scn.id}: footnote key is ${fk}`)
-    console.log(fk)
+    const keys = await win.evaluate(key => {
+      const tb = window.__SAI_TEST__.useOutputStore
+        .getState()
+        .blocks[0]?.result?.tables?.find(x => x.titleKey === key)
+      return tb ? [tb.footnoteKey, ...(tb.footnoteKeys ?? [])].filter(Boolean) : []
+    }, scn.table)
+    if (!keys.some(k => scn.footnote.test(k)))
+      fails.push(`${scn.id}: no r-table footnote (${keys.join(' ; ')})`)
+    console.log(keys.join(' ; '))
   }
 
   await win.evaluate(() => window.__SAI_TEST__.useUIStore.getState().setActiveTab('output'))
@@ -129,6 +130,17 @@ async function main() {
   }
   if (!text.includes(t('analysis:output.correlate.tailTwo')))
     fails.push('tail word (two-tailed) not rendered')
+  // Significance-flag legend: the q items correlate, so ** must be there.
+  const flagged = await win.evaluate(() =>
+    window.__SAI_TEST__.useOutputStore
+      .getState()
+      .blocks.flatMap(b => b.result?.tables ?? [])
+      .flatMap(tb => [tb.footnoteKey, ...(tb.footnoteKeys ?? [])])
+      .some(k => typeof k === 'string' && k.startsWith('output.correlate.sigFlag:'))
+  )
+  const legend = t('analysis:output.correlate.sigFlag').split('{{p1}}')[0].replace('{{p0}}', '**')
+  if (!flagged) fails.push('no significance-flag footnote on the Pearson table')
+  else if (!text.includes(legend)) fails.push(`significance legend not rendered ("${legend}")`)
   const leaks = (text.match(/\b(output|analysis)\.[a-zA-Z][a-zA-Z.]+/g) || []).slice(0, 10)
   if (leaks.length) fails.push(`raw key leaks: ${leaks.join(', ')}`)
   if (pageErrors.length) fails.push(`page errors: ${pageErrors.join(' | ')}`)
