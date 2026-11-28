@@ -296,7 +296,11 @@ tryCatch({
          columns = list("output.col.variable", "output.col.scaleMeanDel",
                         "output.col.scaleVarDel", "output.col.corrItemTotal",
                         "output.col.alphaDel"),
-         rows = item_rows, footnoteKey = NULL),
+         rows = item_rows,
+         # r table for the Corrected Item-Total Correlation column, the
+         # validity check thesis guides apply to it (df = N - 2, α = .05).
+         footnoteKey = if (n >= 3) paste0("output.reliability.rTableFootnote:",
+                                          r_critical(n), "|", n, "|", n - 2L) else NULL),
     # Scale Statistics: mean, variance, SD of the total scale score + N of items.
     list(titleKey = "output.reliability.scaleStatsTitle",
          columns = list("output.col.mean", "output.col.variance",

@@ -1518,7 +1518,11 @@
     },
     "correlate": {
       "title": "Correlaciones — {{name}}",
-      "descriptivesTitle": "Estadísticos Descriptivos"
+      "descriptivesTitle": "Estadísticos Descriptivos",
+      "rTableFootnote": "Valor crítico de r (tabla r), α = .05 {{p3}}: {{p0}} para N = {{p1}} (gl = {{p2}}). Una correlación mayor en valor absoluto es significativa.",
+      "rTableFootnoteRange": "Valor crítico de r (tabla r), α = .05 {{p4}}: {{p0}} para N = {{p1}} hasta {{p2}} para N = {{p3}}; cada par se evalúa con su propio N.",
+      "tailTwo": "bilateral",
+      "tailOne": "unilateral"
     },
     "regression": {
       "modelSummaryTitle": "Resumen del modelo",
@@ -1852,7 +1856,8 @@
       "iccModel_mixed": "mixto de dos factores",
       "iccType_consistency": "consistencia",
       "iccType_absolute": "acuerdo absoluto",
-      "iccType_none": "—"
+      "iccType_none": "—",
+      "rTableFootnote": "Valor crítico de r (tabla r), α = .05 bilateral: {{p0}} para N = {{p1}} (gl = {{p2}}). Los ítems cuya correlación elemento-total corregida queda por debajo suelen considerarse no válidos."
     },
     "means": {
       "reportTitle": "Informe — {{name}}"

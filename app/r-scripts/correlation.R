@@ -179,11 +179,33 @@ tryCatch({
       if (xprod_here) out_rows <- c(out_rows, list(xprod_row), list(cov_row))
     }
 
+    # r table footnote (Pearson only — the critical value comes from the
+    # t-test of Pearson's r). Pairwise deletion can give pairs different Ns,
+    # each with its own critical value: then the footnote gives the range.
+    r_note <- NULL
+    if (identical(m, "pearson") && k >= 2) {
+      pair_n <- unlist(lapply(seq_len(k - 1), function(i) lapply((i + 1):k, function(j)
+        sum(!is.na(mats[[i]]) & !is.na(mats[[j]])))))
+      pair_n <- pair_n[pair_n >= 3]
+      tail_key <- if (one_tailed) "output.correlate.tailOne" else "output.correlate.tailTwo"
+      if (length(pair_n) > 0) {
+        lo <- min(pair_n); hi <- max(pair_n)
+        r_note <- if (lo == hi) {
+          paste0("output.correlate.rTableFootnote:",
+                 r_critical(hi, two_tailed = !one_tailed), "|", hi, "|", hi - 2L, "|", tail_key)
+        } else {
+          paste0("output.correlate.rTableFootnoteRange:",
+                 r_critical(hi, two_tailed = !one_tailed), "|", hi, "|",
+                 r_critical(lo, two_tailed = !one_tailed), "|", lo, "|", tail_key)
+        }
+      }
+    }
+
     all_tables <- c(all_tables, list(list(
       titleKey    = paste0("output.correlate.title:", method_name[[m]]),
       columns     = as.list(unname(cols_hdr)),
       rows        = out_rows,
-      footnoteKey = NULL
+      footnoteKey = r_note
     )))
   }
 

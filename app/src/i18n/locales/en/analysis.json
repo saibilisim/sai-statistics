@@ -1518,7 +1518,11 @@
     },
     "correlate": {
       "title": "Correlations — {{name}}",
-      "descriptivesTitle": "Descriptive Statistics"
+      "descriptivesTitle": "Descriptive Statistics",
+      "rTableFootnote": "Critical value of r (r table), α = .05 {{p3}}: {{p0}} for N = {{p1}} (df = {{p2}}). A correlation larger than this in absolute value is significant.",
+      "rTableFootnoteRange": "Critical value of r (r table), α = .05 {{p4}}: {{p0}} for N = {{p1}} up to {{p2}} for N = {{p3}}; each pair is judged by its own N.",
+      "tailTwo": "two-tailed",
+      "tailOne": "one-tailed"
     },
     "regression": {
       "modelSummaryTitle": "Model Summary",
@@ -1852,7 +1856,8 @@
       "iccModel_mixed": "two-way mixed",
       "iccType_consistency": "consistency",
       "iccType_absolute": "absolute agreement",
-      "iccType_none": "—"
+      "iccType_none": "—",
+      "rTableFootnote": "Critical value of r (r table), α = .05 two-tailed: {{p0}} for N = {{p1}} (df = {{p2}}). Items whose Corrected Item-Total Correlation falls below it are usually read as not valid."
     },
     "means": {
       "reportTitle": "Report — {{name}}"

@@ -196,6 +196,19 @@ sai_case_var <- function(name, values, rows_df, labelKey = "",
   )
 }
 
+#' Critical value of Pearson's r ("r table"): the smallest |r| that is
+#' significant at `alpha` with `n` cases, from the t-test of r with df = n - 2,
+#' r = t / sqrt(df + t^2). Thesis guides (Indonesia's "r tabel" above all)
+#' judge item validity by comparing r with this value, and look it up in a
+#' printed table; the output states it instead. Returned formatted to 3
+#' decimals ("0.361") so a footnote parameter carries it unchanged.
+r_critical <- function(n, alpha = 0.05, two_tailed = TRUE) {
+  df <- n - 2
+  if (df < 1) return(NA_character_)
+  tq <- stats::qt(1 - if (two_tailed) alpha / 2 else alpha, df)
+  sprintf("%.3f", tq / sqrt(df + tq^2))
+}
+
 #' Load the dataset from the Parquet file specified in params$parquetPath.
 load_data <- function(params) {
   path <- params$parquetPath

@@ -6,22 +6,28 @@
       "date": "2026-11-28",
       "notes": {
         "tr": [
-          "Doğrusal Regresyon'a \"Klasik varsayım testleri\" seçeneği eklendi: artıkların normalliği, çoklu doğrusal bağlantı (VIF), değişen varyans ve otokorelasyon tek tabloda, her biri için \"sağlandı / sağlanmadı\" kararıyla geliyor."
+          "Doğrusal Regresyon'a \"Klasik varsayım testleri\" seçeneği eklendi: artıkların normalliği, çoklu doğrusal bağlantı (VIF), değişen varyans ve otokorelasyon tek tabloda, her biri için \"sağlandı / sağlanmadı\" kararıyla geliyor.",
+          "Pearson korelasyon tablosu ve Güvenilirlik Analizi'nin Madde-Toplam İstatistikleri artık r tablosu değerini (r'nin kritik değeri) dipnotta veriyor; madde geçerliğini değerlendirmek için tabloya bakmanız gerekmiyor."
         ],
         "en": [
-          "Linear Regression adds a \"Classical assumption tests\" option: normality of residuals, multicollinearity (VIF), heteroskedasticity and autocorrelation in one table, each with a clear \"met / not met\" decision."
+          "Linear Regression adds a \"Classical assumption tests\" option: normality of residuals, multicollinearity (VIF), heteroskedasticity and autocorrelation in one table, each with a clear \"met / not met\" decision.",
+          "The Pearson correlation table and Reliability Analysis's Item-Total Statistics now give the r table value (critical r) in a footnote, so judging item validity no longer needs a printed table."
         ],
         "es": [
-          "La Regresión lineal añade la opción \"Pruebas de supuestos clásicos\": normalidad de los residuos, multicolinealidad (VIF), heterocedasticidad y autocorrelación en una sola tabla, cada una con la decisión \"cumplido / no cumplido\"."
+          "La Regresión lineal añade la opción \"Pruebas de supuestos clásicos\": normalidad de los residuos, multicolinealidad (VIF), heterocedasticidad y autocorrelación en una sola tabla, cada una con la decisión \"cumplido / no cumplido\".",
+          "La tabla de correlaciones de Pearson y las Estadísticas total-elemento del Análisis de fiabilidad indican ahora el valor de la tabla r (r crítico) en una nota, sin necesidad de consultar una tabla impresa."
         ],
         "fr": [
-          "La Régression linéaire ajoute l'option « Tests des hypothèses classiques » : normalité des résidus, multicolinéarité (VIF), hétéroscédasticité et autocorrélation dans un seul tableau, chacune avec la décision « vérifiée / non vérifiée »."
+          "La Régression linéaire ajoute l'option « Tests des hypothèses classiques » : normalité des résidus, multicolinéarité (VIF), hétéroscédasticité et autocorrélation dans un seul tableau, chacune avec la décision « vérifiée / non vérifiée ».",
+          "Le tableau des corrélations de Pearson et les Statistiques item-total de l'Analyse de fiabilité indiquent désormais la valeur de la table de r (r critique) en note, sans consulter de table imprimée."
         ],
         "pt": [
-          "A Regressão linear ganha a opção \"Testes de pressupostos clássicos\": normalidade dos resíduos, multicolinearidade (VIF), heterocedasticidade e autocorrelação numa única tabela, cada uma com a decisão \"atendido / não atendido\"."
+          "A Regressão linear ganha a opção \"Testes de pressupostos clássicos\": normalidade dos resíduos, multicolinearidade (VIF), heterocedasticidade e autocorrelação numa única tabela, cada uma com a decisão \"atendido / não atendido\".",
+          "A tabela de correlações de Pearson e as Estatísticas item-total da Análise de confiabilidade mostram agora o valor da tabela r (r crítico) numa nota, sem precisar de consultar uma tabela impressa."
         ],
         "it": [
-          "La Regressione lineare aggiunge l'opzione \"Test delle ipotesi classiche\": normalità dei residui, multicollinearità (VIF), eteroschedasticità e autocorrelazione in un'unica tabella, ognuna con la decisione \"soddisfatta / non soddisfatta\"."
+          "La Regressione lineare aggiunge l'opzione \"Test delle ipotesi classiche\": normalità dei residui, multicollinearità (VIF), eteroschedasticità e autocorrelazione in un'unica tabella, ognuna con la decisione \"soddisfatta / non soddisfatta\".",
+          "La tabella delle correlazioni di Pearson e le Statistiche elemento-totale dell'Analisi di affidabilità riportano ora in nota il valore della tavola di r (r critico), senza consultare una tavola stampata."
         ]
       }
     },

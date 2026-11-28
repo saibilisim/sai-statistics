@@ -1518,7 +1518,11 @@
     },
     "correlate": {
       "title": "Korelasyonlar — {{name}}",
-      "descriptivesTitle": "Betimsel İstatistikler"
+      "descriptivesTitle": "Betimsel İstatistikler",
+      "rTableFootnote": "r'nin kritik değeri (r tablosu), α = .05 {{p3}}: N = {{p1}} için {{p0}} (sd = {{p2}}). Mutlak değeri bundan büyük korelasyon anlamlıdır.",
+      "rTableFootnoteRange": "r'nin kritik değeri (r tablosu), α = .05 {{p4}}: N = {{p1}} için {{p0}}, N = {{p3}} için {{p2}}; her çift kendi N'ine göre değerlendirilir.",
+      "tailTwo": "çift yönlü",
+      "tailOne": "tek yönlü"
     },
     "regression": {
       "modelSummaryTitle": "Model Özeti",
@@ -1852,7 +1856,8 @@
       "iccModel_mixed": "iki yönlü karma",
       "iccType_consistency": "tutarlılık",
       "iccType_absolute": "mutlak uyum",
-      "iccType_none": "—"
+      "iccType_none": "—",
+      "rTableFootnote": "r'nin kritik değeri (r tablosu), α = .05 çift yönlü: N = {{p1}} için {{p0}} (sd = {{p2}}). Düzeltilmiş madde-toplam korelasyonu bunun altında kalan maddeler genellikle geçersiz kabul edilir."
     },
     "means": {
       "reportTitle": "Rapor — {{name}}"
