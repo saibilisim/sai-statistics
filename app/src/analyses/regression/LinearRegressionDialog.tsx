@@ -167,6 +167,14 @@ function StatisticsContent({
           {t('analysis:regression.durbinWatson')}
         </CheckOption>
         <CheckOption
+          checked={local.assumptions}
+          onChange={v => {
+            setLocal(o => ({ ...o, assumptions: v }))
+          }}
+        >
+          {t('analysis:regression.assumptions')}
+        </CheckOption>
+        <CheckOption
           checked={local.casewiseDiagnostics}
           onChange={v => {
             setLocal(o => ({ ...o, casewiseDiagnostics: v }))

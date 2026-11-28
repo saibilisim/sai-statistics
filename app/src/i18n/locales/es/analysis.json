@@ -455,6 +455,7 @@
     "plotsTitle": "Regresión Lineal: Gráficos",
     "collinearity": "Diagnósticos de colinealidad",
     "durbinWatson": "Durbin-Watson",
+    "assumptions": "Pruebas de supuestos clásicos",
     "confidenceIntervals": "Intervalos de confianza",
     "covarianceMatrix": "Matriz de covarianzas",
     "rSquaredChange": "Cambio en R cuadrado",
@@ -1544,6 +1545,23 @@
         "mahalanobis": "Distancia de Mahalanobis",
         "dfbeta": "DfBeta — {{name}}",
         "partial": "Residuo parcial — {{name}}"
+      },
+      "assume": {
+        "title": "Pruebas de supuestos clásicos",
+        "normality": "Normalidad de los residuos",
+        "multicollinearity": "Multicolinealidad",
+        "heteroskedasticity": "Heterocedasticidad",
+        "autocorrelation": "Autocorrelación",
+        "ks": "Kolmogorov-Smirnov (Lilliefors)",
+        "sw": "Shapiro-Wilk",
+        "vif": "VIF — {{name}}",
+        "glejser": "Glejser — {{name}}",
+        "bp": "Breusch-Pagan (Koenker)",
+        "dw": "Durbin-Watson",
+        "bg": "Breusch-Godfrey (orden 1)",
+        "met": "Supuesto cumplido",
+        "violated": "No cumplido",
+        "footnote": "Calculado a partir de los residuos no estandarizados del modelo final, α = .05. Normalidad, Glejser, Breusch-Pagan y Breusch-Godfrey: Sig. > .05 indica que el supuesto se cumple. Multicolinealidad: VIF < 10 (Tolerancia > 0,10). Durbin-Watson: valores cercanos a 2 sugieren ausencia de autocorrelación de primer orden; su prueba es Breusch-Godfrey. Kolmogorov-Smirnov usa la corrección de significación de Lilliefors."
       }
     },
     "partialCorr": {
@@ -3157,7 +3175,10 @@
     "lrPositive": "LR+",
     "lrNegative": "LR−",
     "factor": "Factor",
-    "mode": "Moda"
+    "mode": "Moda",
+    "assumption": "Supuesto",
+    "test": "Prueba",
+    "decision": "Decisión"
   },
   "mixed": {
     "title": "Modelos lineales mixtos",

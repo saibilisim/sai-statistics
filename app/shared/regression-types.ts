@@ -86,6 +86,9 @@ export interface RegressionOptions {
   criteria: RegressionCriteria
   collinearity: boolean
   durbinWatson: boolean
+  /** Classical assumption tests table on the final model's residuals (normality, VIF,
+   *  Glejser / Breusch-Pagan, Durbin-Watson / Breusch-Godfrey). No SPSS equivalent. */
+  assumptions: boolean
   confidenceIntervals: boolean
   /** Confidence level in percent, as SPSS's dialog shows it. */
   ciLevel: number
@@ -107,6 +110,7 @@ export const defaultRegressionOptions: RegressionOptions = {
   criteria: defaultRegressionCriteria,
   collinearity: false,
   durbinWatson: false,
+  assumptions: false,
   confidenceIntervals: false,
   ciLevel: 95,
   covarianceMatrix: false,

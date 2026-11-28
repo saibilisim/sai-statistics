@@ -455,6 +455,7 @@
     "plotsTitle": "Regressione Lineare: Grafici",
     "collinearity": "Diagnostica di collinearità",
     "durbinWatson": "Durbin-Watson",
+    "assumptions": "Test delle ipotesi classiche",
     "confidenceIntervals": "Intervalli di confidenza",
     "covarianceMatrix": "Matrice di covarianza",
     "rSquaredChange": "Variazione di R quadrato",
@@ -1544,6 +1545,23 @@
         "mahalanobis": "Distanza di Mahalanobis",
         "dfbeta": "DfBeta — {{name}}",
         "partial": "Residuo parziale — {{name}}"
+      },
+      "assume": {
+        "title": "Test delle ipotesi classiche",
+        "normality": "Normalità dei residui",
+        "multicollinearity": "Multicollinearità",
+        "heteroskedasticity": "Eteroschedasticità",
+        "autocorrelation": "Autocorrelazione",
+        "ks": "Kolmogorov-Smirnov (Lilliefors)",
+        "sw": "Shapiro-Wilk",
+        "vif": "VIF — {{name}}",
+        "glejser": "Glejser — {{name}}",
+        "bp": "Breusch-Pagan (Koenker)",
+        "dw": "Durbin-Watson",
+        "bg": "Breusch-Godfrey (ordine 1)",
+        "met": "Ipotesi soddisfatta",
+        "violated": "Non soddisfatta",
+        "footnote": "Calcolato dai residui non standardizzati del modello finale, α = .05. Normalità, Glejser, Breusch-Pagan e Breusch-Godfrey: Sig. > .05 indica che l'ipotesi è soddisfatta. Multicollinearità: VIF < 10 (Tolleranza > 0,10). Durbin-Watson: valori vicini a 2 suggeriscono assenza di autocorrelazione del primo ordine; il relativo test è Breusch-Godfrey. Kolmogorov-Smirnov usa la correzione di significatività di Lilliefors."
       }
     },
     "partialCorr": {
@@ -3157,7 +3175,10 @@
     "lrPositive": "LR+",
     "lrNegative": "LR−",
     "factor": "Fattore",
-    "mode": "Moda"
+    "mode": "Moda",
+    "assumption": "Ipotesi",
+    "test": "Test",
+    "decision": "Decisione"
   },
   "mixed": {
     "title": "Modelli misti lineari",

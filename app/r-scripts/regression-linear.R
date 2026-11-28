@@ -22,6 +22,10 @@
 #     not R's step()'s AIC-based one.
 #   options$collinearity      — Tolerance/VIF columns in Coefficients (every step)
 #   options$durbinWatson      — Durbin-Watson column in Model Summary (every step)
+#   options$assumptions       — Classical Assumption Tests table on the FINAL
+#     step's residuals: normality (K-S Lilliefors, Shapiro-Wilk), VIF,
+#     Glejser + Breusch-Pagan, Durbin-Watson + Breusch-Godfrey. No SPSS
+#     equivalent (SPSS needs Save → Compute → a second regression → NPAR TESTS)
 #   options$confidenceIntervals / options$ciLevel — CI columns for B (default 95,
 #     every step)
 #   options$covarianceMatrix  — Coefficient Correlations/Covariances table for
@@ -572,6 +576,93 @@ tryCatch({
                          dep_name, "output.col.predictedValue", "output.col.residual"),
       rows        = cw_rows,
       footnoteKey = paste0("output.regression.depFootnote:", dep_name)
+    )))
+  }
+
+  # ── Classical assumption tests (final step) ─────────────────────────────
+  # The residual checks thesis guidelines ask for after an OLS fit (in
+  # Indonesia "uji asumsi klasik"), which SPSS spreads over Save → Compute →
+  # a second regression → NPAR TESTS. One table, from the final model's
+  # unstandardized residuals:
+  #   normality       K-S with the Lilliefors correction (nortest, what SPSS
+  #                   26+ prints) and Shapiro-Wilk (3 ≤ n ≤ 5000)
+  #   multicollinearity  VIF per predictor, 1 / (1 - R²_j); rule VIF < 10
+  #   heteroskedasticity Glejser (|e| on the predictors, per-predictor t) and
+  #                   Breusch-Pagan in Koenker's studentized form — lmtest::
+  #                   bptest()'s default, rebuilt here (lmtest is not bundled)
+  #   autocorrelation Durbin-Watson d (no p: its bounds need dL/dU tables) and
+  #                   Breusch-Godfrey order 1 — lmtest::bgtest()'s default
+  #                   (lagged residual filled with 0, LM = n·R²)
+  # The auxiliary regressions always carry an intercept, so for a model with
+  # a constant they reproduce lmtest exactly (tests/r-validation checks it).
+  if (isTRUE(opts$assumptions)) {
+    e     <- as.numeric(residuals(fit))
+    terms <- final$terms
+    k     <- length(terms)
+    met   <- function(ok) if (is.na(ok)) "" else if (ok) "output.regression.assume.met" else "output.regression.assume.violated"
+    as_rows <- list()
+    add_row <- function(group, test, stat, df, p, ok) {
+      as_rows[[length(as_rows) + 1L]] <<- list(group, test,
+        if (is.na(stat)) "" else round(stat, 6), df,
+        if (is.na(p)) "" else round(p, 6), met(ok))
+    }
+    g_norm <- "output.regression.assume.normality"
+    if (requireNamespace("nortest", quietly = TRUE) && n >= 5) {
+      lt <- nortest::lillie.test(e)
+      add_row(g_norm, "output.regression.assume.ks", as.numeric(lt$statistic), as.character(n),
+              lt$p.value, lt$p.value > 0.05)
+    }
+    if (n >= 3 && n <= 5000 && stats::var(e) > 0) {
+      sw <- stats::shapiro.test(e)
+      add_row(g_norm, "output.regression.assume.sw", as.numeric(sw$statistic), as.character(n),
+              sw$p.value, sw$p.value > 0.05)
+    }
+    if (k >= 2) {
+      for (term in terms) {
+        vif <- 1 / compute_tolerance(term, setdiff(terms, term))
+        add_row("output.regression.assume.multicollinearity",
+                paste0("output.regression.assume.vif:", term_label(term)),
+                vif, "", NA_real_, vif < 10)
+      }
+    }
+    if (k >= 1) {
+      Z   <- dat[, terms, drop = FALSE]
+      rhs <- paste(terms, collapse = " + ")
+      # Glejser: |e| regressed on the predictors; each predictor's own t-test.
+      gl <- summary(lm(as.formula(paste(".ae ~", rhs)), data = cbind(Z, .ae = abs(e))))$coefficients
+      for (i in seq_len(k)) {
+        rn <- terms[i]
+        if (!rn %in% rownames(gl)) next
+        p <- gl[rn, 4]
+        add_row("output.regression.assume.heteroskedasticity",
+                paste0("output.regression.assume.glejser:", term_label(terms[i])),
+                gl[rn, 3], as.character(n - k - 1L), p, p > 0.05)
+      }
+      # Breusch-Pagan, Koenker (studentized): n · R² of e² on the predictors.
+      w   <- e^2 - mean(e^2)
+      aux <- lm(as.formula(paste(".w ~", rhs)), data = cbind(Z, .w = w))
+      bp  <- n * sum(fitted(aux)^2) / sum(w^2)
+      bpp <- stats::pchisq(bp, df = k, lower.tail = FALSE)
+      add_row("output.regression.assume.heteroskedasticity", "output.regression.assume.bp",
+              bp, as.character(k), bpp, bpp > 0.05)
+    }
+    dw <- sum(diff(e)^2) / sum(e^2)
+    add_row("output.regression.assume.autocorrelation", "output.regression.assume.dw",
+            dw, "", NA_real_, NA)
+    if (n > ncol(stats::model.matrix(fit)) + 2L) {
+      X_bg <- cbind(stats::model.matrix(fit), lag1 = c(0, e[-n]))
+      aux_bg <- stats::lm.fit(X_bg, e)
+      bg  <- n * sum((e - aux_bg$residuals)^2) / sum(e^2)
+      bgp <- stats::pchisq(bg, df = 1, lower.tail = FALSE)
+      add_row("output.regression.assume.autocorrelation", "output.regression.assume.bg",
+              bg, "1", bgp, bgp > 0.05)
+    }
+    tables <- c(tables, list(list(
+      titleKey    = "output.regression.assume.title",
+      columns     = list("output.col.assumption", "output.col.test", "output.col.statistic",
+                         "output.col.df", "output.col.sig", "output.col.decision"),
+      rows        = as_rows,
+      footnoteKey = "output.regression.assume.footnote"
     )))
   }
 

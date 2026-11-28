@@ -455,6 +455,7 @@
     "plotsTitle": "Régression Linéaire : Graphiques",
     "collinearity": "Diagnostics de colinéarité",
     "durbinWatson": "Durbin-Watson",
+    "assumptions": "Tests des hypothèses classiques",
     "confidenceIntervals": "Intervalles de confiance",
     "covarianceMatrix": "Matrice de covariance",
     "rSquaredChange": "Variation de R deux",
@@ -1544,6 +1545,23 @@
         "mahalanobis": "Distance de Mahalanobis",
         "dfbeta": "DfBeta — {{name}}",
         "partial": "Résidu partiel — {{name}}"
+      },
+      "assume": {
+        "title": "Tests des hypothèses classiques",
+        "normality": "Normalité des résidus",
+        "multicollinearity": "Multicolinéarité",
+        "heteroskedasticity": "Hétéroscédasticité",
+        "autocorrelation": "Autocorrélation",
+        "ks": "Kolmogorov-Smirnov (Lilliefors)",
+        "sw": "Shapiro-Wilk",
+        "vif": "VIF — {{name}}",
+        "glejser": "Glejser — {{name}}",
+        "bp": "Breusch-Pagan (Koenker)",
+        "dw": "Durbin-Watson",
+        "bg": "Breusch-Godfrey (ordre 1)",
+        "met": "Hypothèse vérifiée",
+        "violated": "Non vérifiée",
+        "footnote": "Calculé à partir des résidus non standardisés du modèle final, α = .05. Normalité, Glejser, Breusch-Pagan et Breusch-Godfrey : Sig. > .05 indique que l'hypothèse est vérifiée. Multicolinéarité : VIF < 10 (Tolérance > 0,10). Durbin-Watson : des valeurs proches de 2 suggèrent l'absence d'autocorrélation d'ordre 1 ; le test correspondant est Breusch-Godfrey. Kolmogorov-Smirnov utilise la correction de signification de Lilliefors."
       }
     },
     "partialCorr": {
@@ -3157,7 +3175,10 @@
     "lrPositive": "LR+",
     "lrNegative": "LR−",
     "factor": "Facteur",
-    "mode": "Mode"
+    "mode": "Mode",
+    "assumption": "Hypothèse",
+    "test": "Test",
+    "decision": "Décision"
   },
   "mixed": {
     "title": "Modèles linéaires mixtes",

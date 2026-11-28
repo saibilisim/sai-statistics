@@ -455,6 +455,7 @@
     "plotsTitle": "Doğrusal Regresyon: Grafikler",
     "collinearity": "Eşdoğrusallık tanılamaları",
     "durbinWatson": "Durbin-Watson",
+    "assumptions": "Klasik varsayım testleri",
     "confidenceIntervals": "Güven aralıkları",
     "covarianceMatrix": "Kovaryans matrisi",
     "rSquaredChange": "R kare değişimi",
@@ -1544,6 +1545,23 @@
         "mahalanobis": "Mahalanobis uzaklığı",
         "dfbeta": "DfBeta — {{name}}",
         "partial": "Kısmi artık — {{name}}"
+      },
+      "assume": {
+        "title": "Klasik Varsayım Testleri",
+        "normality": "Artıkların normalliği",
+        "multicollinearity": "Çoklu doğrusal bağlantı",
+        "heteroskedasticity": "Değişen varyans",
+        "autocorrelation": "Otokorelasyon",
+        "ks": "Kolmogorov-Smirnov (Lilliefors)",
+        "sw": "Shapiro-Wilk",
+        "vif": "VIF — {{name}}",
+        "glejser": "Glejser — {{name}}",
+        "bp": "Breusch-Pagan (Koenker)",
+        "dw": "Durbin-Watson",
+        "bg": "Breusch-Godfrey (1. derece)",
+        "met": "Varsayım sağlandı",
+        "violated": "Sağlanmadı",
+        "footnote": "Son modelin standartlaştırılmamış artıklarından hesaplanmıştır, α = .05. Normallik, Glejser, Breusch-Pagan ve Breusch-Godfrey: Sig. > .05 varsayımın sağlandığını gösterir. Çoklu doğrusal bağlantı: VIF < 10 (Tolerans > 0,10). Durbin-Watson: 2'ye yakın değerler birinci derece otokorelasyon olmadığına işaret eder; testi Breusch-Godfrey'dir. Kolmogorov-Smirnov, Lilliefors anlamlılık düzeltmesiyle hesaplanır."
       }
     },
     "partialCorr": {
@@ -3157,7 +3175,10 @@
     "lrPositive": "LR+",
     "lrNegative": "LR−",
     "factor": "Faktör",
-    "mode": "Mod"
+    "mode": "Mod",
+    "assumption": "Varsayım",
+    "test": "Test",
+    "decision": "Karar"
   },
   "mixed": {
     "title": "Doğrusal Karışık Modeller",

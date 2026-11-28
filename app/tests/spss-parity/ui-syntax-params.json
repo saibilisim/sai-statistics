@@ -336,6 +336,7 @@
           },
           "collinearity": true,
           "durbinWatson": true,
+          "assumptions": false,
           "confidenceIntervals": false,
           "ciLevel": 95,
           "covarianceMatrix": false,

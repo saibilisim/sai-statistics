@@ -2,6 +2,30 @@
   "$comment": "Son kullanıcıya dönük sürüm notları — tek kaynak. Kurallar: app/scripts/check-release-notes.cjs başı ve CLAUDE.md §10.",
   "releases": [
     {
+      "version": "0.3.2",
+      "date": "2026-11-28",
+      "notes": {
+        "tr": [
+          "Doğrusal Regresyon'a \"Klasik varsayım testleri\" seçeneği eklendi: artıkların normalliği, çoklu doğrusal bağlantı (VIF), değişen varyans ve otokorelasyon tek tabloda, her biri için \"sağlandı / sağlanmadı\" kararıyla geliyor."
+        ],
+        "en": [
+          "Linear Regression adds a \"Classical assumption tests\" option: normality of residuals, multicollinearity (VIF), heteroskedasticity and autocorrelation in one table, each with a clear \"met / not met\" decision."
+        ],
+        "es": [
+          "La Regresión lineal añade la opción \"Pruebas de supuestos clásicos\": normalidad de los residuos, multicolinealidad (VIF), heterocedasticidad y autocorrelación en una sola tabla, cada una con la decisión \"cumplido / no cumplido\"."
+        ],
+        "fr": [
+          "La Régression linéaire ajoute l'option « Tests des hypothèses classiques » : normalité des résidus, multicolinéarité (VIF), hétéroscédasticité et autocorrélation dans un seul tableau, chacune avec la décision « vérifiée / non vérifiée »."
+        ],
+        "pt": [
+          "A Regressão linear ganha a opção \"Testes de pressupostos clássicos\": normalidade dos resíduos, multicolinearidade (VIF), heterocedasticidade e autocorrelação numa única tabela, cada uma com a decisão \"atendido / não atendido\"."
+        ],
+        "it": [
+          "La Regressione lineare aggiunge l'opzione \"Test delle ipotesi classiche\": normalità dei residui, multicollinearità (VIF), eteroschedasticità e autocorrelazione in un'unica tabella, ognuna con la decisione \"soddisfatta / non soddisfatta\"."
+        ]
+      }
+    },
+    {
       "version": "0.3.1",
       "date": "2026-11-19",
       "notes": {

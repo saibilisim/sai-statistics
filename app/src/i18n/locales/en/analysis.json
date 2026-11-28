@@ -455,6 +455,7 @@
     "plotsTitle": "Linear Regression: Plots",
     "collinearity": "Collinearity diagnostics",
     "durbinWatson": "Durbin-Watson",
+    "assumptions": "Classical assumption tests",
     "confidenceIntervals": "Confidence intervals",
     "covarianceMatrix": "Covariance matrix",
     "rSquaredChange": "R squared change",
@@ -1544,6 +1545,23 @@
         "mahalanobis": "Mahalanobis distance",
         "dfbeta": "DfBeta — {{name}}",
         "partial": "Partial residual — {{name}}"
+      },
+      "assume": {
+        "title": "Classical Assumption Tests",
+        "normality": "Normality of residuals",
+        "multicollinearity": "Multicollinearity",
+        "heteroskedasticity": "Heteroskedasticity",
+        "autocorrelation": "Autocorrelation",
+        "ks": "Kolmogorov-Smirnov (Lilliefors)",
+        "sw": "Shapiro-Wilk",
+        "vif": "VIF — {{name}}",
+        "glejser": "Glejser — {{name}}",
+        "bp": "Breusch-Pagan (Koenker)",
+        "dw": "Durbin-Watson",
+        "bg": "Breusch-Godfrey (order 1)",
+        "met": "Assumption met",
+        "violated": "Not met",
+        "footnote": "Computed from the final model's unstandardized residuals, α = .05. Normality, Glejser, Breusch-Pagan and Breusch-Godfrey: Sig. > .05 means the assumption holds. Multicollinearity: VIF < 10 (Tolerance > 0.10). Durbin-Watson: values near 2 suggest no first-order autocorrelation; its test is Breusch-Godfrey. Kolmogorov-Smirnov uses the Lilliefors significance correction."
       }
     },
     "partialCorr": {
@@ -3157,7 +3175,10 @@
     "lrPositive": "LR+",
     "lrNegative": "LR−",
     "factor": "Factor",
-    "mode": "Mode"
+    "mode": "Mode",
+    "assumption": "Assumption",
+    "test": "Test",
+    "decision": "Decision"
   },
   "mixed": {
     "title": "Linear Mixed Models",

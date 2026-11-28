@@ -327,7 +327,7 @@ export const ANALYSIS_MANIFEST: readonly AnalysisManifestEntry[] = [
         required: false,
         default: { collinearity: false, durbinWatson: false },
         description:
-          'Booleans/numbers matching SPSS\'s Statistics/Options/Plots dialogs: collinearity, durbinWatson, confidenceIntervals + ciLevel (default 95), covarianceMatrix, rSquaredChange, descriptives, partialCorrelations, casewiseDiagnostics + casewiseOutliersOnly + casewiseSD (default 3), includeConstant (default true), missingMethod ("listwise"|"mean"), plots: { scatterY/scatterX (one of DEPENDNT/ZPRED/ZRESID/DRESID/ADJPRED/SRESID/SDRESID), histogram, normalPP, partialPlots }.'
+          'Booleans/numbers matching SPSS\'s Statistics/Options/Plots dialogs: collinearity, durbinWatson, assumptions (classical assumption tests on the final model residuals: normality K-S/Shapiro-Wilk, VIF, Glejser + Breusch-Pagan, Durbin-Watson + Breusch-Godfrey), confidenceIntervals + ciLevel (default 95), covarianceMatrix, rSquaredChange, descriptives, partialCorrelations, casewiseDiagnostics + casewiseOutliersOnly + casewiseSD (default 3), includeConstant (default true), missingMethod ("listwise"|"mean"), plots: { scatterY/scatterX (one of DEPENDNT/ZPRED/ZRESID/DRESID/ADJPRED/SRESID/SDRESID), histogram, normalPP, partialPlots }.'
       }
     },
     companions: { names: { dependent: 'dependentName', independents: 'varNames' } }
